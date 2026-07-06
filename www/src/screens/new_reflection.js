@@ -266,12 +266,16 @@ export function renderNewReflection(onComplete) {
             const itemNames = { acorns: '🌰 Oak Acorn', blossoms: '🌸 Sage Blossom', nectar: '🍯 Lotus Nectar' };
             const droppedItem = data.itemDropped;
 
-            if (droppedItem && itemNames[droppedItem]) {
+            if (data.mission) {
                 chip.style.display = 'inline-block';
-                chip.innerHTML = `🌟 Completed sit in <strong>${data.mission ? 'Journey' : 'Sanctuary'}</strong>.<br>Harvested: <strong>${itemNames[droppedItem]}</strong> + Sync Boost!`;
-            } else if (data.mission) {
+                let html = `🏆 Mission: <strong>${data.mission.label}</strong> +20 XP`;
+                if (droppedItem && itemNames[droppedItem]) {
+                    html += `<br>🌟 Harvested: <strong>${itemNames[droppedItem]}</strong> + Sync Boost!`;
+                }
+                chip.innerHTML = html;
+            } else if (droppedItem && itemNames[droppedItem]) {
                 chip.style.display = 'inline-block';
-                chip.innerHTML = `🏆 Mission: <strong>${data.mission.label}</strong> +20 XP`;
+                chip.innerHTML = `🌟 Completed sit in <strong>Sanctuary</strong>.<br>Harvested: <strong>${itemNames[droppedItem]}</strong> + Sync Boost!`;
             } else {
                 chip.style.display = 'none';
             }

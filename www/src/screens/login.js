@@ -218,7 +218,7 @@ export function renderLogin(onLoginSuccess) {
         .login-screen {
             background-color: var(--color-bg-primary);
             z-index: 200; /* Above everything */
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -226,6 +226,10 @@ export function renderLogin(onLoginSuccess) {
             overflow-y: auto;
             position: absolute;
             left: 0; top: 0; width: 100%; height: 100%;
+        }
+
+        .login-screen.active {
+            display: flex;
         }
 
         .onboarding-container {

@@ -1,4 +1,4 @@
-import { DB } from '../services/db.js';
+import { DB, xpInCurrentLevel } from '../services/db.js';
 
 // All meditation paths
 const PATHS = {
@@ -751,9 +751,11 @@ export function renderJourney() {
     container.updateData = () => {
         const stats = DB.getStats();
         container.querySelector('#j-level-text').textContent = `Lv.${stats.level}`;
-        const xpInLevel = stats.xp - (stats.level - 1) * 500;
-        container.querySelector('#j-xp-bar').style.width = `${Math.min(100, (xpInLevel / 500) * 100)}%`;
-        container.querySelector('#j-xp-label').textContent = `${xpInLevel} / 500 XP`;
+        // XP bar using scaled level thresholds
+        const xpProgress = xpInCurrentLevel(stats.xp);
+        const xpPct = Math.min(100, (xpProgress.earned / xpProgress.needed) * 100);
+        container.querySelector('#j-xp-bar').style.width = `${xpPct}%`;
+        container.querySelector('#j-xp-label').textContent = `${xpProgress.earned} / ${xpProgress.needed} XP`;
         activePathId = DB.getActivePath();
         updateHeader();
         buildTabs();
@@ -774,6 +776,7 @@ export function renderJourney() {
             questBadge.style.animation = 'none';
             questBar.style.opacity = '0.7';
             questBar.style.cursor = 'default';
+            questBar.onclick = null;
         } else if (quest.completed) {
             questBadge.textContent = 'Claim +25 XP';
             questBadge.style.background = '#e2b857';
@@ -781,13 +784,21 @@ export function renderJourney() {
             questBadge.style.animation = 'pulseGlow 1.5s infinite';
             questBar.style.opacity = '1';
             questBar.style.cursor = 'pointer';
+            questBar.onclick = () => {
+                DB.claimDailyQuest();
+                container.updateData();
+            };
         } else {
             questBadge.textContent = '+25 XP';
             questBadge.style.background = 'rgba(255,255,255,0.15)';
             questBadge.style.color = 'white';
             questBadge.style.animation = 'none';
             questBar.style.opacity = '1';
-            questBar.style.cursor = 'default';
+            questBar.style.cursor = 'pointer';
+            // Navigate to Breathe screen to start a session
+            questBar.onclick = () => {
+                document.querySelector('[data-target="breathe"]')?.click();
+            };
         }
     };
 

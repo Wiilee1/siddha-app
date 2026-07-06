@@ -6,6 +6,60 @@
 
 const DB_KEY = 'siddha_db';
 
+// Total XP needed to REACH each level (index = level number, 0 = never used)
+// Early levels are quick to encourage new users; later levels scale steeply
+const LEVEL_THRESHOLDS = [
+    0,    // level 0 (unused)
+    0,    // level 1: starts here
+    100,  // level 2
+    250,  // level 3
+    450,  // level 4
+    700,  // level 5
+    1000, // level 6
+    1400, // level 7
+    1900, // level 8
+    2500, // level 9
+    3200, // level 10
+    4000, // level 11
+    5000, // level 12
+    6200, // level 13
+    7600, // level 14
+    9200, // level 15
+];
+
+// Returns the level number for a given total XP amount
+function xpToLevel(xp) {
+    let level = 1;
+    for (let i = LEVEL_THRESHOLDS.length - 1; i >= 1; i--) {
+        if (xp >= LEVEL_THRESHOLDS[i]) {
+            level = i;
+            break;
+        }
+    }
+    return level;
+}
+
+// Returns XP needed to reach the next level from current total XP
+function xpForNextLevel(xp) {
+    const currentLevel = xpToLevel(xp);
+    const nextIdx = currentLevel + 1;
+    if (nextIdx >= LEVEL_THRESHOLDS.length) {
+        // Beyond defined thresholds: each extra level costs 2000 more
+        const extra = nextIdx - LEVEL_THRESHOLDS.length + 1;
+        return LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1] + extra * 2000;
+    }
+    return LEVEL_THRESHOLDS[nextIdx];
+}
+
+// XP within the current level (for progress bars)
+function xpInCurrentLevel(xp) {
+    const currentLevel = xpToLevel(xp);
+    const base = LEVEL_THRESHOLDS[Math.min(currentLevel, LEVEL_THRESHOLDS.length - 1)];
+    const next = xpForNextLevel(xp);
+    return { earned: xp - base, needed: next - base };
+}
+
+
 const defaultState = {
     user: null,
     xp: 0,
@@ -61,6 +115,8 @@ function toDateStr(date) {
     const d = new Date(date);
     return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
 }
+
+export { xpToLevel, xpForNextLevel, xpInCurrentLevel, LEVEL_THRESHOLDS };
 
 export const DB = {
     // Auth
@@ -160,7 +216,7 @@ export const DB = {
         const state = getState();
         const oldLevel = state.level;
         state.xp += amount;
-        const newLevel = Math.floor(state.xp / 500) + 1;
+        const newLevel = xpToLevel(state.xp);
         const leveledUp = newLevel > oldLevel;
         state.level = newLevel;
         saveState(state);
@@ -189,7 +245,7 @@ export const DB = {
         
         const xpEarned = durationMins * 5;
         state.xp += xpEarned;
-        const newLevel = Math.floor(state.xp / 500) + 1;
+        const newLevel = xpToLevel(state.xp);
         const leveledUp = newLevel > oldLevel;
         state.level = newLevel;
 
@@ -240,7 +296,7 @@ export const DB = {
             const oldLevel = state.level;
             state.missionProgress[key].push(missionIndex);
             state.xp += 20;
-            const newLevel = Math.floor(state.xp / 500) + 1;
+            const newLevel = xpToLevel(state.xp);
             const leveledUp = newLevel > oldLevel;
             state.level = newLevel;
             saveState(state);
@@ -300,12 +356,14 @@ export const DB = {
     // Dev Tools
     resetProgress: () => {
         const state = getState();
+        state.user = null;
         state.xp = 0;
         state.level = 1;
         state.streak = 0;
         state.meditationHistory = [];
         state.reflectionHistory = [];
         state.missionProgress = {};
+        state.dailyQuests = { completedDate: null, questType: null, label: '', completed: false, claimed: false };
         saveState(state);
     },
     

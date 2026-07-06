@@ -60,20 +60,7 @@ export function renderProfile() {
             </div>
         </div>
 
-        <!-- App Settings Card -->
-        <div class="card" style="margin-bottom: 32px;">
-            <h3 style="font-size: 16px; margin-bottom: 16px;">App Settings</h3>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                    <span class="text-sm" style="font-weight: 600; color: var(--color-text-primary);">Cosmic Dark Mode</span>
-                    <span style="font-size: 10px; color: var(--color-text-muted);">Activate deep dark space elements</span>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="cosmic-theme-toggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
+
 
         <div class="card">
             <h3 style="font-size: 16px; margin-bottom: 16px;">Lifetime Statistics</h3>
@@ -211,34 +198,20 @@ export function renderProfile() {
     };
 
     setTimeout(() => {
-        const themeToggle = container.querySelector('#cosmic-theme-toggle');
-        if (themeToggle) {
-            themeToggle.checked = localStorage.getItem('theme_choice') === 'cosmic';
-            themeToggle.addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    localStorage.setItem('theme_choice', 'cosmic');
-                    document.body.classList.add('theme-cosmic');
-                } else {
-                    localStorage.setItem('theme_choice', 'classic');
-                    document.body.classList.remove('theme-cosmic');
-                }
-            });
-        }
-
         const logoutBtn = container.querySelector('#logout-btn');
         if(logoutBtn) {
             logoutBtn.addEventListener('click', async () => {
                 await DB.logout();
-                window.location.reload(); // Quick way to reset app state to login screen
+                window.location.reload();
             });
         }
 
         const resetBtn = container.querySelector('#dev-reset-btn');
         if(resetBtn) {
             resetBtn.addEventListener('click', () => {
-                if(confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                if(confirm('Reset all progress and return to setup? This cannot be undone.')) {
                     DB.resetProgress();
-                    container.updateData();
+                    window.location.reload();
                 }
             });
         }

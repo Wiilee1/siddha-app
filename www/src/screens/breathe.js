@@ -53,7 +53,7 @@ export function renderBreathe(onComplete) {
 
         <!-- Controls area -->
         <div class="bh-controls">
-            <!-- Soundscape Select -->
+            <!-- Soundscape Select + Mute Toggle -->
             <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); transition: opacity 0.3s;">
                 <span class="material-symbols-rounded" style="font-size:18px;">graphic_eq</span>
                 <label for="ambient-sound-select">Soundscape:</label>
@@ -64,6 +64,9 @@ export function renderBreathe(onComplete) {
                     <option value="waves" style="background:#1e2c22; color:white;">Shore Waves</option>
                     <option value="drone" style="background:#1e2c22; color:white;">Cosmic Drone</option>
                 </select>
+                <button id="sound-mute-btn" title="Toggle sound" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: rgba(255,255,255,0.85); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s;">
+                    <span class="material-symbols-rounded" id="mute-icon" style="font-size: 18px;">volume_up</span>
+                </button>
             </div>
 
             <!-- Preset row (hidden when running) -->
@@ -305,7 +308,30 @@ export function renderBreathe(onComplete) {
         const closeBtn    = container.querySelector('#breathe-close-btn');
         const hint        = container.querySelector('#bh-timer-hint');
         const breathePrompt = container.querySelector('#breathe-prompt');
+        const muteBtn     = container.querySelector('#sound-mute-btn');
+        const muteIcon    = container.querySelector('#mute-icon');
         let promptInterval = null;
+
+        // Persist mute state across sessions
+        let isMuted = localStorage.getItem('siddha_sound_muted') === 'true';
+        function applyMuteState() {
+            muteIcon.textContent = isMuted ? 'volume_off' : 'volume_up';
+            muteBtn.style.background = isMuted ? 'rgba(255,80,80,0.25)' : 'rgba(255,255,255,0.1)';
+            muteBtn.style.borderColor = isMuted ? 'rgba(255,80,80,0.4)' : 'rgba(255,255,255,0.2)';
+        }
+        applyMuteState();
+
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            localStorage.setItem('siddha_sound_muted', isMuted);
+            applyMuteState();
+            if (isMuted && !isPaused) {
+                Synth.stop();
+            } else if (!isMuted && !isPaused) {
+                const soundType = container.querySelector('#ambient-sound-select').value;
+                Synth.start(soundType);
+            }
+        });
 
         glow.style.animationPlayState = 'paused';
         container.querySelectorAll('.bh-ring').forEach(r => r.style.animationPlayState = 'paused');
@@ -411,7 +437,7 @@ export function renderBreathe(onComplete) {
             updateDisplay();
 
             // Play completion bell
-            Synth.playSingleBell();
+            if (!isMuted) Synth.playSingleBell();
 
             if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped });
         }
@@ -460,9 +486,11 @@ export function renderBreathe(onComplete) {
                 setRunningUI(true);
                 
                 // Play bell and start synthesizer sound
-                Synth.playSingleBell();
-                const soundType = container.querySelector('#ambient-sound-select').value;
-                Synth.start(soundType);
+                if (!isMuted) {
+                    Synth.playSingleBell();
+                    const soundType = container.querySelector('#ambient-sound-select').value;
+                    Synth.start(soundType);
+                }
 
                 timerInterval = setInterval(() => {
                     timeLeft--;
