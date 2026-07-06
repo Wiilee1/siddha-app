@@ -1,0 +1,14 @@
+Siddha App - Initial Release (Version 1.0.0)
+
+Welcome to Siddha! 
+
+We are thrilled to launch the first version of the Siddha app, designed to guide you through a journey of Zen and self-discovery.
+
+What's New in this Release:
+- Anicha Journey: Track your spiritual and meditative journey through interactive, beautifully designed stages.
+- Gamified Meditations: Earn achievements and unlock different Zen stages as you progress.
+- Engaging Animations: Beautifully animated UI elements, including falling leaves that respond to your touches for a satisfying experience.
+- Progress Tracking: Intuitive page indicators so you always know where you are.
+- Beautiful UI: Deeply satisfying, premium aesthetics designed for tranquility and focus.
+
+Enjoy the journey with Siddha!

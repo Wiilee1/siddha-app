@@ -1,0 +1,156 @@
+/* Global Styles and Reset */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    overflow: hidden; 
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+}
+
+/* App Container */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    background-color: var(--color-bg-primary);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    flex-shrink: 0; /* Never shrink */
+    width: 100%;
+    height: 72px;
+    background-color: var(--color-bg-card);
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 var(--spacing-sm);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.04);
+    z-index: 100;
+}
+
+/* Screen Container: takes the remaining space between header and nav */
+#screen-container {
+    flex: 1;
+    overflow: hidden; /* Each screen manages its own scroll */
+    position: relative;
+    min-height: 0; /* Critical: allows flex child to shrink below content size */
+}
+
+/* Screen Wrapper: fills the container exactly */
+.screen {
+    width: 100%;
+    height: 100%;
+    padding: 20px 20px 0 20px; /* No bottom padding — screens manage their own */
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+    box-sizing: border-box;
+    overflow: hidden; /* Default: no scroll. Screens that need scroll opt-in */
+}
+
+.screen.active {
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Screens that need vertical scroll */
+.screen.scrollable {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Nav items */
+.nav-item {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    padding: 0 8px;
+}
+
+.nav-item .material-symbols-rounded {
+    font-size: 24px;
+    font-weight: 300;
+    padding: 4px 16px;
+    border-radius: 16px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.nav-item.active {
+    color: var(--color-text-primary);
+}
+
+.nav-item.active .material-symbols-rounded {
+    font-variation-settings: 'FILL' 1;
+    background: rgba(83, 163, 98, 0.15); /* Soft vibrant green background */
+    color: #3d5045; /* Deep green icon */
+}
+
+.nav-item.active .nav-label {
+    font-weight: 700;
+    color: #3d5045;
+}
+
+.nav-label {
+    font-size: 10px;
+    font-weight: 500;
+}
+
+/* Breathe FAB in Bottom Nav */
+.nav-fab {
+    position: relative;
+    top: -20px;
+}
+
+.fab-circle {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #7a8a81, #4a5c50);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f4f3ed;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    margin-bottom: 2px;
+    border: 4px solid #f4f3ed;
+    transition: transform var(--transition-fast);
+}
+
+.fab-circle .material-symbols-rounded {
+    font-size: 32px;
+    font-weight: 300;
+}
+
+.nav-fab.active .fab-circle {
+    background-color: var(--color-accent-dark);
+}
+
+.nav-fab:active .fab-circle {
+    transform: scale(0.95);
+}

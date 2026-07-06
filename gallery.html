@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body style="background: #222; color: #fff; display: flex; flex-wrap: wrap;">
+<script>
+const imgs = [
+"siddha_meditation_home (10).png",
+"siddha_meditation_home (9).png",
+"siddha_meditation_home (8).png",
+"siddha_meditation_home (7).png",
+"siddha_meditation_home (6).png",
+"siddha_meditation_home (5).png",
+"siddha_meditation_home (4).png",
+"siddha_meditation_home (3).png",
+"siddha_meditation_home (2).png",
+"siddha_meditation_home.png",
+"siddha_meditation_home (1).png",
+"siddha_meditation_home1.png"
+];
+imgs.forEach(src => {
+    document.body.innerHTML += `<div style="margin: 10px; text-align: center;">
+        <img src="${src}" style="height: 200px;">
+        <br><span style="font-family: monospace;">${src}</span>
+    </div>`;
+});
+</script>
+</body>
+</html>

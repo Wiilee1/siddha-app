@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="screen-container"></div>
+<script type="module">
+  import { renderJourney } from './src/screens/journey.js';
+  window.onerror = function(msg, url, line) {
+      document.body.innerHTML += '<div style="color:red;font-size:20px;">ERROR: ' + msg + '</div>';
+  };
+  try {
+      const el = renderJourney();
+      document.getElementById('screen-container').appendChild(el);
+      el.updateData();
+  } catch(e) {
+      document.body.innerHTML += '<div style="color:red;font-size:20px;">ERROR: ' + e.message + '</div>';
+  }
+</script>
+</body>
+</html>
