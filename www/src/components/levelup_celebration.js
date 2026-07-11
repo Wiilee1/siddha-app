@@ -274,6 +274,33 @@ function injectStyles() {
             background: #e4e3dd;
         }
 
+        /* Evolution Preview Card */
+        .lu-image-card {
+            width: 100%;
+            max-width: 280px;
+            height: 160px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.15);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            position: relative;
+            opacity: 0;
+            transform: scale(0.9) translateY(10px);
+            animation: lu-image-appear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+        }
+
+        .lu-image-el {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+        }
+
+        @keyframes lu-image-appear {
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
         /* Leaf Particle Canvas */
         .lu-canvas {
             position: absolute;
@@ -465,11 +492,38 @@ export function triggerLevelUpModal(oldLevel, newLevel) {
     titleEl.textContent = "Consciousness Expanded";
     card.appendChild(titleEl);
 
+    function getLevelImage(level) {
+        if (level >= 15) return 'Siddha_lvl15.png';
+        if (level >= 10) return 'Siddha_lvl10.png';
+        if (level >= 7) return 'Siddha_lvl7.png';
+        if (level >= 5) return 'Siddha_lvl5.png';
+        if (level >= 3) return 'Siddha_lvl3.png';
+        return 'Siddha_lvl1.png';
+    }
+
     const subtitleEl = document.createElement("p");
     subtitleEl.className = "lu-subtitle";
-    const titleText = LEVEL_NAMES[Math.min(newLevel - 1, LEVEL_NAMES.length - 1)] || "Novice";
-    subtitleEl.textContent = `Level Up · ${titleText}`;
+    
+    // Check if this level represents a major evolution step
+    const oldImg = getLevelImage(oldLevel);
+    const newImg = getLevelImage(newLevel);
+    const isEvolution = oldImg !== newImg;
+
+    if (isEvolution) {
+        subtitleEl.textContent = "Siddha Has Evolved!";
+        subtitleEl.style.color = "#e2b857";
+        subtitleEl.style.textShadow = "0 0 10px rgba(226,184,87,0.3)";
+    } else {
+        const titleText = LEVEL_NAMES[Math.min(newLevel - 1, LEVEL_NAMES.length - 1)] || "Novice";
+        subtitleEl.textContent = `Level Up · ${titleText}`;
+    }
     card.appendChild(subtitleEl);
+
+    // Evolution image display
+    const imgCard = document.createElement("div");
+    imgCard.className = "lu-image-card";
+    imgCard.innerHTML = `<img class="lu-image-el" src="./src/assets/${newImg}" alt="Siddha Evolution Stage">`;
+    card.appendChild(imgCard);
 
     // Calming quote selection
     const quote = GROUNDING_QUOTES[Math.floor(Math.random() * GROUNDING_QUOTES.length)];

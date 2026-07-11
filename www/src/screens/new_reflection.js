@@ -238,6 +238,8 @@ export function renderNewReflection(onComplete) {
             standalone: isStandalone
         });
 
+        DB.checkAndTriggerAchievements(false);
+
         if (onComplete) onComplete();
     });
 
@@ -257,6 +259,9 @@ export function renderNewReflection(onComplete) {
             const data = container.sessionData;
             const durationXP = (data.duration || 10) * 5;
             earnedXP = durationXP;
+            if (data.mission) {
+                earnedXP += 20;
+            }
 
             container.querySelector('#nr-earned-xp').textContent = earnedXP;
             titleEl.textContent = 'Reflection';

@@ -53,17 +53,12 @@ export function renderBreathe(onComplete) {
 
         <!-- Controls area -->
         <div class="bh-controls">
-            <!-- Soundscape Select + Mute Toggle -->
+            <!-- Interval Bell Input + Mute Toggle -->
             <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); transition: opacity 0.3s;">
-                <span class="material-symbols-rounded" style="font-size:18px;">graphic_eq</span>
-                <label for="ambient-sound-select">Soundscape:</label>
-                <select id="ambient-sound-select" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; padding: 4px 8px; font-size: 12px; cursor: pointer; outline: none; text-align: center;">
-                    <option value="none" style="background:#1e2c22; color:white;">Silence</option>
-                    <option value="bowls" style="background:#1e2c22; color:white;">Singing Bowls</option>
-                    <option value="rain" style="background:#1e2c22; color:white;">Deep Forest Rain</option>
-                    <option value="waves" style="background:#1e2c22; color:white;">Shore Waves</option>
-                    <option value="drone" style="background:#1e2c22; color:white;">Cosmic Drone</option>
-                </select>
+                <span class="material-symbols-rounded" style="font-size:18px;">notifications_active</span>
+                <label for="bell-interval-input">Bell every:</label>
+                <input type="number" id="bell-interval-input" min="0" placeholder="0" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 4px; font-size: 12px; width: 45px; text-align: center; outline: none;" value="0">
+                <span>mins</span>
                 <button id="sound-mute-btn" title="Toggle sound" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: rgba(255,255,255,0.85); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s;">
                     <span class="material-symbols-rounded" id="mute-icon" style="font-size: 18px;">volume_up</span>
                 </button>
@@ -325,12 +320,6 @@ export function renderBreathe(onComplete) {
             isMuted = !isMuted;
             localStorage.setItem('siddha_sound_muted', isMuted);
             applyMuteState();
-            if (isMuted && !isPaused) {
-                Synth.stop();
-            } else if (!isMuted && !isPaused) {
-                const soundType = container.querySelector('#ambient-sound-select').value;
-                Synth.start(soundType);
-            }
         });
 
         glow.style.animationPlayState = 'paused';
@@ -428,8 +417,16 @@ export function renderBreathe(onComplete) {
                 container.activeMission = null;
             }
 
+            DB.checkAndTriggerAchievements(false);
+
             const pathId = activeMission ? (activeMission.pathId || 'tmi') : (DB.getActivePath() || 'tmi');
-            const itemMap = { tmi: 'acorns', vipassana: 'blossoms', zen: 'nectar' };
+            const itemMap = { 
+                tmi: 'acorns', 
+                anapana: 'acorns', 
+                vipassana: 'blossoms', 
+                metta: 'blossoms', 
+                zen: 'nectar' 
+            };
             const itemDropped = itemMap[pathId] || 'acorns';
 
             timeLeft = START_MINUTES * 60;
@@ -485,17 +482,25 @@ export function renderBreathe(onComplete) {
                 isPaused = false;
                 setRunningUI(true);
                 
-                // Play bell and start synthesizer sound
+                // Play starting bell
                 if (!isMuted) {
                     Synth.playSingleBell();
-                    const soundType = container.querySelector('#ambient-sound-select').value;
-                    Synth.start(soundType);
                 }
 
                 timerInterval = setInterval(() => {
                     timeLeft--;
                     sessionElapsed++;
                     updateDisplay();
+
+                    // Play interval bell every X minutes if set
+                    const intervalVal = parseInt(container.querySelector('#bell-interval-input').value);
+                    if (intervalVal > 0 && !isMuted) {
+                        const intervalSeconds = intervalVal * 60;
+                        if (sessionElapsed > 0 && sessionElapsed % intervalSeconds === 0 && timeLeft > 0) {
+                            Synth.playSingleBell();
+                        }
+                    }
+
                     if (timeLeft <= 0) finishSession(START_MINUTES);
                 }, 1000);
             } else {

@@ -60,9 +60,18 @@ export function renderProfile() {
             </div>
         </div>
 
+        <!-- Milestones Grid -->
+        <div class="card collapsible-card" id="milestones-card" style="margin-bottom: 32px;">
+            <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
+                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading);">Milestones & Badges</h3>
+                <span class="material-symbols-rounded collapsible-toggle" style="transition: transform 0.2s;">expand_more</span>
+            </div>
+            <div class="ach-grid collapsible-content" id="achievements-grid" style="margin-top: 12px; transition: max-height 0.3s ease-out, opacity 0.2s; overflow: hidden; max-height: 1000px;">
+                <!-- Achievements injected by JS -->
+            </div>
+        </div>
 
-
-        <div class="card">
+        <div class="card" style="margin-bottom: 32px;">
             <h3 style="font-size: 16px; margin-bottom: 16px;">Lifetime Statistics</h3>
             
             <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--color-bg-secondary);">
@@ -79,6 +88,54 @@ export function renderProfile() {
             </div>
         </div>
 
+        <!-- Support & Donation Card -->
+        <div class="card" style="margin-bottom: 32px; text-align: center; padding: 20px;">
+            <span class="material-symbols-rounded" style="color: #e2b857; font-size: 32px; margin-bottom: 8px;">favorite</span>
+            <h3 style="font-size: 16px; margin: 0 0 8px; font-family: var(--font-heading);">Support Siddha</h3>
+            <p class="text-sm" style="color: var(--color-text-secondary); margin-bottom: 16px; line-height: 1.4;">
+                Siddha is free and built with love. If it helps you stay mindful, consider supporting our journey.
+            </p>
+            <button id="profile-donate-btn" class="btn" style="background: var(--color-accent); color: #fff; border: none; font-size: 14px; font-weight: 600; padding: 10px 24px; border-radius: 20px; width: 100%;">
+                Support the App ☕
+            </button>
+        </div>
+
+        <!-- Feedback Card -->
+        <div class="card collapsible-card collapsed" id="feedback-card" style="margin-bottom: 32px;">
+            <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
+                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-rounded" style="color: var(--color-accent); font-size: 20px;">rate_review</span>
+                    Give Feedback
+                </h3>
+                <span class="material-symbols-rounded collapsible-toggle" style="transition: transform 0.2s;">expand_more</span>
+            </div>
+            <div class="collapsible-content" style="margin-top: 12px; transition: max-height 0.3s ease-out, opacity 0.2s; overflow: hidden; max-height: 400px;">
+                <form id="feedback-form" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label class="text-sm" style="font-weight: 600; color: var(--color-text-secondary);">Feedback Type</label>
+                        <select id="feedback-type" style="padding: 10px; border-radius: 8px; border: 1px solid var(--color-bg-secondary); background: #fff; font-family: inherit; font-size: 13px; color: var(--color-text-primary); outline: none;">
+                            <option value="suggestion">💡 Suggestion</option>
+                            <option value="bug">🐛 Bug Report</option>
+                            <option value="compliment">🌸 Compliment</option>
+                            <option value="other">💬 Other</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label class="text-sm" style="font-weight: 600; color: var(--color-text-secondary);">Your thoughts</label>
+                        <textarea id="feedback-text" placeholder="Share your experience or report an issue..." required style="padding: 12px; border-radius: 8px; border: 1px solid var(--color-bg-secondary); min-height: 100px; resize: vertical; font-family: inherit; font-size: 13px; outline: none; line-height: 1.5; color: var(--color-text-primary);"></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="background: var(--color-accent); color: #fff; border: none; font-size: 13px; font-weight: 600; padding: 10px 16px; align-self: flex-end; border-radius: 20px;">
+                        Submit Feedback
+                    </button>
+                </form>
+                <div id="feedback-success-msg" class="hidden" style="text-align: center; padding: 16px 0; animation: fadeIn 0.3s ease;">
+                    <span class="material-symbols-rounded" style="font-size: 48px; color: var(--color-accent); margin-bottom: 8px; display: block;">check_circle</span>
+                    <h4 style="font-size: 15px; margin-bottom: 4px; font-family: var(--font-heading);">Thank you!</h4>
+                    <p class="text-sm" style="color: var(--color-text-secondary);">Your feedback helps us shape the journey of Siddha.</p>
+                </div>
+            </div>
+        </div>
+
         <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
             <div style="display: flex; gap: 8px;">
                 <button id="dev-skip-3-btn" class="btn" style="background: transparent; color: #f39c12; border: 1px solid #f39c12; font-size: 12px; padding: 6px 12px;">
@@ -88,8 +145,11 @@ export function renderProfile() {
                     Skip 7 Days
                 </button>
             </div>
-            <button id="dev-reset-btn" class="btn" style="background: transparent; color: #ff6b6b; border: 1px solid #ff6b6b; font-size: 12px; padding: 6px 12px;">
+            <button id="dev-reset-btn" class="btn" style="background: transparent; color: #ff6b6b; border: 1px solid #ff6b6b; font-size: 12px; padding: 6px 12px; margin-bottom: 4px;">
                 Reset Progress (Dev)
+            </button>
+            <button id="dev-view-feedback-btn" class="btn" style="background: transparent; color: var(--color-accent); border: 1px solid var(--color-accent); font-size: 12px; padding: 6px 12px;">
+                View Saved Feedback (Dev)
             </button>
         </div>
         <div style="height: 32px; flex-shrink: 0;"></div>
@@ -141,11 +201,99 @@ export function renderProfile() {
         .slider:before {
             position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;
         }
-        .switch input:checked + .slider {
-            background-color: var(--color-accent);
-        }
         .switch input:checked + .slider:before {
             transform: translateX(20px);
+        }
+
+        /* Collapsible Card Rules */
+        .collapsible-card.collapsed .collapsible-content {
+            max-height: 0 !important;
+            margin-top: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .collapsible-card.collapsed .collapsible-toggle {
+            transform: rotate(-90deg);
+        }
+
+        /* Achievements Grid */
+        .ach-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        @media (min-width: 320px) {
+            .ach-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .ach-item {
+            background: #ffffff;
+            border: 1px solid var(--color-bg-secondary);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            position: relative;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+        .ach-item.unlocked {
+            border-left: 3px solid var(--color-accent);
+            background: linear-gradient(135deg, #ffffff 0%, #f7faf8 100%);
+        }
+        .ach-item.locked {
+            opacity: 0.85;
+            background: #fdfdfc;
+        }
+        .ach-emoji {
+            font-size: 22px;
+            line-height: 1;
+            flex-shrink: 0;
+            padding: 6px;
+            background: var(--color-bg-secondary);
+            border-radius: 10px;
+        }
+        .ach-item.unlocked .ach-emoji {
+            background: var(--color-accent-light);
+        }
+        .ach-details {
+            flex: 1;
+            min-width: 0;
+        }
+        .ach-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0 0 2px;
+            font-family: var(--font-heading);
+        }
+        .ach-desc {
+            font-size: 9.5px;
+            color: var(--color-text-secondary);
+            margin: 0 0 6px;
+            line-height: 1.35;
+        }
+        .ach-progress-text {
+            font-size: 8.5px;
+            font-weight: 700;
+            color: var(--color-text-muted);
+            text-align: right;
+        }
+        .ach-reward-tag {
+            font-size: 8.5px;
+            font-weight: 700;
+            color: var(--color-accent-dark);
+            background: var(--color-accent-light);
+            padding: 1px 5px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .ach-item.unlocked .ach-reward-tag {
+            background: #e2ede4;
+            color: #277038;
         }
     `;
     container.appendChild(style);
@@ -195,9 +343,103 @@ export function renderProfile() {
             `;
             chart.appendChild(col);
         });
+
+        // Update achievements grid
+        const achGrid = container.querySelector('#achievements-grid');
+        if (achGrid) {
+            achGrid.innerHTML = '';
+            const achievements = DB.getAchievementsState();
+            achievements.forEach(ach => {
+                const item = document.createElement('div');
+                item.className = `ach-item ${ach.unlocked ? 'unlocked' : 'locked'}`;
+
+                if (ach.unlocked) {
+                    item.innerHTML = `
+                        <div class="ach-emoji">${ach.emoji}</div>
+                        <div class="ach-details">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:4px;">
+                                <h4 class="ach-title">${ach.title}</h4>
+                                <span class="material-symbols-rounded" style="font-size:13px; color:#2c8242; font-variation-settings: 'FILL' 1;">check_circle</span>
+                            </div>
+                            <p class="ach-desc">${ach.desc}</p>
+                            <span class="ach-reward-tag">✓ Unlocked (+${ach.xp} XP)</span>
+                        </div>
+                    `;
+                } else {
+                    const progressPct = Math.min(100, (ach.current / ach.target) * 100);
+                    item.innerHTML = `
+                        <div class="ach-emoji" style="filter: grayscale(0.5); opacity: 0.55;">${ach.emoji}</div>
+                        <div class="ach-details">
+                            <h4 class="ach-title" style="color:var(--color-text-secondary);">${ach.title}</h4>
+                            <p class="ach-desc">${ach.desc}</p>
+                            <div class="home-bar-track" style="margin: 0 0 4px; height: 4px; background: rgba(0,0,0,0.05); width: 100%;">
+                                <div class="home-bar-fill" style="width: ${progressPct}%; height: 100%; background: #abb5ae;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="ach-reward-tag" style="background:#edece8; color:#777;">+${ach.xp} XP</span>
+                                <span class="ach-progress-text">${ach.current}/${ach.target}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                achGrid.appendChild(item);
+            });
+        }
     };
 
     setTimeout(() => {
+        const milesCard = container.querySelector('#milestones-card');
+        if (milesCard) {
+            const header = milesCard.querySelector('.collapsible-header');
+            if (localStorage.getItem('siddha_milestones_collapsed') === 'true') {
+                milesCard.classList.add('collapsed');
+            }
+            header.addEventListener('click', () => {
+                milesCard.classList.toggle('collapsed');
+                localStorage.setItem('siddha_milestones_collapsed', milesCard.classList.contains('collapsed'));
+            });
+        }
+
+        const feedbackCard = container.querySelector('#feedback-card');
+        if (feedbackCard) {
+            const header = feedbackCard.querySelector('.collapsible-header');
+            header.addEventListener('click', () => {
+                feedbackCard.classList.toggle('collapsed');
+            });
+        }
+
+        const feedbackForm = container.querySelector('#feedback-form');
+        const feedbackSuccess = container.querySelector('#feedback-success-msg');
+        if (feedbackForm) {
+            feedbackForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const type = container.querySelector('#feedback-type').value;
+                const text = container.querySelector('#feedback-text').value.trim();
+                
+                if (text) {
+                    DB.saveFeedback(type, text);
+                    
+                    // Show success
+                    feedbackForm.style.display = 'none';
+                    feedbackSuccess.classList.remove('hidden');
+                    
+                    // Reset and show form again after 4 seconds
+                    setTimeout(() => {
+                        feedbackForm.reset();
+                        feedbackForm.style.display = 'flex';
+                        feedbackSuccess.classList.add('hidden');
+                    }, 4000);
+                }
+            });
+        }
+
+        const donateBtn = container.querySelector('#profile-donate-btn');
+        if (donateBtn) {
+            donateBtn.addEventListener('click', () => {
+                window.open('https://ko-fi.com/siddha', '_blank');
+            });
+        }
+
         const logoutBtn = container.querySelector('#logout-btn');
         if(logoutBtn) {
             logoutBtn.addEventListener('click', async () => {
@@ -212,6 +454,20 @@ export function renderProfile() {
                 if(confirm('Reset all progress and return to setup? This cannot be undone.')) {
                     DB.resetProgress();
                     window.location.reload();
+                }
+            });
+        }
+
+        const viewFeedbackBtn = container.querySelector('#dev-view-feedback-btn');
+        if (viewFeedbackBtn) {
+            viewFeedbackBtn.addEventListener('click', () => {
+                const history = DB.getFeedbackHistory();
+                if (history.length === 0) {
+                    alert('No feedback submitted yet.');
+                } else {
+                    const formatted = history.map(item => `[${new Date(item.timestamp).toLocaleString()}] ${item.type.toUpperCase()}: ${item.text}`).join('\n\n');
+                    console.log('Saved Feedback Logs:\n', history);
+                    alert(`Saved Feedback Logs (also printed to Developer Console):\n\n${formatted}`);
                 }
             });
         }

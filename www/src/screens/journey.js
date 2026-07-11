@@ -70,6 +70,74 @@ const PATHS = {
             }
         ]
     },
+    anapana: {
+        id: 'anapana',
+        label: 'Anapana',
+        shortLabel: 'Anapana',
+        unlockLevel: 2,
+        bgImage: './src/assets/anapana_bg.jpg',
+        accentColor: '#705E39',
+        nodeAccent: 'rgba(112,94,57,0.15)',
+        icon: 'air',
+        description: 'Mindfulness of breathing to build concentration',
+        nodes: [
+            {
+                id: 1, label: 'Natural Respiration', subtitle: 'Breath', icon: 'air',
+                description: 'Observe the flow of the breath just as it is, without trying to control it.',
+                xPct: 45, yPct: 8,
+                missions: [
+                    { text: 'Sit and observe the touch of the breath at the nostrils.', duration: 10 },
+                    { text: 'Notice if the breath is long or short.', duration: 12 },
+                    { text: 'Keep focus on the breath for 5 continuous cycles.', duration: 15 },
+                    { text: 'Complete a 15-minute natural breath sit.', duration: 15 }
+                ]
+            },
+            {
+                id: 2, label: 'The Touchpoint', subtitle: 'Sensation', icon: 'pin_drop',
+                description: 'Narrow your focus to the exact area where the breath touches: the upper lip or nostrils.',
+                xPct: 60, yPct: 26,
+                missions: [
+                    { text: 'Locate the exact spot of touch inside the nostrils.', duration: 15 },
+                    { text: 'Detect the difference in touch between inhale and exhale.', duration: 15 },
+                    { text: 'Observe the breath touchpoint without moving a muscle.', duration: 20 },
+                    { text: 'Sit for 20 minutes maintaining focus on the touchpoint.', duration: 20 }
+                ]
+            },
+            {
+                id: 3, label: 'Cool & Warm', subtitle: 'Temperature', icon: 'thermostat',
+                description: 'Note the changing temperature of the air as it enters and leaves your body.',
+                xPct: 40, yPct: 44,
+                missions: [
+                    { text: 'Notice the cool air entering the nostrils on inhale.', duration: 15 },
+                    { text: 'Notice the warm air exiting on the exhale.', duration: 15 },
+                    { text: 'Observe 3 inhalations and exhalations with temperature focus.', duration: 20 },
+                    { text: 'Maintain thermal awareness for a full 25-minute sit.', duration: 25 }
+                ]
+            },
+            {
+                id: 4, label: 'Subtle Breath', subtitle: 'Calm', icon: 'waves',
+                description: 'As your mind settles, the breath becomes extremely soft, shallow, and quiet. Follow it closely.',
+                xPct: 58, yPct: 62,
+                missions: [
+                    { text: 'Notice the breath becoming very shallow or faint.', duration: 20 },
+                    { text: 'Observe the brief gap between the in-breath and out-breath.', duration: 20 },
+                    { text: 'Remain calm when the breath seems to almost disappear.', duration: 25 },
+                    { text: 'Keep single-pointed attention on the faint breath for 30 minutes.', duration: 30 }
+                ]
+            },
+            {
+                id: 5, label: 'Absorption', subtitle: 'Ekaggata', icon: 'brightness_5',
+                description: 'Mind and breath merge. Focus is effortless and steady, preparing you for deeper insight.',
+                xPct: 46, yPct: 80,
+                missions: [
+                    { text: 'Sit for 20 minutes with zero wandering of attention.', duration: 20 },
+                    { text: 'Observe the arising of a pleasant glow or mental calm.', duration: 25 },
+                    { text: 'Let go of the effort to concentrate; rest in the focus.', duration: 25 },
+                    { text: 'Complete a 40-minute silent concentration session.', duration: 40 }
+                ]
+            }
+        ]
+    },
     vipassana: {
         id: 'vipassana',
         label: 'Vipassana',
@@ -134,6 +202,74 @@ const PATHS = {
                     { text: 'Notice dukkha (unsatisfactoriness) — nothing fully satisfies.', duration: 25 },
                     { text: 'Notice anatta (no-self) — who is observing the observer?', duration: 30 },
                     { text: 'Sit for 45 minutes with continuous insight observation.', duration: 45 }
+                ]
+            }
+        ]
+    },
+    metta: {
+        id: 'metta',
+        label: 'Metta',
+        shortLabel: 'Metta',
+        unlockLevel: 4,
+        bgImage: './src/assets/metta_bg.jpg',
+        accentColor: '#7C4559',
+        nodeAccent: 'rgba(124,69,89,0.15)',
+        icon: 'favorite',
+        description: 'Loving-kindness to build compassion and dissolve aversion',
+        nodes: [
+            {
+                id: 1, label: 'Self-Compassion', subtitle: 'Self', icon: 'person',
+                description: 'Direct wishes of safety, happiness, and peace toward yourself.',
+                xPct: 46, yPct: 8,
+                missions: [
+                    { text: 'Silently repeat: "May I be happy, may I be peaceful."', duration: 10 },
+                    { text: 'Notice any internal resistance or self-criticism and release it.', duration: 15 },
+                    { text: 'Cultivate a feeling of warmth in your chest area.', duration: 15 },
+                    { text: 'Sit for 20 minutes sending metta to yourself.', duration: 20 }
+                ]
+            },
+            {
+                id: 2, label: 'The Guide', subtitle: 'Gratitude', icon: 'school',
+                description: 'Direct loving-kindness to someone who has guided, helped, or inspired you.',
+                xPct: 59, yPct: 26,
+                missions: [
+                    { text: 'Bring to mind a mentor or teacher and smile internally.', duration: 15 },
+                    { text: 'Wish them: "May you be free from suffering, may you be peaceful."', duration: 15 },
+                    { text: 'Observe the feeling of gratitude arising in your heart.', duration: 20 },
+                    { text: 'Dedicate a 20-minute sit to your benefactor.', duration: 20 }
+                ]
+            },
+            {
+                id: 3, label: 'The Stranger', subtitle: 'Friendliness', icon: 'people',
+                description: 'Direct loving-kindness to someone you see regularly but do not know personally.',
+                xPct: 42, yPct: 44,
+                missions: [
+                    { text: 'Recall the face of a cashier, neighbor, or driver.', duration: 15 },
+                    { text: 'Acknowledge: "Just like me, they wish to be happy."', duration: 15 },
+                    { text: 'Wish them: "May you be safe, may you live with ease."', duration: 20 },
+                    { text: 'Maintain focus on the neutral person for a 25-minute sit.', duration: 25 }
+                ]
+            },
+            {
+                id: 4, label: 'The Difficult Person', subtitle: 'Pardon', icon: 'healing',
+                description: 'Gently direct loving-kindness to someone with whom you have minor friction or conflict.',
+                xPct: 61, yPct: 62,
+                missions: [
+                    { text: 'Bring to mind a person with mild friction (avoid major trauma at first).', duration: 15 },
+                    { text: 'Observe physical tightness in your body and breathe into it.', duration: 20 },
+                    { text: 'Wish them peace: "May you be happy, may we be free from conflict."', duration: 20 },
+                    { text: 'Sit for 30 minutes holding the difficult person in kindness.', duration: 30 }
+                ]
+            },
+            {
+                id: 5, label: 'Universal Goodwill', subtitle: 'Boundless', icon: 'public',
+                description: 'Extend your heart outward to all directions, covering all living beings everywhere.',
+                xPct: 48, yPct: 80,
+                missions: [
+                    { text: 'Radiate metta to your room, your building, and your city.', duration: 20 },
+                    { text: 'Extend the field of love to the entire country and continent.', duration: 25 },
+                    { text: 'Radiate boundless goodwill to all creatures, seen and unseen.', duration: 25 },
+                    { text: 'Abide in the ocean of universal loving-kindness for 40 minutes.', duration: 40 }
                 ]
             }
         ]
@@ -562,13 +698,7 @@ export function renderJourney() {
         if (e.target === modal) { modal.classList.remove('active'); container.updateData(); }
     });
 
-    container.querySelector('#journey-quest-bar').addEventListener('click', () => {
-        const success = DB.claimDailyQuest();
-        if (success) {
-            triggerQuestSplash();
-            container.updateData();
-        }
-    });
+
 
     function triggerQuestSplash() {
         const bar = container.querySelector('#journey-quest-bar');
@@ -785,8 +915,11 @@ export function renderJourney() {
             questBar.style.opacity = '1';
             questBar.style.cursor = 'pointer';
             questBar.onclick = () => {
-                DB.claimDailyQuest();
-                container.updateData();
+                const success = DB.claimDailyQuest();
+                if (success) {
+                    triggerQuestSplash();
+                    container.updateData();
+                }
             };
         } else {
             questBadge.textContent = '+25 XP';

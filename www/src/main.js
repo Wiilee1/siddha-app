@@ -5,8 +5,10 @@ import { renderReflect } from './screens/reflect.js';
 import { renderLogin } from './screens/login.js';
 import { renderProfile } from './screens/profile.js';
 import { renderNewReflection } from './screens/new_reflection.js';
+import { renderWisdom } from './screens/wisdom.js';
 import { DB } from './services/db.js';
 import './components/levelup_celebration.js';
+import './components/achievement_celebration.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const screenContainer = document.getElementById('screen-container');
@@ -34,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
         new_reflection: renderNewReflection(() => {
             // After saving reflection → go to reflect tab
             navigateTo('reflect');
-        })
+        }),
+        wisdom: renderWisdom()
     };
 
     // Append all screens
@@ -44,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Navigation
     function navigateTo(targetId) {
-        const noNav = ['login', 'breathe', 'new_reflection'];
+        const noNav = ['login', 'breathe', 'new_reflection', 'wisdom'];
         bottomNav.style.display = noNav.includes(targetId) ? 'none' : 'flex';
 
         navItems.forEach(item => {
@@ -65,13 +68,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    window.addEventListener('siddha-navigate', (e) => {
+        if (e.detail && e.detail.target) {
+            navigateTo(e.detail.target);
+        }
+    });
+
     navItems.forEach(item => {
         item.addEventListener('click', () => navigateTo(item.dataset.target));
     });
 
     function handleAuthChange() {
         const user = DB.getUser();
-        navigateTo(user ? 'home' : 'login');
+        if (user) {
+            DB.checkAndTriggerAchievements(true); // Silent retroactive unlock on startup
+            if (!DB.isTutorialCompleted()) {
+                navigateTo('home');
+                import('./components/onboarding_tutorial.js').then(module => {
+                    module.startOnboardingTutorial(() => {
+                        navigateTo('home');
+                    });
+                });
+            } else {
+                navigateTo('home');
+            }
+        } else {
+            navigateTo('login');
+        }
     }
 
     // Start
