@@ -452,6 +452,11 @@ export function renderBreathe(onComplete) {
             timerInterval = null;
             isPaused = true;
             Synth.stop();
+            if (window.Capacitor?.Plugins?.LocalNotifications) {
+                window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: [{ id: 99 }] }).catch(err => {
+                    console.log("Error cancelling notification:", err);
+                });
+            }
         }
 
         function finishSession(minutesOverride) {
@@ -538,6 +543,30 @@ export function renderBreathe(onComplete) {
                 // Play starting bell
                 if (!isMuted) {
                     Synth.playSingleBell();
+                }
+
+                // Schedule local notification for completion when running on mobile native platforms
+                const localNotifications = window.Capacitor?.Plugins?.LocalNotifications;
+                if (localNotifications) {
+                    localNotifications.requestPermissions().then((result) => {
+                        if (result.display === 'granted') {
+                            localNotifications.cancel({ notifications: [{ id: 99 }] }).then(() => {
+                                localNotifications.schedule({
+                                    notifications: [
+                                        {
+                                            title: "Meditation Complete 🔔",
+                                            body: "Your session is complete. Return to your day with peace.",
+                                            id: 99,
+                                            schedule: { at: new Date(Date.now() + timeLeft * 1000) },
+                                            sound: 'bell.wav',
+                                            actionTypeId: "",
+                                            extra: null
+                                        }
+                                    ]
+                                }).catch(err => console.log("Schedule err:", err));
+                            });
+                        }
+                    }).catch(err => console.log("Permission err:", err));
                 }
 
                 lastTickTime = Date.now();
