@@ -88,6 +88,14 @@ const defaultState = {
         completedDate: null,
         quest: null
     },
+    cosmetics: {
+        unlockedSkins: ['default'],
+        activeSkin: 'default',
+        unlockedSounds: ['default_bell'],
+        activeSound: 'default_bell',
+        unlockedThemes: ['default'],
+        activeTheme: 'default'
+    },
     readArticles: [],
     unlockedAchievements: {} // stores { id: unlockTimestamp }
 };
@@ -812,6 +820,59 @@ export const DB = {
                 target: prog.target
             };
         });
+    },
+
+    // Cosmetics (Future IAP Integration)
+    getCosmeticsState: () => {
+        const state = getState();
+        if (!state.cosmetics) {
+            state.cosmetics = {
+                unlockedSkins: ['default'],
+                activeSkin: 'default',
+                unlockedSounds: ['default_bell'],
+                activeSound: 'default_bell',
+                unlockedThemes: ['default'],
+                activeTheme: 'default'
+            };
+        }
+        return state.cosmetics;
+    },
+
+    unlockCosmetic: (type, id) => {
+        const state = getState();
+        if (!state.cosmetics) {
+            state.cosmetics = {
+                unlockedSkins: ['default'],
+                activeSkin: 'default',
+                unlockedSounds: ['default_bell'],
+                activeSound: 'default_bell',
+                unlockedThemes: ['default'],
+                activeTheme: 'default'
+            };
+        }
+        
+        let listKey = type === 'skin' ? 'unlockedSkins' : (type === 'sound' ? 'unlockedSounds' : 'unlockedThemes');
+        if (state.cosmetics[listKey] && !state.cosmetics[listKey].includes(id)) {
+            state.cosmetics[listKey].push(id);
+            saveState(state);
+            return true;
+        }
+        return false;
+    },
+
+    selectCosmetic: (type, id) => {
+        const state = getState();
+        if (!state.cosmetics) return false;
+        
+        let activeKey = type === 'skin' ? 'activeSkin' : (type === 'sound' ? 'activeSound' : 'activeTheme');
+        let listKey = type === 'skin' ? 'unlockedSkins' : (type === 'sound' ? 'unlockedSounds' : 'unlockedThemes');
+        
+        if (state.cosmetics[listKey] && state.cosmetics[listKey].includes(id)) {
+            state.cosmetics[activeKey] = id;
+            saveState(state);
+            return true;
+        }
+        return false;
     }
 };
 

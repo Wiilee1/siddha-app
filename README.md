@@ -65,5 +65,6 @@ npx cap sync
 
 ---
 
-## 📜 License
-Siddha is licensed under the **GNU General Public License v3 (GPL-3.0)**. See the [LICENSE](LICENSE) file for details. This copyleft license ensures that the application remains free and open-source forever.
+## 📜 License & Intellectual Property
+*   **Source Code**: The codebase of Siddha is licensed under the **GNU General Public License v3 (GPL-3.0)**. See the [LICENSE](LICENSE) file for details. This copyleft license ensures that the application remains free and open-source forever.
+*   **Art & Media Assets**: All branding, logos, graphic design, companion illustrations, custom UI themes, and custom audio chime files are proprietary and copyrighted. You are free to run the code, but you may not repackage or redistribute the proprietary visual and audio assets for commercial use or on public app stores without express permission.
