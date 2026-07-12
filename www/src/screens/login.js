@@ -670,11 +670,6 @@ export function renderLogin(onLoginSuccess) {
 
                 // Save selected option
                 onboardingData[field] = field === 'commitment' ? parseInt(value) : value;
-
-                // Auto-advance for cards if it makes sense (experience & goals)
-                if (field === 'experience' || field === 'goal') {
-                    setTimeout(() => goToStep(currentStep + 1), 250);
-                }
             });
         });
 

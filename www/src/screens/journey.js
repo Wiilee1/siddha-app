@@ -2,79 +2,12 @@ import { DB, xpInCurrentLevel } from '../services/db.js';
 
 // All meditation paths
 const PATHS = {
-    tmi: {
-        id: 'tmi',
-        label: 'The Mind Illuminated',
-        shortLabel: 'TMI',
-        unlockLevel: 1,
-        bgImage: './src/assets/journey_bg.jpg',
-        accentColor: '#3F5247',
-        nodeAccent: 'rgba(63,82,71,0.15)',
-        icon: 'local_florist',
-        description: 'Systematic 10-stage framework for deep concentration',
-        nodes: [
-            {
-                id: 1, label: 'Establishing a Practice', subtitle: 'Practice', icon: 'event_seat',
-                description: 'Before mastering the mind, you must master your schedule.',
-                xPct: 44, yPct: 8,
-                missions: [
-                    { text: 'Set a non-negotiable time & space for your practice.', duration: 10 },
-                    { text: 'Sit for a realistic baseline of 15–20 minutes.', duration: 15 },
-                    { text: 'Overcome the initial wave of procrastination.', duration: 15 },
-                    { text: 'Establish a streak of 3 consecutive daily sits.', duration: 20 }
-                ]
-            },
-            {
-                id: 2, label: 'Interrupted Attention & Mind-Wandering', subtitle: 'Attention', icon: 'psychology',
-                description: 'Transition consciously into the practice to stabilize focus.',
-                xPct: 62, yPct: 26,
-                missions: [
-                    { text: 'Review your motivations before each sit.', duration: 15 },
-                    { text: 'Set a specific, bite-sized goal for this session.', duration: 15 },
-                    { text: 'Perform a mental inventory of current worries.', duration: 20 },
-                    { text: 'Adjust posture and alignment for comfort.', duration: 20 }
-                ]
-            },
-            {
-                id: 3, label: 'Extended Continuity & Forgetting', subtitle: 'Continuity', icon: 'anchor',
-                description: 'Anchor yourself in the space around you.',
-                xPct: 38, yPct: 44,
-                missions: [
-                    { text: 'Maintain broad awareness of the present moment.', duration: 15 },
-                    { text: 'Focus solely on raw physical sensations.', duration: 20 },
-                    { text: 'Restrict attention to bodily sensations.', duration: 20 },
-                    { text: 'Develop grounding in physical support and gravity.', duration: 20 }
-                ]
-            },
-            {
-                id: 4, label: 'Continuous Attention & Gross Distraction', subtitle: 'Focus', icon: 'center_focus_strong',
-                description: 'Move focus from broad body sensations to the breath.',
-                xPct: 60, yPct: 62,
-                missions: [
-                    { text: 'Observe the somatic rises and falls of breathing.', duration: 20 },
-                    { text: 'Find and appreciate a pleasant quality in the breath.', duration: 20 },
-                    { text: 'Narrow attention to the tip of the nose.', duration: 25 },
-                    { text: 'Observe breath patterns passively without control.', duration: 25 }
-                ]
-            },
-            {
-                id: 5, label: 'Overcoming Subtle Dullness', subtitle: 'Dullness', icon: 'visibility',
-                description: 'Use mental count markers to bridge focus when distracted.',
-                xPct: 44, yPct: 80,
-                missions: [
-                    { text: 'Silently count "one" at the end of the out-breath.', duration: 20 },
-                    { text: 'Maintain counting cycles up to ten.', duration: 20 },
-                    { text: 'Restart counting calmly from one if mind wanders.', duration: 25 },
-                    { text: 'Intentionally drop counting to sit in pure silence.', duration: 30 }
-                ]
-            }
-        ]
-    },
     anapana: {
         id: 'anapana',
         label: 'Anapana',
         shortLabel: 'Anapana',
-        unlockLevel: 2,
+        unlockLevel: 1,
+        difficulty: 'Low',
         bgImage: './src/assets/anapana_bg.jpg',
         accentColor: '#705E39',
         nodeAccent: 'rgba(112,94,57,0.15)',
@@ -88,7 +21,6 @@ const PATHS = {
                 missions: [
                     { text: 'Sit and observe the touch of the breath at the nostrils.', duration: 10 },
                     { text: 'Notice if the breath is long or short.', duration: 12 },
-                    { text: 'Keep focus on the breath for 5 continuous cycles.', duration: 15 },
                     { text: 'Complete a 15-minute natural breath sit.', duration: 15 }
                 ]
             },
@@ -99,7 +31,6 @@ const PATHS = {
                 missions: [
                     { text: 'Locate the exact spot of touch inside the nostrils.', duration: 15 },
                     { text: 'Detect the difference in touch between inhale and exhale.', duration: 15 },
-                    { text: 'Observe the breath touchpoint without moving a muscle.', duration: 20 },
                     { text: 'Sit for 20 minutes maintaining focus on the touchpoint.', duration: 20 }
                 ]
             },
@@ -110,7 +41,6 @@ const PATHS = {
                 missions: [
                     { text: 'Notice the cool air entering the nostrils on inhale.', duration: 15 },
                     { text: 'Notice the warm air exiting on the exhale.', duration: 15 },
-                    { text: 'Observe 3 inhalations and exhalations with temperature focus.', duration: 20 },
                     { text: 'Maintain thermal awareness for a full 25-minute sit.', duration: 25 }
                 ]
             },
@@ -121,7 +51,6 @@ const PATHS = {
                 missions: [
                     { text: 'Notice the breath becoming very shallow or faint.', duration: 20 },
                     { text: 'Observe the brief gap between the in-breath and out-breath.', duration: 20 },
-                    { text: 'Remain calm when the breath seems to almost disappear.', duration: 25 },
                     { text: 'Keep single-pointed attention on the faint breath for 30 minutes.', duration: 30 }
                 ]
             },
@@ -131,77 +60,8 @@ const PATHS = {
                 xPct: 46, yPct: 80,
                 missions: [
                     { text: 'Sit for 20 minutes with zero wandering of attention.', duration: 20 },
-                    { text: 'Observe the arising of a pleasant glow or mental calm.', duration: 25 },
                     { text: 'Let go of the effort to concentrate; rest in the focus.', duration: 25 },
-                    { text: 'Complete a 40-minute silent concentration session.', duration: 40 }
-                ]
-            }
-        ]
-    },
-    vipassana: {
-        id: 'vipassana',
-        label: 'Vipassana',
-        shortLabel: 'Vipassana',
-        unlockLevel: 3,
-        bgImage: './src/assets/vipassana_bg.jpg',
-        accentColor: '#1A4A5A',
-        nodeAccent: 'rgba(26,74,90,0.15)',
-        icon: 'water_drop',
-        description: 'Ancient insight practice through body scanning',
-        nodes: [
-            {
-                id: 1, label: 'Body Scan', subtitle: 'Foundation', icon: 'accessibility_new',
-                description: 'Learn to feel sensation as pure energy, not concept.',
-                xPct: 48, yPct: 8,
-                missions: [
-                    { text: 'Scan slowly from crown of head to feet without reacting.', duration: 15 },
-                    { text: 'Note gross sensations: heat, tingling, pressure.', duration: 15 },
-                    { text: 'Scan in both directions, top-to-bottom and bottom-to-top.', duration: 20 },
-                    { text: 'Sit for 30 minutes with continuous scanning.', duration: 30 }
-                ]
-            },
-            {
-                id: 2, label: 'Impermanence', subtitle: 'Anicca', icon: 'change_circle',
-                description: 'Observe that every sensation arises and passes away.',
-                xPct: 58, yPct: 26,
-                missions: [
-                    { text: 'Label each sensation: "arising" or "passing".', duration: 20 },
-                    { text: 'Notice a pleasant sensation dissolve without craving.', duration: 20 },
-                    { text: 'Notice an unpleasant sensation dissolve without aversion.', duration: 25 },
-                    { text: 'Rest in the space between sensations.', duration: 25 }
-                ]
-            },
-            {
-                id: 3, label: 'Subtle Body', subtitle: 'Deeper Scan', icon: 'vibration',
-                description: 'Move beyond gross sensations to subtle vibrations.',
-                xPct: 40, yPct: 44,
-                missions: [
-                    { text: 'Scan an area of the body that feels "blank" or numb.', duration: 20 },
-                    { text: 'Notice the subtle vibration of aliveness beneath stillness.', duration: 25 },
-                    { text: 'Scan the entire body as a field of vibration.', duration: 25 },
-                    { text: 'Maintain equanimity for an entire 30-minute scan.', duration: 30 }
-                ]
-            },
-            {
-                id: 4, label: 'Equanimity', subtitle: 'Non-Reaction', icon: 'balance',
-                description: 'Neither craving nor aversion — pure observation.',
-                xPct: 58, yPct: 62,
-                missions: [
-                    { text: 'Sit with discomfort for 5 minutes without shifting.', duration: 15 },
-                    { text: 'Smile internally at both pleasant and painful sensations.', duration: 20 },
-                    { text: 'Observe an intense sensation with complete stillness.', duration: 25 },
-                    { text: 'Dedicate a full sit to metta — loving kindness.', duration: 30 }
-                ]
-            },
-            {
-                id: 5, label: 'Insight', subtitle: 'Vipassana', icon: 'remove_red_eye',
-                description: 'Direct insight into the three characteristics of experience.',
-                xPct: 48, yPct: 80,
-                missions: [
-                    { text: 'Notice anicca (impermanence) in every breath cycle.', duration: 25 },
-                    { text: 'Notice dukkha (unsatisfactoriness) — nothing fully satisfies.', duration: 25 },
-                    { text: 'Notice anatta (no-self) — who is observing the observer?', duration: 30 },
-                    { text: 'Sit for 45 minutes with continuous insight observation.', duration: 45 }
+                    { text: 'Complete a 30-minute silent concentration session.', duration: 30 }
                 ]
             }
         ]
@@ -210,7 +70,8 @@ const PATHS = {
         id: 'metta',
         label: 'Metta',
         shortLabel: 'Metta',
-        unlockLevel: 4,
+        unlockLevel: 2,
+        difficulty: 'Low',
         bgImage: './src/assets/metta_bg.jpg',
         accentColor: '#7C4559',
         nodeAccent: 'rgba(124,69,89,0.15)',
@@ -274,11 +135,150 @@ const PATHS = {
             }
         ]
     },
+    vipassana: {
+        id: 'vipassana',
+        label: 'Vipassana',
+        shortLabel: 'Vipassana',
+        unlockLevel: 3,
+        difficulty: 'High',
+        bgImage: './src/assets/vipassana_bg.jpg',
+        accentColor: '#1A4A5A',
+        nodeAccent: 'rgba(26,74,90,0.15)',
+        icon: 'water_drop',
+        description: 'Ancient insight practice through body scanning',
+        nodes: [
+            {
+                id: 1, label: 'Body Scan', subtitle: 'Foundation', icon: 'accessibility_new',
+                description: 'Learn to feel sensation as pure energy, not concept.',
+                xPct: 48, yPct: 8,
+                missions: [
+                    { text: 'Scan slowly from crown of head to feet without reacting.', duration: 15 },
+                    { text: 'Note gross sensations: heat, tingling, pressure.', duration: 15 },
+                    { text: 'Scan in both directions, top-to-bottom and bottom-to-top.', duration: 20 },
+                    { text: 'Sit for 30 minutes with continuous scanning.', duration: 30 }
+                ]
+            },
+            {
+                id: 2, label: 'Impermanence', subtitle: 'Anicca', icon: 'change_circle',
+                description: 'Observe that every sensation arises and passes away.',
+                xPct: 58, yPct: 26,
+                missions: [
+                    { text: 'Label each sensation: "arising" or "passing".', duration: 20 },
+                    { text: 'Notice a pleasant sensation dissolve without craving.', duration: 20 },
+                    { text: 'Notice an unpleasant sensation dissolve without aversion.', duration: 25 },
+                    { text: 'Rest in the space between sensations.', duration: 25 }
+                ]
+            },
+            {
+                id: 3, label: 'Subtle Body', subtitle: 'Deeper Scan', icon: 'vibration',
+                description: 'Move beyond gross sensations to subtle vibrations.',
+                xPct: 40, yPct: 44,
+                missions: [
+                    { text: 'Scan an area of the body that feels "blank" or numb.', duration: 20 },
+                    { text: 'Notice the subtle vibration of aliveness beneath stillness.', duration: 25 },
+                    { text: 'Scan the entire body as a field of vibration.', duration: 25 },
+                    { text: 'Maintain equanimity for an entire 30-minute scan.', duration: 30 }
+                ]
+            },
+            {
+                id: 4, label: 'Equanimity', subtitle: 'Non-Reaction', icon: 'balance',
+                description: 'Neither craving nor aversion — pure observation.',
+                xPct: 58, yPct: 62,
+                missions: [
+                    { text: 'Sit with discomfort for 5 minutes without shifting.', duration: 15 },
+                    { text: 'Smile internally at both pleasant and painful sensations.', duration: 20 },
+                    { text: 'Observe an intense sensation with complete stillness.', duration: 25 },
+                    { text: 'Dedicate a full sit to metta — loving kindness.', duration: 30 }
+                ]
+            },
+            {
+                id: 5, label: 'Insight', subtitle: 'Vipassana', icon: 'remove_red_eye',
+                description: 'Direct insight into the three characteristics of experience.',
+                xPct: 48, yPct: 80,
+                missions: [
+                    { text: 'Notice anicca (impermanence) in every breath cycle.', duration: 25 },
+                    { text: 'Notice dukkha (unsatisfactoriness) — nothing fully satisfies.', duration: 25 },
+                    { text: 'Notice anatta (no-self) — who is observing the observer?', duration: 30 },
+                    { text: 'Sit for 45 minutes with continuous insight observation.', duration: 45 }
+                ]
+            }
+        ]
+    },
+    tmi: {
+        id: 'tmi',
+        label: 'The Mind Illuminated',
+        shortLabel: 'TMI',
+        unlockLevel: 4,
+        difficulty: 'Medium',
+        bgImage: './src/assets/journey_bg.jpg',
+        accentColor: '#3F5247',
+        nodeAccent: 'rgba(63,82,71,0.15)',
+        icon: 'local_florist',
+        description: 'Systematic 10-stage framework for deep concentration',
+        nodes: [
+            {
+                id: 1, label: 'Establishing a Practice', subtitle: 'Practice', icon: 'event_seat',
+                description: 'Before mastering the mind, you must master your schedule.',
+                xPct: 44, yPct: 8,
+                missions: [
+                    { text: 'Set a non-negotiable time & space for your practice.', duration: 10 },
+                    { text: 'Sit for a realistic baseline of 15–20 minutes.', duration: 15 },
+                    { text: 'Overcome the initial wave of procrastination.', duration: 15 },
+                    { text: 'Establish a streak of 3 consecutive daily sits.', duration: 20 }
+                ]
+            },
+            {
+                id: 2, label: 'Interrupted Attention & Mind-Wandering', subtitle: 'Attention', icon: 'psychology',
+                description: 'Transition consciously into the practice to stabilize focus.',
+                xPct: 62, yPct: 26,
+                missions: [
+                    { text: 'Review your motivations before each sit.', duration: 15 },
+                    { text: 'Set a specific, bite-sized goal for this session.', duration: 15 },
+                    { text: 'Perform a mental inventory of current worries.', duration: 20 },
+                    { text: 'Adjust posture and alignment for comfort.', duration: 20 }
+                ]
+            },
+            {
+                id: 3, label: 'Extended Continuity & Forgetting', subtitle: 'Continuity', icon: 'anchor',
+                description: 'Anchor yourself in the space around you.',
+                xPct: 38, yPct: 44,
+                missions: [
+                    { text: 'Maintain broad awareness of the present moment.', duration: 15 },
+                    { text: 'Focus solely on raw physical sensations.', duration: 20 },
+                    { text: 'Restrict attention to bodily sensations.', duration: 20 },
+                    { text: 'Develop grounding in physical support and gravity.', duration: 20 }
+                ]
+            },
+            {
+                id: 4, label: 'Continuous Attention & Gross Distraction', subtitle: 'Focus', icon: 'center_focus_strong',
+                description: 'Move focus from broad body sensations to the breath.',
+                xPct: 60, yPct: 62,
+                missions: [
+                    { text: 'Observe the somatic rises and falls of breathing.', duration: 20 },
+                    { text: 'Find and appreciate a pleasant quality in the breath.', duration: 20 },
+                    { text: 'Narrow attention to the tip of the nose.', duration: 25 },
+                    { text: 'Observe breath patterns passively without control.', duration: 25 }
+                ]
+            },
+            {
+                id: 5, label: 'Overcoming Subtle Dullness', subtitle: 'Dullness', icon: 'visibility',
+                description: 'Use mental count markers to bridge focus when distracted.',
+                xPct: 44, yPct: 80,
+                missions: [
+                    { text: 'Silently count "one" at the end of the out-breath.', duration: 20 },
+                    { text: 'Maintain counting cycles up to ten.', duration: 20 },
+                    { text: 'Restart counting calmly from one if mind wanders.', duration: 25 },
+                    { text: 'Intentionally drop counting to sit in pure silence.', duration: 30 }
+                ]
+            }
+        ]
+    },
     zen: {
         id: 'zen',
         label: 'Zen',
         shortLabel: 'Zen',
         unlockLevel: 5,
+        difficulty: 'High',
         bgImage: './src/assets/zen_bg.jpg',
         accentColor: '#3A3228',
         nodeAccent: 'rgba(58,50,40,0.15)',
@@ -351,9 +351,12 @@ export function renderJourney() {
     container.innerHTML = `
         <!-- Fixed header -->
         <div class="jh-header">
-            <div>
+            <div style="flex: 1; min-width: 0;">
                 <h1 class="jh-title">Your Journey</h1>
-                <p class="jh-subtitle" id="j-path-subtitle">Loading...</p>
+                <p class="jh-subtitle" style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0;">
+                    <span id="j-path-subtitle">Loading...</span>
+                    <span id="j-path-learn-more" style="color: var(--color-accent-dark); font-weight: 700; cursor: pointer; text-decoration: underline; font-size: 11px; display: inline-flex; align-items: center; gap: 2px;">Learn More <span class="material-symbols-rounded" style="font-size:12px; font-variation-settings: 'FILL' 1;">info</span></span>
+                </p>
             </div>
             <!-- Level bar -->
             <div class="jh-level-pill" id="j-level-pill">
@@ -385,7 +388,7 @@ export function renderJourney() {
         <!-- Daily quest pinned at bottom -->
         <div class="jh-quest-bar" id="journey-quest-bar" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
             <div>
-                <p class="jh-quest-title">Daily Quest</p>
+                <p class="jh-quest-title">Daily Quest <span style="color: var(--color-accent-dark); font-weight: 700; margin-left: 6px;">(+25 XP)</span></p>
                 <p class="jh-quest-sub" id="journey-quest-sub">Meditate for 20 minutes</p>
             </div>
             <div class="jh-xp-badge" id="journey-quest-badge" style="transition: all 0.2s;">+25 XP</div>
@@ -583,9 +586,9 @@ export function renderJourney() {
             z-index: -1; animation: node-pulse 2.5s infinite;
         }
         @keyframes node-pulse {
-            0%   { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
-            50%  { transform: translate(-50%, -50%) scale(1.45); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+            0%   { transform: translate(-50%, -50%); opacity: 0.8; }
+            50%  { transform: translate(-50%, -50%); opacity: 0; }
+            100% { transform: translate(-50%, -50%); opacity: 0.8; }
         }
 
         /* Quest bar */
@@ -605,8 +608,8 @@ export function renderJourney() {
             padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700;
         }
         @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 4px rgba(226, 184, 87, 0.4); }
-            50%      { transform: scale(1.04); box-shadow: 0 0 12px rgba(226, 184, 87, 0.8); }
+            0%, 100% { box-shadow: 0 0 4px rgba(226, 184, 87, 0.4); }
+            50%      { box-shadow: 0 0 12px rgba(226, 184, 87, 0.8); }
         }
 
         /* Modal */
@@ -698,6 +701,58 @@ export function renderJourney() {
         if (e.target === modal) { modal.classList.remove('active'); container.updateData(); }
     });
 
+    container.querySelector('#j-path-learn-more').addEventListener('click', () => {
+        const path = PATHS[activePathId];
+        openPathInfoModal(path);
+    });
+
+    function openPathInfoModal(path) {
+        const title = container.querySelector('#modal-title');
+        const subtitle = container.querySelector('#modal-subtitle');
+        const desc = container.querySelector('#modal-desc');
+        const list = container.querySelector('#modal-missions-list');
+
+        title.innerHTML = `${path.label} <span style="font-size:12px; font-weight:bold; padding: 3px 8px; border-radius:10px; margin-left: 8px; background:${path.accentColor}20; color:${path.accentColor}; border: 1px solid ${path.accentColor}40;">Difficulty: ${path.difficulty}</span>`;
+        subtitle.textContent = "Lineage & Practical Insights";
+        
+        let detailsHtml = '';
+        if (path.id === 'anapana') {
+            detailsHtml = `
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> Anapana is the classic Buddhist practice of mindfulness of breathing. It is the foundation for almost all meditation traditions.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> Rest your focus entirely on the physical touch of air at the rims of your nostrils or upper lip. Notice temperature, friction, and movement without following the breath into the body.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Builds sharp sensory clarity, calms the central nervous system, and prepares the mind for deep analytical body scanning.</p>
+            `;
+        } else if (path.id === 'vipassana') {
+            detailsHtml = `
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> Vipassana translates to "insight" — seeing things as they truly are. It is the heart of Theravada mindfulness lineages.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> Systematically scan physical body sensations from head to toe, observing them with total equanimity. You will observe impermanence (anicca) and non-reaction.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Reprograms the brain to stop reacting with craving or aversion to physical triggers, freeing you from deep-seated habit patterns.</p>
+            `;
+        } else if (path.id === 'tmi') {
+            detailsHtml = `
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> The Mind Illuminated (TMI) is a modern, highly systematic master guide that integrates classical teachings with cognitive science.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> A 10-stage progressive path focused on balancing attention (selecting specific details) with peripheral awareness (keeping track of the background environment).</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Eliminates dullness, stops mind-wandering, and establishes stable, effortless attention through structured metrics.</p>
+            `;
+        } else if (path.id === 'metta') {
+            detailsHtml = `
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> Metta is loving-kindness or goodwill. It is a heart-centered concentration technique rather than analytical scanning.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> Silently repeat phrases of protection, happiness, and peace toward yourself, then expand the circle to a mentor, a dear friend, a neutral stranger, a difficult person, and eventually all living beings.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Actively dissolves anger, builds empathy, increases emotional resilience, and softens self-criticism.</p>
+            `;
+        } else if (path.id === 'zen') {
+            detailsHtml = `
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> Zen (Zazen) meditation comes from East Asian Mahayana traditions. It is the ultimate practice of non-doing and radical presence.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> Direct your eyes downwards, sit with open awareness (Shikantaza — "just sitting"), and allow thoughts to arise and pass without any effort to hold or reject them.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Directly reveals the spacious, non-dual nature of consciousness itself, dissolving the illusion of a separate self.</p>
+            `;
+        }
+
+        desc.innerHTML = detailsHtml;
+        list.innerHTML = ''; // No missions list in the info modal
+        modal.classList.add('active');
+    }
+
 
 
     function triggerQuestSplash() {
@@ -747,6 +802,10 @@ export function renderJourney() {
             const done = DB.isMissionComplete(node.id, idx, path.id);
             const item = document.createElement('div');
             item.className = 'mission-item' + (done ? ' completed' : '');
+            if (!done) {
+                item.setAttribute('role', 'button');
+                item.setAttribute('tabindex', '0');
+            }
             item.innerHTML = `
                 <div class="m-check"><span class="material-symbols-rounded">check</span></div>
                 <div class="m-body">
@@ -765,7 +824,8 @@ export function renderJourney() {
                             missionIndex: idx,
                             pathId: path.id,
                             label: `${node.subtitle}: Mission ${idx + 1}`,
-                            description: mission.text
+                            description: mission.text,
+                            minDuration: mission.duration
                         };
                         breathe.setTimerDuration(mission.duration);
                     }
@@ -811,6 +871,8 @@ export function renderJourney() {
 
             const el = document.createElement('div');
             el.className = `path-node ${cls}`;
+            el.setAttribute('role', 'button');
+            el.setAttribute('tabindex', '0');
             el.style.left = `${node.xPct}%`;
             el.style.top = `${node.yPct}%`;
 
@@ -829,7 +891,7 @@ export function renderJourney() {
         });
 
         // Show locked overlay if path not unlocked yet
-        const pathUnlocked = stats.level >= path.unlockLevel;
+        const pathUnlocked = stats.level >= path.unlockLevel || DB.isPathUnlocked(path.id);
         if (!pathUnlocked) {
             const overlay = document.createElement('div');
             overlay.className = 'jh-map-locked-overlay';
@@ -851,7 +913,7 @@ export function renderJourney() {
         const stats = DB.getStats();
 
         Object.values(PATHS).forEach(path => {
-            const isUnlocked = stats.level >= path.unlockLevel;
+            const isUnlocked = stats.level >= path.unlockLevel || DB.isPathUnlocked(path.id);
             const tab = document.createElement('button');
             tab.className = 'jh-tab' + (path.id === activePathId ? ' active' : '') + (!isUnlocked ? ' locked' : '');
             tab.innerHTML = `
@@ -892,46 +954,56 @@ export function renderJourney() {
         buildMap(PATHS[activePathId]);
 
         // Update Daily Quest UI
-        const quest = DB.getDailyQuestState();
+        const questState = DB.getDailyQuestState();
+        const q = questState.quest;
         const questSub = container.querySelector('#journey-quest-sub');
         const questBadge = container.querySelector('#journey-quest-badge');
         const questBar = container.querySelector('#journey-quest-bar');
 
-        questSub.textContent = quest.label;
+        if (q) {
+            questSub.textContent = q.label;
 
-        if (quest.claimed) {
-            questBadge.textContent = 'Claimed ✔';
-            questBadge.style.background = 'rgba(255,255,255,0.2)';
-            questBadge.style.color = 'rgba(255,255,255,0.6)';
-            questBadge.style.animation = 'none';
-            questBar.style.opacity = '0.7';
-            questBar.style.cursor = 'default';
-            questBar.onclick = null;
-        } else if (quest.completed) {
-            questBadge.textContent = 'Claim +25 XP';
-            questBadge.style.background = '#e2b857';
-            questBadge.style.color = '#1b2e26';
-            questBadge.style.animation = 'pulseGlow 1.5s infinite';
-            questBar.style.opacity = '1';
-            questBar.style.cursor = 'pointer';
-            questBar.onclick = () => {
-                const success = DB.claimDailyQuest();
-                if (success) {
-                    triggerQuestSplash();
-                    container.updateData();
-                }
-            };
-        } else {
-            questBadge.textContent = '+25 XP';
-            questBadge.style.background = 'rgba(255,255,255,0.15)';
-            questBadge.style.color = 'white';
-            questBadge.style.animation = 'none';
-            questBar.style.opacity = '1';
-            questBar.style.cursor = 'pointer';
-            // Navigate to Breathe screen to start a session
-            questBar.onclick = () => {
-                document.querySelector('[data-target="breathe"]')?.click();
-            };
+            if (q.claimed) {
+                questBadge.textContent = 'Claimed ✔';
+                questBadge.style.background = 'rgba(255,255,255,0.2)';
+                questBadge.style.color = 'rgba(255,255,255,0.6)';
+                questBadge.style.animation = 'none';
+                questBar.style.opacity = '0.7';
+                questBar.style.cursor = 'default';
+                questBar.onclick = null;
+            } else if (q.completed) {
+                questBadge.textContent = 'Claim +25 XP';
+                questBadge.style.background = '#e2b857';
+                questBadge.style.color = '#1b2e26';
+                questBadge.style.animation = 'pulseGlow 1.5s infinite';
+                questBar.style.opacity = '1';
+                questBar.style.cursor = 'pointer';
+                questBar.onclick = () => {
+                    const success = DB.claimDailyQuest();
+                    if (success) {
+                        triggerQuestSplash();
+                        container.updateData();
+                    }
+                };
+            } else {
+                questBadge.textContent = '+25 XP';
+                questBadge.style.background = 'rgba(255,255,255,0.15)';
+                questBadge.style.color = 'white';
+                questBadge.style.animation = 'none';
+                questBar.style.opacity = '1';
+                questBar.style.cursor = 'pointer';
+                questBar.onclick = () => {
+                    if (q.type.startsWith('sit_')) {
+                        document.querySelector('[data-target="breathe"]')?.click();
+                    } else if (q.type.startsWith('log_')) {
+                        document.querySelector('[data-target="reflect"]')?.click();
+                    } else if (q.type.startsWith('read_')) {
+                        document.querySelector('[data-target="wisdom"]')?.click();
+                    } else {
+                        document.querySelector('[data-target="breathe"]')?.click();
+                    }
+                };
+            }
         }
     };
 

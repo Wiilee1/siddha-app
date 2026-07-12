@@ -1,3 +1,5 @@
+
+
 let audioCtx = null;
 let synthNodes = [];
 let chimeInterval = null;
@@ -13,6 +15,11 @@ function initAudioContext() {
 
 export const Synth = {
     start: (type) => {
+        if (window.Capacitor?.getPlatform() === 'ios') {
+            console.log('[Synth iOS] Soundscapes are disabled on iOS:', type);
+            return;
+        }
+
         initAudioContext();
         Synth.stop();
 
@@ -160,6 +167,8 @@ export const Synth = {
     },
 
     stop: () => {
+        if (window.Capacitor?.getPlatform() === 'ios') return;
+
         if (chimeInterval) {
             clearInterval(chimeInterval);
             chimeInterval = null;

@@ -71,7 +71,8 @@ const defaultState = {
     feedbackHistory: [],
     missionProgress: {},   // { nodeId_pathId: [missionIndex,...] }
     lastLogin: null,
-    activePathId: 'tmi',   // currently selected journey path
+    activePathId: 'anapana',   // currently selected journey path
+    unlockedPathIds: ['anapana'], // paths unlocked by the user
     companion: {
         nourish: 45,
         aura: 55,
@@ -85,10 +86,7 @@ const defaultState = {
     },
     dailyQuests: {
         completedDate: null,
-        questType: null,
-        label: '',
-        completed: false,
-        claimed: false
+        quest: null
     },
     readArticles: [],
     unlockedAchievements: {} // stores { id: unlockTimestamp }
@@ -372,6 +370,21 @@ export const DB = {
         state.activePathId = pathId;
         saveState(state);
     },
+    unlockPath: (pathId) => {
+        const state = getState();
+        if (!state.unlockedPathIds) state.unlockedPathIds = ['tmi'];
+        if (!state.unlockedPathIds.includes(pathId)) {
+            state.unlockedPathIds.push(pathId);
+            saveState(state);
+        }
+    },
+    isPathUnlocked: (pathId) => {
+        const state = getState();
+        if (pathId === 'tmi') return true;
+        if (state.activePathId === pathId) return true;
+        if (state.unlockedPathIds && state.unlockedPathIds.includes(pathId)) return true;
+        return false;
+    },
 
     // Reflections
     saveReflection: (reflectionData) => {
@@ -522,67 +535,89 @@ export const DB = {
         const user = state.user;
         const commitment = user ? parseInt(user.dailyCommitment) || 10 : 10;
 
-        if (!state.dailyQuests || state.dailyQuests.completedDate !== todayStr) {
-            const quests = [
+        if (!state.dailyQuests || state.dailyQuests.completedDate !== todayStr || !state.dailyQuests.quest) {
+            const pool = [
                 { type: 'sit_commitment', label: `Sit for your daily commitment (${commitment}m)` },
                 { type: 'sit_any', label: 'Complete any meditation session' },
                 { type: 'log_grateful', label: 'Log a Grateful mood reflection' },
-                { type: 'sit_tmi', label: 'Complete a Mind Illuminated (TMI) session' }
+                { type: 'read_wisdom', label: 'Read any Wisdom Library article' },
+                { type: 'sit_anapana', label: 'Complete an Anapana session' }
             ];
-            if (state.level >= 3) {
-                quests.push({ type: 'sit_vipassana', label: 'Complete a Vipassana session' });
+
+            const unlocked = state.unlockedPathIds || [];
+            if (unlocked.includes('metta')) {
+                pool.push({ type: 'sit_metta', label: 'Complete a Kindness (Metta) session' });
             }
-            if (state.level >= 5) {
-                quests.push({ type: 'sit_zen', label: 'Complete a Zen session' });
+            if (unlocked.includes('vipassana')) {
+                pool.push({ type: 'sit_vipassana', label: 'Complete an Insight (Vipassana) session' });
+            }
+            if (unlocked.includes('tmi')) {
+                pool.push({ type: 'sit_tmi', label: 'Complete a Focus (TMI) session' });
+            }
+            if (unlocked.includes('zen')) {
+                pool.push({ type: 'sit_zen', label: 'Complete a Stillness (Zen) session' });
             }
 
-            const dayNum = new Date().getDate();
-            const chosen = quests[dayNum % quests.length];
+            // Pick 1 random quest
+            const chosen = pool[Math.floor(Math.random() * pool.length)];
 
             state.dailyQuests = {
                 completedDate: todayStr,
-                questType: chosen.type,
-                label: chosen.label,
-                completed: false,
-                claimed: false
+                quest: {
+                    type: chosen.type,
+                    label: chosen.label,
+                    completed: false,
+                    claimed: false
+                }
             };
             saveState(state);
         }
 
-        const quest = state.dailyQuests;
-        if (!quest.completed) {
+        const questState = state.dailyQuests;
+        const q = questState.quest;
+        if (q && !q.completed) {
             const todayHistory = (state.meditationHistory || []).filter(item => toDateStr(item.date) === todayStr);
             const todayReflections = (state.reflectionHistory || []).filter(item => toDateStr(item.date) === todayStr);
+            const todayReadArticles = Object.keys(state.readArticlesWithDates || {}).filter(id => state.readArticlesWithDates[id] === todayStr);
 
-            if (quest.questType === 'sit_commitment') {
-                quest.completed = todayHistory.some(h => h.duration >= commitment);
-            } else if (quest.questType === 'sit_any') {
-                quest.completed = todayHistory.length > 0;
-            } else if (quest.questType === 'log_grateful') {
-                quest.completed = todayReflections.some(r => r.mood === 'grateful');
-            } else if (quest.questType === 'sit_tmi') {
-                quest.completed = todayHistory.some(h => h.path === 'tmi');
-            } else if (quest.questType === 'sit_vipassana') {
-                quest.completed = todayHistory.some(h => h.path === 'vipassana');
-            } else if (quest.questType === 'sit_zen') {
-                quest.completed = todayHistory.some(h => h.path === 'zen');
+            if (q.type === 'sit_commitment') {
+                q.completed = todayHistory.some(h => h.duration >= commitment);
+            } else if (q.type === 'sit_any') {
+                q.completed = todayHistory.length > 0;
+            } else if (q.type === 'log_grateful') {
+                q.completed = todayReflections.some(r => r.mood === 'grateful');
+            } else if (q.type === 'read_wisdom') {
+                q.completed = todayReadArticles.length > 0;
+            } else if (q.type === 'sit_anapana') {
+                q.completed = todayHistory.some(h => h.path === 'anapana');
+            } else if (q.type === 'sit_metta') {
+                q.completed = todayHistory.some(h => h.path === 'metta');
+            } else if (q.type === 'sit_vipassana') {
+                q.completed = todayHistory.some(h => h.path === 'vipassana');
+            } else if (q.type === 'sit_tmi') {
+                q.completed = todayHistory.some(h => h.path === 'tmi');
+            } else if (q.type === 'sit_zen') {
+                q.completed = todayHistory.some(h => h.path === 'zen');
             }
-            if (quest.completed) {
+            if (q.completed) {
                 saveState(state);
             }
         }
 
-        return quest;
+        return questState;
     },
 
     claimDailyQuest: () => {
         const state = getState();
-        const quest = state.dailyQuests;
-        if (quest && quest.completed && !quest.claimed) {
-            quest.claimed = true;
-            saveState(state);
-            DB.addXP(25);
-            return true;
+        const questState = state.dailyQuests;
+        if (questState && questState.quest) {
+            const q = questState.quest;
+            if (q.completed && !q.claimed) {
+                q.claimed = true;
+                saveState(state);
+                DB.addXP(25);
+                return true;
+            }
         }
         return false;
     },
@@ -710,21 +745,6 @@ export const DB = {
         return xpEarned;
     },
 
-    markDailyQuestProgress: (questType) => {
-        // Call this after meditation / reflection / wisdom read to auto-mark the quest complete
-        const state = getState();
-        const todayStr = todayDate();
-        const dq = state.dailyQuests || {};
-        if (dq.claimed && dq.completedDate === todayStr) return; // already fully done
-        state.dailyQuests = {
-            ...(dq || {}),
-            completedDate: todayStr,
-            questType,
-            completed: true,
-            claimed: false,
-        };
-        saveState(state);
-    },
 
     // ── Achievements & Milestones ──────────────────────────────────────────────
     checkAndTriggerAchievements: (silent = false) => {

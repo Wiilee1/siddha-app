@@ -582,6 +582,13 @@ export function triggerLevelUpModal(oldLevel, newLevel) {
 
 // Global window event listener initialization
 window.addEventListener("siddha-levelup", (e) => {
+    try {
+        const raw = localStorage.getItem('siddha_db');
+        if (raw) {
+            const state = JSON.parse(raw);
+            if (state && !state.completedTutorial) return;
+        }
+    } catch(err) {}
     const { oldLevel, newLevel } = e.detail;
     triggerLevelUpModal(oldLevel, newLevel);
 });

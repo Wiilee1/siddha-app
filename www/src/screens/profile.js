@@ -18,7 +18,6 @@ export function renderProfile() {
                 <span id="profile-initial">A</span>
             </div>
             <h2 id="profile-name" style="font-size: 20px; margin-bottom: 4px;">User Name</h2>
-            <p id="profile-email" class="text-sm">user@example.com</p>
         </div>
 
         <div style="display: flex; gap: 16px; margin-bottom: 32px;">
@@ -61,7 +60,7 @@ export function renderProfile() {
         </div>
 
         <!-- Milestones Grid -->
-        <div class="card collapsible-card" id="milestones-card" style="margin-bottom: 32px;">
+        <div class="card collapsible-card collapsed" id="milestones-card" style="margin-bottom: 32px;">
             <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
                 <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading);">Milestones & Badges</h3>
                 <span class="material-symbols-rounded collapsible-toggle" style="transition: transform 0.2s;">expand_more</span>
@@ -308,7 +307,6 @@ export function renderProfile() {
         
         if (user) {
             container.querySelector('#profile-name').textContent = user.name || 'User';
-            container.querySelector('#profile-email').textContent = user.email || '';
             container.querySelector('#profile-initial').textContent = (user.name || 'U').charAt(0).toUpperCase();
         }
         
@@ -391,7 +389,9 @@ export function renderProfile() {
         const milesCard = container.querySelector('#milestones-card');
         if (milesCard) {
             const header = milesCard.querySelector('.collapsible-header');
-            if (localStorage.getItem('siddha_milestones_collapsed') === 'true') {
+            if (localStorage.getItem('siddha_milestones_collapsed') === 'false') {
+                milesCard.classList.remove('collapsed');
+            } else {
                 milesCard.classList.add('collapsed');
             }
             header.addEventListener('click', () => {

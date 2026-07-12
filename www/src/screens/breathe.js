@@ -306,6 +306,7 @@ export function renderBreathe(onComplete) {
         const muteBtn     = container.querySelector('#sound-mute-btn');
         const muteIcon    = container.querySelector('#mute-icon');
         let promptInterval = null;
+        let lastTickTime = null;
 
         // Persist mute state across sessions
         let isMuted = localStorage.getItem('siddha_sound_muted') === 'true';
@@ -322,6 +323,35 @@ export function renderBreathe(onComplete) {
             applyMuteState();
         });
 
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !isPaused && lastTickTime) {
+                const now = Date.now();
+                const delta = Math.floor((now - lastTickTime) / 1000);
+                if (delta > 0) {
+                    timeLeft = Math.max(0, timeLeft - delta);
+                    sessionElapsed += delta;
+                    lastTickTime += delta * 1000;
+                    updateDisplay();
+                    
+                    // Interval bell catch up check
+                    const intervalVal = parseInt(container.querySelector('#bell-interval-input').value);
+                    if (intervalVal > 0 && !isMuted) {
+                        const intervalSeconds = intervalVal * 60;
+                        const prevElapsed = sessionElapsed - delta;
+                        const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
+                        const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
+                        if (currentBoundary > prevBoundary && timeLeft > 0) {
+                            Synth.playSingleBell();
+                        }
+                    }
+
+                    if (timeLeft <= 0) {
+                        finishSession(START_MINUTES);
+                    }
+                }
+            }
+        });
+
         glow.style.animationPlayState = 'paused';
         container.querySelectorAll('.bh-ring').forEach(r => r.style.animationPlayState = 'paused');
         container.querySelector('.bh-core').style.animationPlayState = 'paused';
@@ -332,7 +362,29 @@ export function renderBreathe(onComplete) {
             timerEl.textContent = `${m}:${s}`;
         }
 
+        function updatePresetsState() {
+            const minMins = container.activeMission ? container.activeMission.minDuration : 0;
+            presetBtns.forEach(btn => {
+                const t = parseInt(btn.dataset.time);
+                if (isNaN(t)) return;
+                if (t < minMins) {
+                    btn.classList.add('disabled');
+                    btn.style.opacity = '0.35';
+                    btn.style.pointerEvents = 'none';
+                } else {
+                    btn.classList.remove('disabled');
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                }
+            });
+        }
+
         container.setTimerDuration = (mins) => {
+            const minMins = container.activeMission ? container.activeMission.minDuration : 0;
+            if (mins < minMins) {
+                mins = minMins;
+            }
+
             START_MINUTES = mins;
             timeLeft = mins * 60;
             sessionElapsed = 0;
@@ -345,7 +397,7 @@ export function renderBreathe(onComplete) {
             if (container.activeMission) {
                 titleEl.textContent = container.activeMission.label;
                 descEl.textContent = 'Complete the sit to finish the mission';
-                presetsEl.style.display = 'none';
+                presetsEl.style.display = 'flex'; // Keep presets visible
                 banner.style.display = 'block';
                 bannerText.textContent = container.activeMission.description;
             } else {
@@ -354,6 +406,7 @@ export function renderBreathe(onComplete) {
                 presetsEl.style.display = 'flex';
                 banner.style.display = 'none';
             }
+            updatePresetsState();
         };
 
         function setRunningUI(running) {
@@ -487,22 +540,31 @@ export function renderBreathe(onComplete) {
                     Synth.playSingleBell();
                 }
 
+                lastTickTime = Date.now();
                 timerInterval = setInterval(() => {
-                    timeLeft--;
-                    sessionElapsed++;
-                    updateDisplay();
+                    const now = Date.now();
+                    const delta = Math.floor((now - lastTickTime) / 1000);
+                    if (delta > 0) {
+                        timeLeft = Math.max(0, timeLeft - delta);
+                        sessionElapsed += delta;
+                        lastTickTime += delta * 1000;
+                        updateDisplay();
 
-                    // Play interval bell every X minutes if set
-                    const intervalVal = parseInt(container.querySelector('#bell-interval-input').value);
-                    if (intervalVal > 0 && !isMuted) {
-                        const intervalSeconds = intervalVal * 60;
-                        if (sessionElapsed > 0 && sessionElapsed % intervalSeconds === 0 && timeLeft > 0) {
-                            Synth.playSingleBell();
+                        // Play interval bell every X minutes if set
+                        const intervalVal = parseInt(container.querySelector('#bell-interval-input').value);
+                        if (intervalVal > 0 && !isMuted) {
+                            const intervalSeconds = intervalVal * 60;
+                            const prevElapsed = sessionElapsed - delta;
+                            const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
+                            const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
+                            if (currentBoundary > prevBoundary && timeLeft > 0) {
+                                Synth.playSingleBell();
+                            }
                         }
-                    }
 
-                    if (timeLeft <= 0) finishSession(START_MINUTES);
-                }, 1000);
+                        if (timeLeft <= 0) finishSession(START_MINUTES);
+                    }
+                }, 500); // Check every 500ms for high responsiveness
             } else {
                 stopTimer();
                 setRunningUI(false);
@@ -513,6 +575,7 @@ export function renderBreathe(onComplete) {
         presetBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 if (!isPaused) return;
+                if (btn.classList.contains('disabled')) return; // Disable clicking muted/disabled buttons
                 presetBtns.forEach(b => b.classList.remove('active'));
                 customBtn.classList.remove('active');
                 customCont.style.display = 'none';
@@ -534,6 +597,15 @@ export function renderBreathe(onComplete) {
         setCustomBtn.addEventListener('click', () => {
             let mins = parseInt(customInput.value);
             if (isNaN(mins) || mins < 1) mins = 1;
+
+            // Restrict duration if an active mission is loaded
+            const minMins = container.activeMission ? container.activeMission.minDuration : 0;
+            if (mins < minMins) {
+                alert(`This mission requires at least a ${minMins}-minute sit. Duration adjusted to ${minMins} minutes.`);
+                mins = minMins;
+                customInput.value = minMins;
+            }
+
             START_MINUTES = mins;
             timeLeft = mins * 60;
             sessionElapsed = 0;
@@ -564,6 +636,7 @@ export function renderBreathe(onComplete) {
                     }
                 }
             }
+            updatePresetsState();
         };
 
         updateDisplay();

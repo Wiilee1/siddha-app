@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf www && mkdir www && cp index.html www/ && cp -r src www/",
+    "build": "rm -rf www && mkdir www && cp index.html www/ && cp src/privacy_policy.html www/ && cp -r src www/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,7 +14,8 @@
   "dependencies": {
     "@capacitor/android": "^8.4.1",
     "@capacitor/cli": "^8.4.1",
-    "@capacitor/core": "^8.4.1"
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5"
