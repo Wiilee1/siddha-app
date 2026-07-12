@@ -1,4 +1,4 @@
-# Siddha Meditation App — Release Notes (v1.1.0)
+# Siddha Meditation App — Release Notes (v1.1.0, Build 3)
 
 ## Overview
 This update focuses on polishing the onboarding experience, streamlining the initial meditation pathway, improving layout visibility during the tutorial tour, and making daily quests dynamic and rewarding.
