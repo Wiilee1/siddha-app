@@ -106,7 +106,7 @@ export function renderBreathe(onComplete) {
             background: linear-gradient(160deg, #3D5142 0%, #1E2C22 100%);
             overflow: hidden;
             justify-content: space-between;
-            padding: 14px 20px 28px;
+            padding: calc(14px + env(safe-area-inset-top, 0px)) 20px calc(28px + env(safe-area-inset-bottom, 0px)) 20px;
             position: relative;
         }
 

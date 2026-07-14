@@ -124,8 +124,12 @@ export function renderHome() {
             flex-direction: column;
         }
 
+        .home-screen {
+            padding-top: 0 !important;
+        }
+
         .home-top-section {
-            padding: 16px 20px 0;
+            padding: calc(14px + env(safe-area-inset-top, 0px)) 20px 0;
             background: #f4f3ed;
         }
 
