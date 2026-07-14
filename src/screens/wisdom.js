@@ -749,7 +749,7 @@ export function renderWisdom() {
     style.textContent = `
         .wisdom-screen {
             background-color: var(--color-bg-primary);
-            padding: 14px 20px var(--spacing-xl);
+            padding: calc(14px + env(safe-area-inset-top, 0px)) 20px calc(var(--spacing-xl) + 20px);
             display: flex;
             flex-direction: column;
         }

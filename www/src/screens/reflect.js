@@ -32,16 +32,12 @@ export function renderReflect(onNewReflection) {
         <div id="reflection-list" class="rfl-list">
             <p class="rfl-empty">No reflections yet. Tap Reflect above to add your first.</p>
         </div>
-        <!-- bottom padding so last item isn't cut off -->
-        <div style="height: 16px; flex-shrink: 0;"></div>
+        <!-- bottom padding so last item isn't cut off by floating nav button -->
+        <div style="height: 48px; flex-shrink: 0;"></div>
     `;
 
     const style = document.createElement('style');
     style.textContent = `
-        .reflect-screen {
-            padding: 16px 20px 0;
-        }
-
         /* Header */
         .rfl-header {
             flex-shrink: 0;

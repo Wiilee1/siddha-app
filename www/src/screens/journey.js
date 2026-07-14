@@ -417,7 +417,7 @@ export function renderJourney() {
         /* ---- Journey screen ---- */
         .journey-screen {
             overflow: hidden;
-            padding: 14px 16px 8px;
+            padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 48px;
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
