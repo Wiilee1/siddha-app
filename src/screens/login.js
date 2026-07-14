@@ -235,7 +235,7 @@ export function renderLogin(onLoginSuccess) {
         .onboarding-container {
             width: 100%;
             max-width: 400px;
-            padding: 24px;
+            padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px)) 24px;
             display: flex;
             flex-direction: column;
             height: 100%;

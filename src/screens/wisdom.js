@@ -717,11 +717,10 @@ export function renderWisdom() {
 
         <!-- Article Reader Modal Overlay (Slides up) -->
         <div id="wd-reader-modal" class="wd-reader-overlay">
-            <div class="wd-progress-container">
-                <div class="wd-progress-bar" id="wd-reader-progress"></div>
-            </div>
-            
-            <div class="wd-reader-header">
+            <div class="wd-reader-header" style="position: relative;">
+                <div class="wd-progress-container" style="position: absolute; bottom: 0; top: auto; left: 0; height: 3px;">
+                    <div class="wd-progress-bar" id="wd-reader-progress"></div>
+                </div>
                 <button class="wd-reader-close" id="wd-reader-close" aria-label="Close reader">
                     <span class="material-symbols-rounded">arrow_back</span>
                 </button>
@@ -938,7 +937,7 @@ export function renderWisdom() {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px var(--spacing-lg);
+            padding: calc(12px + env(safe-area-inset-top, 0px)) var(--spacing-lg) 12px;
             border-bottom: 1px solid var(--color-bg-secondary);
             background: var(--color-bg-primary);
             z-index: 5;
