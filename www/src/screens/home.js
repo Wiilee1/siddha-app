@@ -1,6 +1,29 @@
 import { DB, xpInCurrentLevel } from '../services/db.js';
 import { Synth } from '../services/synth.js';
 
+const DIALOGUES = [
+    "Don't just do something, sit there!",
+    "True stillness is not the absence of sound, but the presence of the one who listens.",
+    "Silence is not empty. It is full of presence.",
+    "When you become aware of the silence around you, immediately you touch the stillness within.",
+    "There is a quiet space inside you that remains untouched by any storm. Let us sit there.",
+    "You are not your thoughts. You are the spacious awareness in which they arise and dissolve.",
+    "Be still. Look. Listen. In this moment, there is nothing else to do.",
+    "Allow this moment to be exactly as it is. Let go of the need to change anything.",
+    "When you lose touch with inner stillness, you lose yourself in the world. Return here.",
+    "Close your eyes, find the touchpoints of the air, and let the rest of the world wait.",
+    "Listen to the quiet between two breaths. In that brief gap, you are completely free.",
+    "Feel the weight of gravity holding you down. The earth is supporting this sit. Rest into it.",
+    "Observe the cool breeze at the tip of the nose on the inhale, and the warm sigh on the exhale.",
+    "Let your shoulders drop. Release the tension in your jaw. Let the next breath be completely effortless.",
+    "Feel the gentle rise and fall of your chest. Like soft waves on a calm, quiet lake.",
+    "Are we meditating today, or are we just sitting here looking extremely peaceful?",
+    "Look at a tree, a flower, a leaf. Notice how still they are, how rooted in being. Let them teach you.",
+    "The mind is always busy. But beneath the noise, there is a deep reservoir of calm. Dive in.",
+    "Watch your thoughts arise and dissolve, like clouds drifting across an infinite sky.",
+    "The breath is your anchor. Whenever the storm of thoughts arrives, return to the breath."
+];
+
 export function renderHome() {
     const container = document.createElement('div');
     container.className = 'screen home-screen';
@@ -27,6 +50,10 @@ export function renderHome() {
         <!-- Hero Area -->
         <div class="home-hero-area">
             <div id="hero-anim-container" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;"></div>
+            <div id="companion-speech-bubble" class="companion-bubble">
+                <span id="companion-bubble-text"></span>
+                <div class="companion-bubble-tail"></div>
+            </div>
         </div>
 
         <!-- Stats Area -->
@@ -308,7 +335,65 @@ export function renderHome() {
             height: 100%;
             pointer-events: none;
         }
+        
+        .companion-bubble {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.85);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(134, 155, 143, 0.3);
+            border-radius: 16px;
+            padding: 10px 16px;
+            max-width: 85%;
+            min-width: 160px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            cursor: pointer;
+            pointer-events: none; /* Ignore clicks when hidden */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            opacity: 0;
+        }
+        .companion-bubble.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) scale(1);
+        }
+        .companion-bubble.visible:hover {
+            transform: translateX(-50%) scale(1.03);
+            background: rgba(255, 255, 255, 0.98);
+        }
+        .companion-bubble.visible:active {
+            transform: translateX(-50%) scale(0.97);
+        }
+        #companion-bubble-text {
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--color-text-primary);
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-style: italic;
+            display: inline-block;
+        }
+        .companion-bubble-tail {
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border-right: 1px solid rgba(134, 155, 143, 0.2);
+            border-bottom: 1px solid rgba(134, 155, 143, 0.2);
+        }
+        .companion-bubble.visible:hover .companion-bubble-tail {
+            background: rgba(255, 255, 255, 0.98);
+        }
     `;
+
     container.appendChild(style);
 
     // Wire up buttons
@@ -536,6 +621,10 @@ export function renderHome() {
             if (user.dailyCommitment) {
                 dailyGoal = user.dailyCommitment;
             }
+            if (user.avatar) {
+                const logoAvatar = container.querySelector('.home-logo-avatar');
+                if (logoAvatar) logoAvatar.src = user.avatar;
+            }
         }
         container.querySelector('#home-goal-minutes').textContent = dailyGoal;
 
@@ -580,6 +669,61 @@ export function renderHome() {
         
         container.style.backgroundImage = `url('./src/assets/${bgImg}')`;
         updateHeroAnimations(stats.level, stats.daysSinceLastSession);
+
+        // Siddha Speech Bubble Dialogue
+        const bubble = container.querySelector('#companion-speech-bubble');
+        const bubbleText = container.querySelector('#companion-bubble-text');
+        
+        // Clean up any existing timers attached to the window
+        if (window.siddhaBubbleTimer) clearTimeout(window.siddhaBubbleTimer);
+        if (window.siddhaBubbleHideTimer) clearTimeout(window.siddhaBubbleHideTimer);
+
+        if (bubble && bubbleText) {
+            const showBubble = () => {
+                // Only run if we are still on the home screen
+                if (!document.contains(bubble)) return;
+
+                // Pick a random quote
+                let newQuote;
+                const current = bubbleText.textContent;
+                do {
+                    newQuote = DIALOGUES[Math.floor(Math.random() * DIALOGUES.length)];
+                } while (newQuote === current && DIALOGUES.length > 1);
+                
+                bubbleText.textContent = newQuote;
+                bubble.classList.add('visible');
+
+                // Keep it visible for 5-8 seconds, then hide
+                const readTime = 5000 + Math.random() * 3000;
+                window.siddhaBubbleHideTimer = setTimeout(() => {
+                    if (document.contains(bubble)) {
+                        bubble.classList.remove('visible');
+                        
+                        // Schedule next appearance (10-25 seconds after hiding)
+                        const nextWait = 10000 + Math.random() * 15000;
+                        window.siddhaBubbleTimer = setTimeout(showBubble, nextWait);
+                    }
+                }, readTime);
+            };
+
+            // Initial appearance after a short delay
+            window.siddhaBubbleTimer = setTimeout(showBubble, 1500);
+            
+            // Allow clicking to dismiss it early
+            bubble.onclick = (e) => {
+                e.stopPropagation();
+                bubble.style.transform = 'translateX(-50%) scale(0.92)';
+                setTimeout(() => {
+                    bubble.style.transform = '';
+                    bubble.classList.remove('visible');
+                    
+                    // Reset the cycle
+                    clearTimeout(window.siddhaBubbleHideTimer);
+                    clearTimeout(window.siddhaBubbleTimer);
+                    window.siddhaBubbleTimer = setTimeout(showBubble, 8000 + Math.random() * 10000);
+                }, 150);
+            };
+        }
 
         container.querySelectorAll('[data-target]').forEach(el => {
             el.onclick = (e) => {
