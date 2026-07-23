@@ -586,6 +586,16 @@ export function startOnboardingTutorial(onComplete) {
         if (presets) {
             presets.classList.remove('tu-highlight-ring-rect');
         }
+        const breatheScreen = document.querySelector('.breathe-screen');
+        if (breatheScreen) {
+            breatheScreen.activeMission = null;
+            const banner = breatheScreen.querySelector('#mission-info-banner');
+            const titleEl = breatheScreen.querySelector('#breathe-screen-title');
+            const descEl = breatheScreen.querySelector('#breathe-screen-desc');
+            if (banner) banner.style.display = 'none';
+            if (titleEl) titleEl.textContent = 'Meditation';
+            if (descEl) descEl.textContent = 'Find your center';
+        }
     }
 
     // Step 7: Wisdom Fallback

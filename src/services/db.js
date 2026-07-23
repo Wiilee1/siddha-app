@@ -125,6 +125,7 @@ function toDateStr(date) {
     const d = new Date(date);
     return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
 }
+const todayDate = () => toDateStr(new Date());
 
 // Helper to award items on level up
 function checkAndApplyLevelUpRewards(state, oldLevel, newLevel) {
@@ -155,7 +156,19 @@ function checkAndApplyLevelUpRewards(state, oldLevel, newLevel) {
 
 export { xpToLevel, xpForNextLevel, xpInCurrentLevel, LEVEL_THRESHOLDS };
 
+export const CHAKRA_LEVELS = [
+    { level: 1, name: "Root Chakra", color: "#E53935", bg: "rgba(229, 57, 53, 0.12)", border: "#E53935", emoji: "🔴" },
+    { level: 2, name: "Sacral Chakra", color: "#F57C00", bg: "rgba(245, 124, 0, 0.12)", border: "#F57C00", emoji: "🟠" },
+    { level: 3, name: "Solar Plexus", color: "#FBC02D", bg: "rgba(251, 192, 45, 0.18)", border: "#FBC02D", emoji: "🟡" },
+    { level: 4, name: "Heart Chakra", color: "#43A047", bg: "rgba(67, 160, 71, 0.12)", border: "#43A047", emoji: "🟢" },
+    { level: 5, name: "Throat Chakra", color: "#1E88E5", bg: "rgba(30, 136, 229, 0.12)", border: "#1E88E5", emoji: "🔵" },
+    { level: 6, name: "Third Eye", color: "#3F51B5", bg: "rgba(63, 81, 181, 0.12)", border: "#3F51B5", emoji: "🟣" },
+    { level: 7, name: "Crown Chakra", color: "#8E24AA", bg: "linear-gradient(135deg, rgba(142,36,170,0.18), rgba(212,175,55,0.22))", border: "#D4AF37", emoji: "👑" }
+];
+
 export const DB = {
+    getState: () => getState(),
+    getMeditationHistory: () => getState().meditationHistory || [],
     // Auth
     login: async (userData) => {
         const state = getState();
@@ -172,6 +185,30 @@ export const DB = {
     },
 
     getUser: () => getState().user,
+
+    setDailyGoal: (minutes) => {
+        const state = getState();
+        if (!state.user) state.user = { name: 'Alex' };
+        state.user.dailyCommitment = Math.max(1, parseInt(minutes) || 20);
+        saveState(state);
+        return state.user.dailyCommitment;
+    },
+
+    setDailyReminder: (enabled, timeStr) => {
+        const state = getState();
+        if (!state.user) state.user = { name: 'Alex' };
+        state.user.reminderSchedule = { enabled, time: timeStr || '08:00' };
+        saveState(state);
+        return state.user.reminderSchedule;
+    },
+
+    updateProfileAvatar: (avatarPath) => {
+        const state = getState();
+        if (!state.user) state.user = { name: 'Alex' };
+        state.user.avatar = avatarPath;
+        saveState(state);
+        return state.user.avatar;
+    },
 
     // Progress & Stats
     getStats: () => {
@@ -549,7 +586,8 @@ export const DB = {
                 { type: 'sit_any', label: 'Complete any meditation session' },
                 { type: 'log_grateful', label: 'Log a Grateful mood reflection' },
                 { type: 'read_wisdom', label: 'Read any Wisdom Library article' },
-                { type: 'sit_anapana', label: 'Complete an Anapana session' }
+                { type: 'sit_anapana', label: 'Complete an Anapana session' },
+                { type: 'journey_path', label: 'Complete a Journey path session' }
             ];
 
             const unlocked = state.unlockedPathIds || [];
@@ -606,6 +644,8 @@ export const DB = {
                 q.completed = todayHistory.some(h => h.path === 'tmi');
             } else if (q.type === 'sit_zen') {
                 q.completed = todayHistory.some(h => h.path === 'zen');
+            } else if (q.type === 'journey_path') {
+                q.completed = todayHistory.some(h => h.path && h.path !== 'free' && h.path !== 'standalone');
             }
             if (q.completed) {
                 saveState(state);
@@ -698,13 +738,13 @@ export const DB = {
 
         // Quest pool — rotates by day of year
         const QUESTS = [
-            { type: 'meditate', emoji: '🧘', label: 'Complete a meditation session', xp: 30 },
-            { type: 'reflect',  emoji: '📝', label: 'Log a mood reflection',          xp: 20 },
-            { type: 'wisdom',   emoji: '📖', label: 'Read a Wisdom Library article',  xp: 25 },
-            { type: 'meditate', emoji: '🌿', label: 'Meditate for 10+ minutes',       xp: 40 },
-            { type: 'reflect',  emoji: '💭', label: 'Write a reflection note',         xp: 20 },
-            { type: 'wisdom',   emoji: '🌟', label: 'Unlock & read a new article',    xp: 25 },
-            { type: 'meditate', emoji: '🔥', label: 'Extend your daily streak',       xp: 35 },
+            { type: 'meditate', emoji: '🧘', label: 'Complete a meditation session', xp: 30, target: 'breathe' },
+            { type: 'reflect',  emoji: '📝', label: 'Log a mood reflection',          xp: 20, target: 'reflect' },
+            { type: 'wisdom',   emoji: '📖', label: 'Read a Wisdom Library article',  xp: 25, target: 'wisdom' },
+            { type: 'journey',  emoji: '🗺️', label: 'Complete a Journey path sit',     xp: 35, target: 'journey' },
+            { type: 'meditate', emoji: '🌿', label: 'Meditate for 10+ minutes',       xp: 40, target: 'breathe' },
+            { type: 'reflect',  emoji: '💭', label: 'Write a reflection note',         xp: 20, target: 'reflect' },
+            { type: 'meditate', emoji: '🔥', label: 'Extend your daily streak',       xp: 35, target: 'breathe' },
         ];
 
         // Rotate quest by calendar day
@@ -712,12 +752,36 @@ export const DB = {
         const quest = QUESTS[dayOfYear % QUESTS.length];
 
         const dq = state.dailyQuests || {};
-        const isToday = dq.completedDate === todayStr;
+        const isTodayClaimed = (dq.completedDate === todayStr) && (dq.questType === quest.type) && (dq.claimed === true);
+
+        // Evaluate dynamic completion for today
+        const todayHistory = (state.meditationHistory || []).filter(item => toDateStr(item.date) === todayStr);
+        const todayReflections = (state.reflectionHistory || []).filter(item => toDateStr(item.date) === todayStr);
+        const todayReadArticles = (state.readArticles || []);
+
+        let isCompleted = false;
+        if (quest.type === 'meditate') {
+            if (quest.label.includes('10+')) {
+                isCompleted = todayHistory.some(h => (h.duration || 0) >= 10);
+            } else {
+                isCompleted = todayHistory.length > 0;
+            }
+        } else if (quest.type === 'reflect') {
+            isCompleted = todayReflections.length > 0;
+        } else if (quest.type === 'wisdom') {
+            isCompleted = todayReadArticles.length > 0;
+        } else if (quest.type === 'journey') {
+            isCompleted = todayHistory.some(h => h.path && h.path !== 'free' && h.path !== 'standalone');
+        }
+
+        if (isTodayClaimed) {
+            isCompleted = true;
+        }
 
         return {
             ...quest,
-            completed: isToday && dq.questType === quest.type,
-            claimed:   isToday && dq.claimed,
+            completed: isCompleted,
+            claimed: isTodayClaimed,
         };
     },
 
@@ -727,8 +791,8 @@ export const DB = {
         const dq = state.dailyQuests || {};
         if (dq.claimed && dq.completedDate === todayStr) return false; // already claimed
 
-        const XP_MAP = { meditate: 30, reflect: 20, wisdom: 25 };
-        const xpEarned = XP_MAP[questType] || 20;
+        const currentQuest = DB.getDailyQuest();
+        const xpEarned = currentQuest.xp || 25;
 
         const oldLevel = state.level;
         state.xp = (state.xp || 0) + xpEarned;
@@ -738,7 +802,7 @@ export const DB = {
 
         state.dailyQuests = {
             completedDate: todayStr,
-            questType,
+            questType: questType || currentQuest.type,
             completed: true,
             claimed: true,
         };
@@ -761,7 +825,36 @@ export const DB = {
         const newlyUnlocked = [];
 
         ACHIEVEMENTS.forEach(ach => {
-            if (!state.unlockedAchievements[ach.id]) {
+            if (ach.tiers) {
+                const val = ach.getValue(state);
+                ach.tiers.forEach(t => {
+                    const key = `${ach.id}_lvl_${t.level}`;
+                    if (val >= t.target && !state.unlockedAchievements[key]) {
+                        state.unlockedAchievements[key] = new Date().toISOString();
+                        const oldLevel = state.level;
+                        state.xp = (state.xp || 0) + t.xp;
+                        const newLevel = xpToLevel(state.xp);
+                        state.level = newLevel;
+                        checkAndApplyLevelUpRewards(state, oldLevel, newLevel);
+
+                        const chakra = CHAKRA_LEVELS[Math.min(6, t.level - 1)];
+                        newlyUnlocked.push({
+                            id: key,
+                            title: `${ach.title} (Level ${t.level})`,
+                            desc: `${t.target} milestone reached in ${chakra.name}`,
+                            emoji: ach.emoji,
+                            xp: t.xp,
+                            chakra
+                        });
+
+                        if (newLevel > oldLevel && !silent) {
+                            setTimeout(() => {
+                                window.dispatchEvent(new CustomEvent('siddha-levelup', { detail: { oldLevel, newLevel } }));
+                            }, 2500);
+                        }
+                    }
+                });
+            } else if (!state.unlockedAchievements[ach.id]) {
                 if (ach.check(state)) {
                     state.unlockedAchievements[ach.id] = new Date().toISOString();
                     const oldLevel = state.level;
@@ -778,11 +871,10 @@ export const DB = {
                         xp: ach.xp
                     });
 
-                    // Trigger level-up celebration event if level increases (and not silent)
                     if (newLevel > oldLevel && !silent) {
                         setTimeout(() => {
                             window.dispatchEvent(new CustomEvent('siddha-levelup', { detail: { oldLevel, newLevel } }));
-                        }, 2500); // Delay level-up modal slightly to not overlap
+                        }, 2500);
                     }
                 }
             }
@@ -792,7 +884,6 @@ export const DB = {
             saveState(state);
             if (!silent) {
                 newlyUnlocked.forEach((ach, index) => {
-                    // Stagger overlay triggers if multiple unlock at once
                     setTimeout(() => {
                         window.dispatchEvent(new CustomEvent('siddha-achievement', { detail: ach }));
                     }, index * 500);
@@ -806,19 +897,48 @@ export const DB = {
         if (!state.unlockedAchievements) state.unlockedAchievements = {};
 
         return ACHIEVEMENTS.map(ach => {
-            const unlocked = !!state.unlockedAchievements[ach.id];
-            const prog = ach.progress(state);
-            return {
-                id: ach.id,
-                title: ach.title,
-                desc: ach.desc,
-                emoji: ach.emoji,
-                xp: ach.xp,
-                unlocked,
-                unlockDate: state.unlockedAchievements[ach.id] || null,
-                current: prog.current,
-                target: prog.target
-            };
+            if (ach.tiers) {
+                const val = ach.getValue(state);
+                let currentLevel = 0;
+                ach.tiers.forEach(t => {
+                    if (val >= t.target) currentLevel = t.level;
+                });
+
+                const maxLevel = ach.tiers.length;
+                const nextTier = ach.tiers.find(t => t.level === currentLevel + 1) || ach.tiers[maxLevel - 1];
+                const currentTier = ach.tiers.find(t => t.level === currentLevel) || { level: 0, target: 0, xp: 0 };
+                const chakra = CHAKRA_LEVELS[Math.min(6, Math.max(0, (currentLevel > 0 ? currentLevel - 1 : 0)))] || CHAKRA_LEVELS[0];
+
+                return {
+                    id: ach.id,
+                    title: ach.title,
+                    desc: ach.desc,
+                    emoji: ach.emoji,
+                    isTiered: true,
+                    currentLevel,
+                    maxLevel,
+                    val,
+                    target: nextTier.target,
+                    currentTier,
+                    nextTier,
+                    chakra,
+                    unlocked: currentLevel > 0
+                };
+            } else {
+                const unlocked = !!state.unlockedAchievements[ach.id];
+                const prog = ach.progress(state);
+                return {
+                    id: ach.id,
+                    title: ach.title,
+                    desc: ach.desc,
+                    emoji: ach.emoji,
+                    xp: ach.xp,
+                    unlocked,
+                    unlockDate: state.unlockedAchievements[ach.id] || null,
+                    val: prog.current,
+                    target: prog.target
+                };
+            }
         });
     },
 
@@ -879,123 +999,99 @@ export const DB = {
 // Constant definition of all achievements
 const ACHIEVEMENTS = [
     {
-        id: 'first_steps',
-        title: 'First Steps',
-        desc: 'Complete your first meditation session',
-        emoji: '🌱',
-        xp: 20,
-        check: (state) => state.meditationHistory && state.meditationHistory.length >= 1,
-        progress: (state) => {
-            const count = state.meditationHistory ? state.meditationHistory.length : 0;
-            return { current: Math.min(1, count), target: 1 };
-        }
-    },
-    {
-        id: 'daily_ritual',
-        title: 'Daily Ritual',
-        desc: 'Reach a 3-day meditation streak',
-        emoji: '🔥',
-        xp: 30,
-        check: (state) => state.streak >= 3,
-        progress: (state) => ({ current: Math.min(3, state.streak || 0), target: 3 })
-    },
-    {
-        id: 'established_mind',
-        title: 'Established Mind',
-        desc: 'Reach a 7-day meditation streak',
+        id: 'sits_milestone',
+        title: 'Meditation Sits',
+        desc: 'Accumulate completed meditation sessions',
         emoji: '🧘',
-        xp: 50,
-        check: (state) => state.streak >= 7,
-        progress: (state) => ({ current: Math.min(7, state.streak || 0), target: 7 })
+        tiers: [
+            { level: 1, target: 1, xp: 20 },
+            { level: 2, target: 5, xp: 30 },
+            { level: 3, target: 10, xp: 40 },
+            { level: 4, target: 25, xp: 60 },
+            { level: 5, target: 50, xp: 80 },
+            { level: 6, target: 100, xp: 120 },
+            { level: 7, target: 250, xp: 200 }
+        ],
+        getValue: (state) => (state.meditationHistory || []).length
     },
     {
-        id: 'deep_presence',
-        title: 'Deep Presence',
-        desc: 'Sit for 30+ minutes in a single session',
-        emoji: '🌊',
-        xp: 40,
-        check: (state) => {
-            if (!state.meditationHistory) return false;
-            return state.meditationHistory.some(s => s.duration >= 30);
-        },
-        progress: (state) => {
-            if (!state.meditationHistory) return { current: 0, target: 30 };
-            const maxDur = state.meditationHistory.reduce((max, s) => Math.max(max, s.duration || 0), 0);
-            return { current: Math.min(30, maxDur), target: 30 };
-        }
+        id: 'minutes_milestone',
+        title: 'Mindful Minutes',
+        desc: 'Accumulate total minutes spent in quiet sit',
+        emoji: '⏱️',
+        tiers: [
+            { level: 1, target: 10, xp: 20 },
+            { level: 2, target: 50, xp: 30 },
+            { level: 3, target: 100, xp: 40 },
+            { level: 4, target: 250, xp: 60 },
+            { level: 5, target: 500, xp: 80 },
+            { level: 6, target: 1000, xp: 120 },
+            { level: 7, target: 2500, xp: 200 }
+        ],
+        getValue: (state) => (state.meditationHistory || []).reduce((sum, s) => sum + (s.duration || 0), 0)
     },
     {
-        id: 'zen_master',
-        title: 'Zen Master',
-        desc: 'Complete 10 hours of meditation',
-        emoji: '⛰️',
-        xp: 100,
-        check: (state) => {
-            if (!state.meditationHistory) return false;
-            const total = state.meditationHistory.reduce((sum, s) => sum + (s.duration || 0), 0);
-            return total >= 600; // 10 hours * 60 minutes
-        },
-        progress: (state) => {
-            if (!state.meditationHistory) return { current: 0, target: 600 };
-            const total = state.meditationHistory.reduce((sum, s) => sum + (s.duration || 0), 0);
-            return { current: Math.min(600, total), target: 600 };
-        }
+        id: 'streak_milestone',
+        title: 'Streak Keeper',
+        desc: 'Maintain consecutive daily sit practice',
+        emoji: '🔥',
+        tiers: [
+            { level: 1, target: 1, xp: 15 },
+            { level: 2, target: 3, xp: 25 },
+            { level: 3, target: 7, xp: 40 },
+            { level: 4, target: 14, xp: 60 },
+            { level: 5, target: 30, xp: 90 },
+            { level: 6, target: 60, xp: 140 },
+            { level: 7, target: 108, xp: 250 }
+        ],
+        getValue: (state) => state.streak || 0
     },
     {
-        id: 'pathfinder',
-        title: 'Pathfinder',
-        desc: 'Complete all nodes on any meditation path',
-        emoji: '🗺️',
-        xp: 75,
-        check: (state) => {
-            if (!state.missionProgress) return false;
-            const paths = ['tmi', 'anapana', 'vipassana', 'metta', 'zen'];
-            return paths.some(p => {
-                for (let node = 1; node <= 5; node++) {
-                    const key = `${p}_${node}`;
-                    const completed = state.missionProgress[key] || [];
-                    if (completed.length < 4) return false;
-                    for (let m = 0; m < 4; m++) {
-                        if (!completed.includes(m)) return false;
-                    }
-                }
-                return true;
-            });
-        },
-        progress: (state) => {
-            if (!state.missionProgress) return { current: 0, target: 20 };
-            const paths = ['tmi', 'anapana', 'vipassana', 'metta', 'zen'];
-            let maxCompleted = 0;
-            paths.forEach(p => {
-                let completedMissions = 0;
-                for (let node = 1; node <= 5; node++) {
-                    const key = `${p}_${node}`;
-                    const completed = state.missionProgress[key] || [];
-                    for (let m = 0; m < 4; m++) {
-                        if (completed.includes(m)) completedMissions++;
-                    }
-                }
-                maxCompleted = Math.max(maxCompleted, completedMissions);
-            });
-            return { current: maxCompleted, target: 20 };
-        }
+        id: 'pathways_milestone',
+        title: 'Path Explorer',
+        desc: 'Practice across unlocked meditation lineages',
+        emoji: '🧭',
+        tiers: [
+            { level: 1, target: 1, xp: 20 },
+            { level: 2, target: 2, xp: 30 },
+            { level: 3, target: 3, xp: 40 },
+            { level: 4, target: 4, xp: 50 },
+            { level: 5, target: 5, xp: 70 },
+            { level: 6, target: 6, xp: 90 },
+            { level: 7, target: 7, xp: 120 }
+        ],
+        getValue: (state) => (state.unlockedPathIds || ['anapana']).length
+    },
+    {
+        id: 'reflections_milestone',
+        title: 'Reflective Soul',
+        desc: 'Log post-meditation mood & mind reflections',
+        emoji: '📝',
+        tiers: [
+            { level: 1, target: 1, xp: 15 },
+            { level: 2, target: 3, xp: 25 },
+            { level: 3, target: 5, xp: 35 },
+            { level: 4, target: 10, xp: 50 },
+            { level: 5, target: 20, xp: 75 },
+            { level: 6, target: 35, xp: 100 },
+            { level: 7, target: 50, xp: 150 }
+        ],
+        getValue: (state) => (state.reflectionHistory || []).length
     },
     {
         id: 'wisdom_seeker',
         title: 'Wisdom Seeker',
-        desc: 'Read 5 Wisdom Library articles',
+        desc: 'Read articles from the Wisdom Library',
         emoji: '📖',
-        xp: 35,
-        check: (state) => state.readArticles && state.readArticles.length >= 5,
-        progress: (state) => ({ current: Math.min(5, state.readArticles ? state.readArticles.length : 0), target: 5 })
-    },
-    {
-        id: 'self_aware',
-        title: 'Self-Aware',
-        desc: 'Log 5 mood reflections',
-        emoji: '📝',
-        xp: 30,
-        check: (state) => state.reflectionHistory && state.reflectionHistory.length >= 5,
-        progress: (state) => ({ current: Math.min(5, state.reflectionHistory ? state.reflectionHistory.length : 0), target: 5 })
+        tiers: [
+            { level: 1, target: 1, xp: 15 },
+            { level: 2, target: 3, xp: 25 },
+            { level: 3, target: 5, xp: 35 },
+            { level: 4, target: 8, xp: 50 },
+            { level: 5, target: 12, xp: 75 },
+            { level: 6, target: 16, xp: 100 },
+            { level: 7, target: 20, xp: 150 }
+        ],
+        getValue: (state) => (state.readArticles || []).length
     }
 ];

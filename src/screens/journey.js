@@ -385,13 +385,8 @@ export function renderJourney() {
             </div>
         </div>
 
-        <!-- Daily quest pinned at bottom -->
-        <div class="jh-quest-bar" id="journey-quest-bar" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;">
-            <div>
-                <p class="jh-quest-title">Daily Quest <span style="color: var(--color-accent-dark); font-weight: 700; margin-left: 6px;">(+25 XP)</span></p>
-                <p class="jh-quest-sub" id="journey-quest-sub">Meditate for 20 minutes</p>
-            </div>
-            <div class="jh-xp-badge" id="journey-quest-badge" style="transition: all 0.2s;">+25 XP</div>
+        <!-- Daily quest (hidden as requested) -->
+        <div class="jh-quest-bar" id="journey-quest-bar" style="display: none !important;">
         </div>
 
         <!-- Mission modal -->

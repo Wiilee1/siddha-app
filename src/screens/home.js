@@ -30,19 +30,20 @@ export function renderHome() {
 
     container.innerHTML = `
         <div class="home-top-section">
-            <!-- Header -->
-            <div class="home-header">
+            <!-- Header Box Card -->
+            <div class="home-header home-header-box">
                 <div style="display:flex; align-items:center; gap:8px;">
                     <img src="./src/assets/logo.png" class="home-logo-avatar" alt="Siddha">
-                    <span style="font-weight:700; font-size:18px; font-family:var(--font-heading); color:#2c3e38;">Siddha</span>
-                    <button id="dev-add-xp" style="font-size:10px; padding:2px 6px; background:transparent; border:1px solid #dcdcdc; border-radius:4px; cursor:pointer; color:#777;">+500 XP</button>
+                    <span style="font-weight:700; font-size:16px; font-family:var(--font-heading); color:#2c3e38;">Siddha</span>
+                    <button id="dev-add-xp" style="font-size:9px; padding:2px 5px; background:transparent; border:1px solid #dcdcdc; border-radius:4px; cursor:pointer; color:#777;">+500 XP</button>
                 </div>
                 <!-- Inline greeting at top -->
                 <div class="home-header-greeting" style="font-size: 12px; color: var(--color-text-secondary); font-weight: 500; font-family: var(--font-body); display: flex; align-items: center; gap: 4px;">
                     Good day, <strong id="home-name">Alex</strong> 👋
                 </div>
-                <button id="home-profile-btn" class="home-icon-btn" aria-label="Profile">
-                    <span class="material-symbols-rounded" style="color:#7a8a81; font-weight:300;">account_circle</span>
+                <!-- Profile Avatar at top right -->
+                <button id="home-profile-btn" aria-label="Profile" style="padding:0; background:none; border:none; cursor:pointer; flex-shrink:0;">
+                    <img id="home-profile-avatar-img" src="./src/assets/avatar_monk.jpg" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:2px solid var(--color-accent); box-shadow:0 2px 6px rgba(0,0,0,0.1);" alt="Profile">
                 </button>
             </div>
         </div>
@@ -51,8 +52,13 @@ export function renderHome() {
         <div class="home-hero-area">
             <div id="hero-anim-container" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;"></div>
             <div id="companion-speech-bubble" class="companion-bubble">
+                <div class="companion-bubble-top-icon">
+                    <span class="material-symbols-rounded" style="font-size:16px; color:#5c7866;">spa</span>
+                </div>
                 <span id="companion-bubble-text"></span>
-                <div class="companion-bubble-tail"></div>
+                <div class="companion-bubble-tail">
+                    <div class="companion-bubble-tail-notch"></div>
+                </div>
             </div>
         </div>
 
@@ -124,6 +130,20 @@ export function renderHome() {
                 </div>
             </div>
 
+            <!-- Daily Quest Card -->
+            <div class="home-stat-card row-card dq-card" id="home-dq-card" style="margin-top: 10px; cursor: pointer; transition: all 0.2s; width: 100%;">
+                <div style="flex:1;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <p class="home-stat-title" style="font-weight:700;">Daily Quest</p>
+                        <span id="home-dq-badge" style="font-size:9.5px; font-weight:700; background:var(--color-accent-light); color:var(--color-accent-dark); padding:2px 6px; border-radius:8px;">+25 XP</span>
+                    </div>
+                    <p id="home-dq-text" class="text-sm" style="color:var(--color-text-secondary); margin-top:2px; font-size:11px;">Complete your daily practice</p>
+                </div>
+                <div class="home-icon-badge" id="home-dq-icon" style="background:#e8f4ec; color:#2c8242;">
+                    <span class="material-symbols-rounded">task_alt</span>
+                </div>
+            </div>
+
             <!-- Wisdom Card -->
             <div class="home-stat-card row-card" data-link="wisdom" style="margin-top: 10px; background: linear-gradient(135deg, #ffffff 0%, #f6f8f6 100%); border-left: 3px solid var(--color-accent); width: 100%;">
                 <div style="flex:1;">
@@ -156,15 +176,24 @@ export function renderHome() {
         }
 
         .home-top-section {
-            padding: calc(14px + env(safe-area-inset-top, 0px)) 20px 0;
-            background: #f4f3ed;
+            padding: 0;
+            width: 100%;
+            z-index: 20;
+            position: relative;
         }
 
-        .home-header {
+        .home-header-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 20px;
+            width: 100%;
+            padding: calc(12px + env(safe-area-inset-top, 0px)) 18px 12px;
+            background: rgba(253, 252, 248, 0.94);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(134, 155, 143, 0.28);
+            border-radius: 0;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
         }
         .home-logo-avatar {
             width: 28px; height: 28px;
@@ -338,59 +367,79 @@ export function renderHome() {
         
         .companion-bubble {
             position: absolute;
-            top: 25px;
+            top: 68px;
             left: 50%;
             transform: translateX(-50%) scale(0.85);
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(246, 245, 239, 0.42);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(134, 155, 143, 0.3);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 10px 16px;
-            max-width: 85%;
-            min-width: 160px;
+            max-width: 78%;
+            min-width: 140px;
             text-align: center;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
             z-index: 10;
             cursor: pointer;
-            pointer-events: none; /* Ignore clicks when hidden */
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            pointer-events: none;
             opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
         }
         .companion-bubble.visible {
             opacity: 1;
             pointer-events: auto;
             transform: translateX(-50%) scale(1);
         }
+        .companion-bubble-top-icon {
+            position: absolute;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(246, 245, 239, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            padding: 0 5px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 16px;
+        }
         .companion-bubble.visible:hover {
-            transform: translateX(-50%) scale(1.03);
-            background: rgba(255, 255, 255, 0.98);
+            transform: translateX(-50%) scale(1.02);
+            background: rgba(246, 245, 239, 0.58);
         }
         .companion-bubble.visible:active {
             transform: translateX(-50%) scale(0.97);
         }
         #companion-bubble-text {
-            font-size: 12px;
-            line-height: 1.45;
-            color: var(--color-text-primary);
+            font-size: 11.5px;
+            line-height: 1.42;
+            color: #243329;
             font-family: var(--font-body);
-            font-weight: 500;
-            font-style: italic;
+            font-weight: 600;
             display: inline-block;
         }
         .companion-bubble-tail {
             position: absolute;
             bottom: -6px;
             left: 50%;
-            transform: translateX(-50%) rotate(45deg);
-            width: 12px;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.95);
-            border-right: 1px solid rgba(134, 155, 143, 0.2);
-            border-bottom: 1px solid rgba(134, 155, 143, 0.2);
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+        }
+        .companion-bubble-tail-notch {
+            width: 10px;
+            height: 10px;
+            background: rgba(246, 245, 239, 0.42);
+            border-right: 1px solid rgba(134, 155, 143, 0.3);
+            border-bottom: 1px solid rgba(134, 155, 143, 0.3);
+            transform: rotate(45deg);
+            border-bottom-right-radius: 2px;
         }
         .companion-bubble.visible:hover .companion-bubble-tail {
-            background: rgba(255, 255, 255, 0.98);
+            background: #ffffff;
         }
     `;
 
@@ -415,10 +464,39 @@ export function renderHome() {
         card.addEventListener('click', () => {
             const target = card.getAttribute('data-link');
             if (target) {
-                document.querySelector(`[data-target="${target}"]`)?.click();
+                const navBtn = document.querySelector(`[data-target="${target}"]`);
+                if (navBtn) navBtn.click();
+                if (card.querySelector('#home-today-minutes')) {
+                    setTimeout(() => {
+                        const goalCard = document.querySelector('#profile-goal-card');
+                        if (goalCard) goalCard.scrollIntoView({ behavior: 'smooth' });
+                    }, 50);
+                }
             }
         });
     });
+
+    // Daily Quest card click
+    const dqCard = container.querySelector('#home-dq-card');
+    if (dqCard) {
+        dqCard.addEventListener('click', () => {
+            const dq = DB.getDailyQuest ? DB.getDailyQuest() : null;
+            if (dq && (dq.completed || dq.claimed)) {
+                return;
+            }
+            if (dq && dq.target) {
+                document.querySelector(`[data-target="${dq.target}"]`)?.click();
+            } else if (dq && dq.type === 'journey') {
+                document.querySelector('[data-target="journey"]')?.click();
+            } else if (dq && dq.type === 'wisdom') {
+                document.querySelector('[data-target="wisdom"]')?.click();
+            } else if (dq && dq.type === 'reflect') {
+                document.querySelector('[data-target="reflect"]')?.click();
+            } else {
+                document.querySelector('[data-target="breathe"]')?.click();
+            }
+        });
+    }
 
 
 
@@ -622,8 +700,8 @@ export function renderHome() {
                 dailyGoal = user.dailyCommitment;
             }
             if (user.avatar) {
-                const logoAvatar = container.querySelector('.home-logo-avatar');
-                if (logoAvatar) logoAvatar.src = user.avatar;
+                const profileAvatar = container.querySelector('#home-profile-avatar-img');
+                if (profileAvatar) profileAvatar.src = user.avatar;
             }
         }
         container.querySelector('#home-goal-minutes').textContent = dailyGoal;
@@ -643,7 +721,90 @@ export function renderHome() {
         container.querySelector('#home-total-mins').textContent = stats.totalMinutes;
 
         const todayPct = Math.min(100, (stats.todayMinutes / dailyGoal) * 100);
-        container.querySelector('#home-today-bar').style.width = `${todayPct}%`;
+        container.querySelector('#home-today-bar').style.width = todayPct + '%';
+
+        // Daily Quest card state
+        const dq = DB.getDailyQuest ? DB.getDailyQuest() : null;
+        const dqCardEl = container.querySelector('#home-dq-card');
+        if (dq && dqCardEl) {
+            const dqText = container.querySelector('#home-dq-text');
+            const dqBadge = container.querySelector('#home-dq-badge');
+            const dqIcon = container.querySelector('#home-dq-icon');
+
+            if (dq.completed && !dq.claimed) {
+                dqText.textContent = `✓ Completed: ${dq.label}`;
+                dqText.style.fontWeight = '600';
+                dqText.style.color = '#1b5e20';
+                dqBadge.textContent = '🎁 Claim +25 XP';
+                dqBadge.style.background = '#277038';
+                dqBadge.style.color = '#ffffff';
+                dqBadge.style.fontWeight = '700';
+                dqBadge.style.boxShadow = '0 3px 10px rgba(39, 112, 56, 0.35)';
+                if (dqIcon) {
+                    dqIcon.style.background = '#277038';
+                    dqIcon.style.color = '#ffffff';
+                    dqIcon.style.boxShadow = '0 2px 6px rgba(39, 112, 56, 0.25)';
+                    dqIcon.innerHTML = '<span class="material-symbols-rounded">card_giftcard</span>';
+                }
+                dqCardEl.style.background = 'linear-gradient(135deg, #e8f5e9 0%, #f1f8f3 100%)';
+                dqCardEl.style.border = '1.5px solid #277038';
+                dqCardEl.style.boxShadow = '0 3px 12px rgba(39, 112, 56, 0.15)';
+                dqCardEl.style.cursor = 'pointer';
+                
+                dqCardEl.onclick = () => {
+                    if (typeof DB.claimDailyQuest === 'function') {
+                        DB.claimDailyQuest(dq.type);
+                    }
+                    if (typeof container.updateData === 'function') {
+                        container.updateData();
+                    }
+                };
+            } else if (dq.claimed) {
+                dqText.textContent = `✓ Completed: ${dq.label}`;
+                dqText.style.fontWeight = '500';
+                dqText.style.color = '#386641';
+                dqBadge.textContent = '✓ Claimed (+25 XP)';
+                dqBadge.style.background = '#d8e8dc';
+                dqBadge.style.color = '#277038';
+                dqBadge.style.fontWeight = '600';
+                dqBadge.style.boxShadow = 'none';
+                if (dqIcon) {
+                    dqIcon.style.background = '#277038';
+                    dqIcon.style.color = '#ffffff';
+                    dqIcon.style.boxShadow = 'none';
+                    dqIcon.innerHTML = '<span class="material-symbols-rounded">check_circle</span>';
+                }
+                dqCardEl.style.background = '#f2f8f3';
+                dqCardEl.style.border = '1px solid #c2dec9';
+                dqCardEl.style.boxShadow = 'none';
+                dqCardEl.style.cursor = 'default';
+                dqCardEl.onclick = null;
+            } else {
+                dqText.textContent = `${dq.emoji || '🎯'} ${dq.label}`;
+                dqText.style.fontWeight = '400';
+                dqText.style.color = 'var(--color-text-secondary)';
+                dqBadge.textContent = `+${dq.xp || 25} XP`;
+                dqBadge.style.background = 'var(--color-accent-light)';
+                dqBadge.style.color = 'var(--color-accent-dark)';
+                dqBadge.style.boxShadow = 'none';
+                if (dqIcon) {
+                    dqIcon.style.background = '#e8f4ec';
+                    dqIcon.style.color = '#2c8242';
+                    dqIcon.style.boxShadow = 'none';
+                    dqIcon.innerHTML = '<span class="material-symbols-rounded">task_alt</span>';
+                }
+                dqCardEl.style.background = 'var(--color-bg-card)';
+                dqCardEl.style.border = 'none';
+                dqCardEl.style.boxShadow = 'none';
+                dqCardEl.style.cursor = 'pointer';
+                
+                dqCardEl.onclick = () => {
+                    const targetTab = (dq && dq.target) ? dq.target : (dq && dq.type === 'wisdom' ? 'wisdom' : dq && dq.type === 'reflect' ? 'reflect' : dq && dq.type === 'journey' ? 'journey' : 'breathe');
+                    const nav = document.querySelector('.bottom-nav [data-target="' + targetTab + '"]');
+                    if (nav) nav.click();
+                };
+            }
+        }
 
         // XP bar using scaled level thresholds
         const xpProgress = xpInCurrentLevel(stats.xp);
@@ -670,7 +831,7 @@ export function renderHome() {
         container.style.backgroundImage = `url('./src/assets/${bgImg}')`;
         updateHeroAnimations(stats.level, stats.daysSinceLastSession);
 
-        // Siddha Speech Bubble Dialogue
+        // Siddha Speech Bubble Dialogue (Pops in after 1.5s, stays visible)
         const bubble = container.querySelector('#companion-speech-bubble');
         const bubbleText = container.querySelector('#companion-bubble-text');
         
@@ -680,10 +841,8 @@ export function renderHome() {
 
         if (bubble && bubbleText) {
             const showBubble = () => {
-                // Only run if we are still on the home screen
                 if (!document.contains(bubble)) return;
 
-                // Pick a random quote
                 let newQuote;
                 const current = bubbleText.textContent;
                 do {
@@ -693,23 +852,22 @@ export function renderHome() {
                 bubbleText.textContent = newQuote;
                 bubble.classList.add('visible');
 
-                // Keep it visible for 5-8 seconds, then hide
-                const readTime = 5000 + Math.random() * 3000;
+                // Display for exactly 7 seconds then disappear
+                if (window.siddhaBubbleHideTimer) clearTimeout(window.siddhaBubbleHideTimer);
                 window.siddhaBubbleHideTimer = setTimeout(() => {
                     if (document.contains(bubble)) {
                         bubble.classList.remove('visible');
                         
-                        // Schedule next appearance (10-25 seconds after hiding)
-                        const nextWait = 10000 + Math.random() * 15000;
+                        // Schedule next appearance
+                        const nextWait = 14000 + Math.random() * 10000;
                         window.siddhaBubbleTimer = setTimeout(showBubble, nextWait);
                     }
-                }, readTime);
+                }, 7000);
             };
 
-            // Initial appearance after a short delay
-            window.siddhaBubbleTimer = setTimeout(showBubble, 1500);
+            // Entrance after 5 seconds (with text ready)
+            window.siddhaBubbleTimer = setTimeout(showBubble, 5000);
             
-            // Allow clicking to dismiss it early
             bubble.onclick = (e) => {
                 e.stopPropagation();
                 bubble.style.transform = 'translateX(-50%) scale(0.92)';
@@ -717,11 +875,12 @@ export function renderHome() {
                     bubble.style.transform = '';
                     bubble.classList.remove('visible');
                     
-                    // Reset the cycle
-                    clearTimeout(window.siddhaBubbleHideTimer);
-                    clearTimeout(window.siddhaBubbleTimer);
-                    window.siddhaBubbleTimer = setTimeout(showBubble, 8000 + Math.random() * 10000);
-                }, 150);
+                    if (window.siddhaBubbleTimer) clearTimeout(window.siddhaBubbleTimer);
+                    if (window.siddhaBubbleHideTimer) clearTimeout(window.siddhaBubbleHideTimer);
+                    
+                    const nextWait = 10000 + Math.random() * 10000;
+                    window.siddhaBubbleTimer = setTimeout(showBubble, nextWait);
+                }, 200);
             };
         }
 

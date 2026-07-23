@@ -187,6 +187,7 @@ export const Synth = {
     },
 
     playSingleBell: () => {
+        if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
         try {
             initAudioContext();
             const osc = audioCtx.createOscillator();
@@ -196,8 +197,8 @@ export const Synth = {
             osc.frequency.setValueAtTime(293.66, audioCtx.currentTime); // D4
             
             gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 4.0);
+            gain.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + 0.1); // Peak gain 0.2
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 4.5);
 
             osc.connect(gain);
             gain.connect(audioCtx.destination);
@@ -207,5 +208,27 @@ export const Synth = {
         } catch(e) {
             console.warn("Could not play bell tone:", e);
         }
+    },
+
+    playMenuClick: () => {
+        if (localStorage.getItem('siddha_sound_menu_muted') === 'true') return;
+        try {
+            initAudioContext();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.04, audioCtx.currentTime + 0.015);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        } catch(e) {}
     }
 };

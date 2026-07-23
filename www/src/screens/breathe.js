@@ -309,7 +309,7 @@ export function renderBreathe(onComplete) {
         let lastTickTime = null;
 
         // Persist mute state across sessions
-        let isMuted = localStorage.getItem('siddha_sound_muted') === 'true';
+        let isMuted = localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true';
         function applyMuteState() {
             muteIcon.textContent = isMuted ? 'volume_off' : 'volume_up';
             muteBtn.style.background = isMuted ? 'rgba(255,80,80,0.25)' : 'rgba(255,255,255,0.1)';
@@ -491,8 +491,11 @@ export function renderBreathe(onComplete) {
             sessionElapsed = 0;
             updateDisplay();
 
-            // Play completion bell
+            // Play completion bell & 2 end-of-session vibration pulses
             if (!isMuted) Synth.playSingleBell();
+            if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                try { navigator.vibrate([400, 200, 400]); } catch(e) {}
+            }
 
             if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped });
         }

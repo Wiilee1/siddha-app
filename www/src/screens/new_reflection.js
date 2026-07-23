@@ -49,9 +49,89 @@ export function renderNewReflection(onComplete) {
             </div>
         </div>
 
-        <!-- Reflection text -->
+        <!-- Meditation-Only State Spectrums & Orb -->
+        <div id="nr-meditation-spectrums">
+            <!-- Zen State Orb Preview & Polarity Descriptor -->
+            <div class="nr-section" style="text-align: center; margin-bottom: 24px;">
+                <div class="nr-orb-container" style="position: relative; width: 110px; height: 110px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;">
+                    <div id="nr-state-orb" style="width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9); box-shadow: 0 0 24px rgba(139, 92, 246, 0.4); transition: all 0.25s ease-out; display: flex; align-items: center; justify-content: center;">
+                        <span id="nr-orb-emoji" style="font-size: 28px;">🧘</span>
+                    </div>
+                </div>
+                <h4 id="nr-state-title" style="font-size: 15px; font-weight: 700; margin: 0 0 4px; font-family: var(--font-heading); color: var(--color-text-primary);">Focused Clarity</h4>
+                <p id="nr-state-desc" class="text-sm" style="color: var(--color-text-secondary); margin: 0; font-size: 12px;">Steady Concentration & Clear Mindfulness</p>
+            </div>
+
+            <!-- Dual Polarity Spectrum Sliders -->
+            <div class="nr-section">
+                <h3 class="nr-section-title">Mind State Spectrums</h3>
+
+                <!-- Slider 1: Focus Polarity -->
+                <div style="margin-bottom: 16px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Focus & Concentration</span>
+                        <span id="nr-focus-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
+                    </div>
+                    <input type="range" id="nr-focus-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
+                        <span>🌀 Wandering</span>
+                        <span>✨ Absorbed</span>
+                    </div>
+                </div>
+
+                <!-- Slider 2: Stability & Clarity Polarity -->
+                <div style="margin-bottom: 16px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Stability & Clarity</span>
+                        <span id="nr-stability-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
+                    </div>
+                    <input type="range" id="nr-stability-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
+                        <span>💤 Sleepy / Dull</span>
+                        <span>☀️ Vivid / Luminous</span>
+                    </div>
+                </div>
+
+                <!-- Slider 3: Equanimity & Non-Reactivity Polarity -->
+                <div style="margin-bottom: 20px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Equanimity & Openness</span>
+                        <span id="nr-equanimity-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
+                    </div>
+                    <input type="range" id="nr-equanimity-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
+                        <span>⚡ Tense / Resistant</span>
+                        <span>🕊️ Open / Equanimous</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mental Hindrances -->
         <div class="nr-section">
-            <h3 class="nr-section-title">Notes</h3>
+            <h3 class="nr-section-title">Mental Obstacles <span class="nr-section-tag">(optional)</span></h3>
+            <div class="nr-chips-row" id="hindrances-selector">
+                <div class="nr-chip nr-chip-multi" data-hindrance="dullness">💤 Sleepiness</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="restlessness">🐝 Restlessness</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="craving">💭 Craving</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="aversion">⚡ Aversion</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="doubt">❓ Doubt</div>
+            </div>
+        </div>
+
+        <!-- Reflection Prompts & Notes -->
+        <div class="nr-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h3 class="nr-section-title" style="margin:0;">Notes & Insights</h3>
+                <span style="font-size:10px; color:var(--color-text-muted);">Tap prompt to insert</span>
+            </div>
+            <!-- Interactive Guided Prompt Chips -->
+            <div class="nr-chips-row" id="guided-prompts-row" style="margin-bottom:10px;">
+                <button class="nr-chip prompt-chip" data-prompt="What arose during the sit: ">💡 What arose?</button>
+                <button class="nr-chip prompt-chip" data-prompt="Where was breath felt most clearly: ">🌬️ Breath anchor?</button>
+                <button class="nr-chip prompt-chip" data-prompt="Tension softened in: ">🌿 Tension release?</button>
+                <button class="nr-chip prompt-chip" data-prompt="Insight gained today: ">✨ Today's insight?</button>
+            </div>
             <textarea id="reflection-text" class="nr-textarea"
                 placeholder="Write down your insights, thoughts, or feelings..."></textarea>
         </div>
@@ -192,6 +272,35 @@ export function renderNewReflection(onComplete) {
         }
         .nr-textarea:focus { border-color: var(--color-accent); }
 
+        /* Chips Section */
+        .nr-section-tag { font-size: 11px; font-weight: 400; color: var(--color-text-muted); }
+        .nr-chips-row {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-top: 4px;
+        }
+        .nr-chip {
+            padding: 6px 12px;
+            background: var(--color-bg-secondary);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 20px;
+            font-size: 12px; font-weight: 500;
+            color: var(--color-text-secondary);
+            cursor: pointer; user-select: none;
+            transition: all 0.2s ease;
+        }
+        .nr-chip:active { transform: scale(0.95); }
+        .nr-chip.active {
+            background: var(--color-accent-light);
+            border-color: var(--color-accent);
+            color: var(--color-accent-dark);
+            font-weight: 600;
+        }
+        .nr-chip-multi.active {
+            background: rgba(124, 69, 89, 0.12);
+            border-color: rgba(124, 69, 89, 0.3);
+            color: #7C4559;
+        }
+
         /* Finish btn */
         .nr-finish-btn { 
             width: 100%; 
@@ -206,7 +315,13 @@ export function renderNewReflection(onComplete) {
     container.appendChild(style);
 
     let selectedMood = 'calm';
+    let selectedFocusDepth = 'settling';
+    const selectedHindrances = new Set();
     let earnedXP = 0;
+
+    let currentFocusScore = 50;
+    let currentStabilityScore = 50;
+    let currentEquanimityScore = 50;
 
     // Mood selector
     const moodBtns = container.querySelectorAll('.nr-mood');
@@ -217,8 +332,134 @@ export function renderNewReflection(onComplete) {
             selectedMood = btn.dataset.mood;
         });
     });
-    // Default selection
-    container.querySelector('[data-mood="calm"]').classList.add('active');
+    const defaultMood = container.querySelector('[data-mood="calm"]');
+    if (defaultMood) defaultMood.classList.add('active');
+
+    // 3-Pillar Zen State Orb & Mandala Updater
+    const updateStateOrb = (focus, stability, equanimity) => {
+        const focusValEl = container.querySelector('#nr-focus-val');
+        const stabilityValEl = container.querySelector('#nr-stability-val');
+        const equanimityValEl = container.querySelector('#nr-equanimity-val');
+        const orb = container.querySelector('#nr-state-orb');
+        const orbEmoji = container.querySelector('#nr-orb-emoji');
+        const stateTitle = container.querySelector('#nr-state-title');
+        const stateDesc = container.querySelector('#nr-state-desc');
+
+        if (focusValEl) focusValEl.textContent = `${focus}%`;
+        if (stabilityValEl) stabilityValEl.textContent = `${stability}%`;
+        if (equanimityValEl) equanimityValEl.textContent = `${equanimity}%`;
+
+        const avgScore = (focus + stability + equanimity) / 3;
+        const scale = 0.75 + (avgScore / 100) * 0.55;
+        const shadowBlur = 12 + Math.round((avgScore / 100) * 32);
+
+        let grad = 'radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9)';
+        let emoji = '🧘';
+        let title = 'Focused Clarity';
+        let desc = 'Steady Concentration & Clear Mindfulness';
+        let shadowColor = 'rgba(139, 92, 246, 0.4)';
+
+        if (equanimity >= 75 && focus >= 75 && stability >= 75) {
+            grad = 'radial-gradient(circle at 30% 30%, #10b981, #047857)';
+            emoji = '🕊️';
+            title = 'Open Samadhi';
+            desc = 'Single-Pointed Absorption & Deep Equanimity';
+            shadowColor = 'rgba(16, 185, 129, 0.5)';
+            selectedFocusDepth = 'absorbed';
+        } else if (equanimity >= 70 && focus < 40) {
+            grad = 'radial-gradient(circle at 30% 30%, #06b6d4, #0891b2)';
+            emoji = '🌊';
+            title = 'Equanimous Ease';
+            desc = 'Open Non-Reactivity to Wandering Thoughts';
+            shadowColor = 'rgba(6, 182, 212, 0.4)';
+            selectedFocusDepth = 'settling';
+        } else if (equanimity < 35 && focus >= 60) {
+            grad = 'radial-gradient(circle at 30% 30%, #f43f5e, #be123c)';
+            emoji = '⚡';
+            title = 'Striving Focus';
+            desc = 'Tense Concentration with Mild Resistance';
+            shadowColor = 'rgba(244, 63, 94, 0.4)';
+            selectedFocusDepth = 'unsteady';
+        } else if (focus < 40 && stability < 40) {
+            grad = 'radial-gradient(circle at 30% 30%, #f59e0b, #d97706)';
+            emoji = '💤';
+            title = 'Sleepy Drift';
+            desc = 'Dullness & Sluggish Presence';
+            shadowColor = 'rgba(245, 158, 11, 0.4)';
+            selectedFocusDepth = 'wandering';
+        } else if (focus >= 50 && stability >= 50) {
+            grad = 'radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9)';
+            emoji = '🧘';
+            title = 'Focused Clarity';
+            desc = 'Steady Concentration & Clear Mindfulness';
+            shadowColor = 'rgba(139, 92, 246, 0.4)';
+            selectedFocusDepth = 'focused';
+        }
+
+        if (orb) {
+            orb.style.transform = `scale(${scale})`;
+            orb.style.background = grad;
+            orb.style.boxShadow = `0 0 ${shadowBlur}px ${shadowColor}`;
+        }
+        if (orbEmoji) orbEmoji.textContent = emoji;
+        if (stateTitle) stateTitle.textContent = title;
+        if (stateDesc) stateDesc.textContent = desc;
+    };
+
+    // Sliders input listeners
+    const focusSlider = container.querySelector('#nr-focus-slider');
+    const stabilitySlider = container.querySelector('#nr-stability-slider');
+    const equanimitySlider = container.querySelector('#nr-equanimity-slider');
+
+    if (focusSlider) {
+        focusSlider.addEventListener('input', (e) => {
+            currentFocusScore = parseInt(e.target.value) || 50;
+            updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
+        });
+    }
+    if (stabilitySlider) {
+        stabilitySlider.addEventListener('input', (e) => {
+            currentStabilityScore = parseInt(e.target.value) || 50;
+            updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
+        });
+    }
+    if (equanimitySlider) {
+        equanimitySlider.addEventListener('input', (e) => {
+            currentEquanimityScore = parseInt(e.target.value) || 50;
+            updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
+        });
+    }
+
+    // Guided Prompt Chips listener
+    container.querySelectorAll('#guided-prompts-row .prompt-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const promptText = btn.getAttribute('data-prompt');
+            const textarea = container.querySelector('#reflection-text');
+            if (textarea && promptText) {
+                if (textarea.value.trim().length > 0) {
+                    textarea.value += `\n${promptText}`;
+                } else {
+                    textarea.value = promptText;
+                }
+                textarea.focus();
+            }
+        });
+    });
+
+    // Hindrance selector (multi-select)
+    const hindranceChips = container.querySelectorAll('#hindrances-selector .nr-chip');
+    hindranceChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const h = chip.dataset.hindrance;
+            if (selectedHindrances.has(h)) {
+                selectedHindrances.delete(h);
+                chip.classList.remove('active');
+            } else {
+                selectedHindrances.add(h);
+                chip.classList.add('active');
+            }
+        });
+    });
 
     // Back button → cancel, go home or back to reflect
     container.querySelector('#nr-back-btn').addEventListener('click', () => {
@@ -232,6 +473,11 @@ export function renderNewReflection(onComplete) {
 
         DB.saveReflection({
             mood: selectedMood,
+            focusDepth: selectedFocusDepth,
+            focusScore: currentFocusScore,
+            stabilityScore: currentStabilityScore,
+            equanimityScore: currentEquanimityScore,
+            hindrances: Array.from(selectedHindrances),
             text: text,
             xp: isStandalone ? 0 : earnedXP,
             duration: isStandalone ? null : (container.sessionData?.duration || null),
@@ -248,14 +494,17 @@ export function renderNewReflection(onComplete) {
         const xpZone = container.querySelector('#nr-xp-zone');
         const titleEl = container.querySelector('#nr-title');
         const subtitleEl = container.querySelector('#nr-subtitle');
+        const spectsEl = container.querySelector('#nr-meditation-spectrums');
 
         if (isStandalone) {
-            // Hide XP celebration, simplify heading
+            // Hide XP celebration, meditation spectrums & orb for quick standalone reflection
             xpZone.classList.add('hidden');
+            if (spectsEl) spectsEl.style.display = 'none';
             titleEl.textContent = 'Quick Reflection';
-            subtitleEl.textContent = 'No meditation required';
+            subtitleEl.textContent = 'Capture your thoughts & mood';
         } else {
             xpZone.classList.remove('hidden');
+            if (spectsEl) spectsEl.style.display = 'block';
             const data = container.sessionData;
             const durationXP = (data.duration || 10) * 5;
             earnedXP = durationXP;
@@ -268,29 +517,29 @@ export function renderNewReflection(onComplete) {
             subtitleEl.textContent = 'Nice work! Session complete.';
 
             const chip = container.querySelector('#nr-mission-chip');
-            const itemNames = { acorns: '🌰 Oak Acorn', blossoms: '🌸 Sage Blossom', nectar: '🍯 Lotus Nectar' };
-            const droppedItem = data.itemDropped;
 
             if (data.mission) {
                 chip.style.display = 'inline-block';
-                let html = `🏆 Mission: <strong>${data.mission.label}</strong> +20 XP`;
-                if (droppedItem && itemNames[droppedItem]) {
-                    html += `<br>🌟 Harvested: <strong>${itemNames[droppedItem]}</strong> + Sync Boost!`;
-                }
-                chip.innerHTML = html;
-            } else if (droppedItem && itemNames[droppedItem]) {
-                chip.style.display = 'inline-block';
-                chip.innerHTML = `🌟 Completed sit in <strong>Sanctuary</strong>.<br>Harvested: <strong>${itemNames[droppedItem]}</strong> + Sync Boost!`;
+                chip.innerHTML = `🏆 Mission: <strong>${data.mission.label}</strong> (+20 XP)`;
             } else {
-                chip.style.display = 'none';
+                chip.style.display = 'inline-block';
+                chip.innerHTML = `✨ Completed <strong>${data.duration || 10}-min</strong> meditation session`;
             }
         }
 
-        // Reset textarea and mood
+        // Reset textarea, mood, focus depth and hindrances
         container.querySelector('#reflection-text').value = '';
         moodBtns.forEach(b => b.classList.remove('active'));
         container.querySelector('[data-mood="calm"]').classList.add('active');
         selectedMood = 'calm';
+
+        focusChips.forEach(c => c.classList.remove('active'));
+        const defaultFocusChip = container.querySelector('[data-depth="settling"]');
+        if (defaultFocusChip) defaultFocusChip.classList.add('active');
+        selectedFocusDepth = 'settling';
+
+        selectedHindrances.clear();
+        hindranceChips.forEach(c => c.classList.remove('active'));
     };
 
     return container;
