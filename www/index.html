@@ -59,35 +59,11 @@
 
     <!-- Scripts -->
     <script type="module" src="./src/main.js"></script>
+    <!-- Auto-redirect to local HTTP server if file:// is opened -->
     <script>
-        // Fallback check to detect CORS issues when opening index.html directly via file://
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                if (window.location.protocol === 'file:') {
-                    const screenContainer = document.getElementById('screen-container');
-                    if (screenContainer && screenContainer.children.length === 0) {
-                    screenContainer.innerHTML = `
-                        <div style="padding: var(--spacing-lg); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh;">
-                            <span class="material-symbols-rounded" style="font-size: 64px; color: #d32f2f; margin-bottom: 16px;">error</span>
-                            <h2 style="margin-bottom: 12px; font-size: 20px;">Local Server Required</h2>
-                            <p class="text-sm" style="margin-bottom: 24px; line-height: 1.6;">
-                                Browsers block modular JavaScript when opening HTML files directly (via <strong>file://</strong>). 
-                                <br><br>
-                                Please run a local server to view the app.
-                            </p>
-                            <div class="card" style="background: #FFF; border: 1px solid var(--color-bg-secondary); width: 100%; text-align: left;">
-                                <p class="text-sm" style="font-family: monospace; font-size: 11px; margin-bottom: 8px;">Run this command in terminal:</p>
-                                <code style="font-family: monospace; font-size: 12px; display: block; background: var(--color-bg-secondary); padding: 8px; border-radius: 4px; word-break: break-all;">cd "siddha-app" && python3 -m http.server 8000</code>
-                                <p class="text-sm" style="font-family: monospace; font-size: 11px; margin-top: 12px; margin-bottom: 8px;">Then open this link:</p>
-                                <a href="http://localhost:8000" target="_blank" style="font-family: monospace; font-size: 12px; color: var(--color-accent-dark); text-decoration: underline;">http://localhost:8000</a>
-                            </div>
-                        </div>
-                    `;
-                    document.querySelector('.bottom-nav').style.display = 'none';
-                    }
-                }
-            }, 1000);
-        });
+        if (window.location.protocol === 'file:') {
+            window.location.href = 'http://localhost:8000';
+        }
     </script>
 </body>
 </html>
