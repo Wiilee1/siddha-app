@@ -63,8 +63,9 @@
         // Fallback check to detect CORS issues when opening index.html directly via file://
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const screenContainer = document.getElementById('screen-container');
-                if (screenContainer && screenContainer.children.length === 0) {
+                if (window.location.protocol === 'file:') {
+                    const screenContainer = document.getElementById('screen-container');
+                    if (screenContainer && screenContainer.children.length === 0) {
                     screenContainer.innerHTML = `
                         <div style="padding: var(--spacing-lg); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh;">
                             <span class="material-symbols-rounded" style="font-size: 64px; color: #d32f2f; margin-bottom: 16px;">error</span>
@@ -83,6 +84,7 @@
                         </div>
                     `;
                     document.querySelector('.bottom-nav').style.display = 'none';
+                    }
                 }
             }, 1000);
         });
