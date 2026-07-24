@@ -7,7 +7,7 @@ export function renderNewReflection(onComplete) {
     container.sessionData = null; // null = standalone mode
 
     container.innerHTML = `
-        <!-- Back button + title -->
+        <!-- Back button + title + Skip button -->
         <div class="nr-header">
             <button class="nr-back-btn" id="nr-back-btn">
                 <span class="material-symbols-rounded">arrow_back</span>
@@ -16,7 +16,7 @@ export function renderNewReflection(onComplete) {
                 <h1 class="nr-title" id="nr-title">Reflection</h1>
                 <p class="nr-subtitle" id="nr-subtitle">How are you feeling?</p>
             </div>
-            <div style="width:40px;"></div>
+            <button id="nr-skip-btn" class="nr-skip-btn">Skip</button>
         </div>
 
         <!-- XP celebration (hidden in standalone mode) -->
@@ -51,7 +51,7 @@ export function renderNewReflection(onComplete) {
 
         <!-- Meditation-Only State Spectrums & Orb -->
         <div id="nr-meditation-spectrums">
-            <!-- Zen State Orb Preview & Polarity Descriptor -->
+            <!-- Zen State Orb Preview -->
             <div class="nr-section" style="text-align: center; margin-bottom: 24px;">
                 <div class="nr-orb-container" style="position: relative; width: 110px; height: 110px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;">
                     <div id="nr-state-orb" style="width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9); box-shadow: 0 0 24px rgba(139, 92, 246, 0.4); transition: all 0.25s ease-out; display: flex; align-items: center; justify-content: center;">
@@ -64,14 +64,20 @@ export function renderNewReflection(onComplete) {
 
             <!-- Dual Polarity Spectrum Sliders -->
             <div class="nr-section">
-                <h3 class="nr-section-title">Mind State Spectrums</h3>
+                <h3 class="nr-section-title" style="margin-bottom:6px;">Mind State Spectrums</h3>
+                <p style="font-size:11px; color:var(--color-text-secondary); margin:0 0 12px 0; line-height:1.4;">
+                    Rate the internal quality of your attention during this sit along 3 core dimensions. These reflect awareness quality rather than performance.
+                </p>
 
                 <!-- Slider 1: Focus Polarity -->
                 <div style="margin-bottom: 16px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Focus & Concentration</span>
                         <span id="nr-focus-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
                     </div>
+                    <p style="font-size: 10px; color: var(--color-text-muted); margin: 0 0 10px 0; line-height: 1.35;">
+                        How continuously your attention stayed anchored to your breath object vs wandering.
+                    </p>
                     <input type="range" id="nr-focus-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
                         <span>🌀 Wandering</span>
@@ -81,10 +87,13 @@ export function renderNewReflection(onComplete) {
 
                 <!-- Slider 2: Stability & Clarity Polarity -->
                 <div style="margin-bottom: 16px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Stability & Clarity</span>
                         <span id="nr-stability-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
                     </div>
+                    <p style="font-size: 10px; color: var(--color-text-muted); margin: 0 0 10px 0; line-height: 1.35;">
+                        Whether your mind felt awake and sharp vs heavy, sluggish, or sleepy.
+                    </p>
                     <input type="range" id="nr-stability-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
                         <span>💤 Sleepy / Dull</span>
@@ -94,10 +103,13 @@ export function renderNewReflection(onComplete) {
 
                 <!-- Slider 3: Equanimity & Non-Reactivity Polarity -->
                 <div style="margin-bottom: 20px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Equanimity & Openness</span>
                         <span id="nr-equanimity-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
                     </div>
+                    <p style="font-size: 10px; color: var(--color-text-muted); margin: 0 0 10px 0; line-height: 1.35;">
+                        How gracefully you allowed thoughts and sensations to be without pushing or resisting.
+                    </p>
                     <input type="range" id="nr-equanimity-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
                         <span>⚡ Tense / Resistant</span>
@@ -165,6 +177,22 @@ export function renderNewReflection(onComplete) {
         .nr-back-btn .material-symbols-rounded { font-size: 20px; }
         .nr-title { font-size: 18px; font-weight: 700; margin: 0 0 2px; }
         .nr-subtitle { font-size: 12px; color: var(--color-text-muted); margin: 0; }
+        .nr-skip-btn {
+            background: var(--color-bg-secondary);
+            border: 1px solid rgba(0,0,0,0.08);
+            color: var(--color-text-primary);
+            font-weight: 600;
+            font-size: 12px;
+            padding: 7px 13px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+        .nr-skip-btn:hover {
+            background: var(--color-accent);
+            color: #ffffff;
+        }
 
         /* XP zone */
         .nr-xp-zone {
@@ -355,38 +383,74 @@ export function renderNewReflection(onComplete) {
 
         let grad = 'radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9)';
         let emoji = '🧘';
-        let title = 'Focused Clarity';
-        let desc = 'Steady Concentration & Clear Mindfulness';
+        let title = 'Balanced Mindfulness';
+        let desc = 'Harmonious Concentration & Steady Flow';
         let shadowColor = 'rgba(139, 92, 246, 0.4)';
 
-        if (equanimity >= 75 && focus >= 75 && stability >= 75) {
+        if (equanimity >= 65 && focus >= 65 && stability >= 65) {
             grad = 'radial-gradient(circle at 30% 30%, #10b981, #047857)';
             emoji = '🕊️';
             title = 'Open Samadhi';
-            desc = 'Single-Pointed Absorption & Deep Equanimity';
+            desc = 'Single-Pointed Absorption, Vivid Clarity & Deep Peace';
             shadowColor = 'rgba(16, 185, 129, 0.5)';
             selectedFocusDepth = 'absorbed';
-        } else if (equanimity >= 70 && focus < 40) {
-            grad = 'radial-gradient(circle at 30% 30%, #06b6d4, #0891b2)';
-            emoji = '🌊';
-            title = 'Equanimous Ease';
-            desc = 'Open Non-Reactivity to Wandering Thoughts';
-            shadowColor = 'rgba(6, 182, 212, 0.4)';
-            selectedFocusDepth = 'settling';
-        } else if (equanimity < 35 && focus >= 60) {
-            grad = 'radial-gradient(circle at 30% 30%, #f43f5e, #be123c)';
-            emoji = '⚡';
-            title = 'Striving Focus';
-            desc = 'Tense Concentration with Mild Resistance';
-            shadowColor = 'rgba(244, 63, 94, 0.4)';
+        } else if (focus >= 60 && stability < 35) {
+            // High Focus + 0-34% Stability = Fighting Sluggishness/Dullness
+            grad = 'radial-gradient(circle at 30% 30%, #7c3aed, #4c1d95)';
+            emoji = '😴';
+            title = 'Striving against Dullness';
+            desc = 'High Effort Fighting Sluggishness & Foggy Mind';
+            shadowColor = 'rgba(124, 58, 237, 0.4)';
             selectedFocusDepth = 'unsteady';
-        } else if (focus < 40 && stability < 40) {
+        } else if (focus < 35 && stability < 35 && equanimity < 35) {
+            grad = 'radial-gradient(circle at 30% 30%, #e11d48, #9f1239)';
+            emoji = '🌪️';
+            title = 'Turbulent Mind';
+            desc = 'Restless Thoughts & Emotional Agitation';
+            shadowColor = 'rgba(225, 29, 72, 0.4)';
+            selectedFocusDepth = 'wandering';
+        } else if (focus < 35 && stability < 35) {
             grad = 'radial-gradient(circle at 30% 30%, #f59e0b, #d97706)';
             emoji = '💤';
             title = 'Sleepy Drift';
             desc = 'Dullness & Sluggish Presence';
             shadowColor = 'rgba(245, 158, 11, 0.4)';
             selectedFocusDepth = 'wandering';
+        } else if (focus >= 65 && stability >= 60 && equanimity < 65) {
+            grad = 'radial-gradient(circle at 30% 30%, #6366f1, #4338ca)';
+            emoji = '🎯';
+            title = 'Laser Clarity';
+            desc = 'Intense Single-Pointed Concentration';
+            shadowColor = 'rgba(99, 102, 241, 0.4)';
+            selectedFocusDepth = 'focused';
+        } else if (focus >= 65 && equanimity < 35) {
+            grad = 'radial-gradient(circle at 30% 30%, #f43f5e, #be123c)';
+            emoji = '⚡';
+            title = 'Tense Striving';
+            desc = 'High Focus with Internal Tension & Resistance';
+            shadowColor = 'rgba(244, 63, 94, 0.4)';
+            selectedFocusDepth = 'unsteady';
+        } else if (equanimity >= 65 && focus < 40) {
+            grad = 'radial-gradient(circle at 30% 30%, #06b6d4, #0891b2)';
+            emoji = '🌊';
+            title = 'Equanimous Flow';
+            desc = 'Open Non-Reactivity to Wandering Thoughts';
+            shadowColor = 'rgba(6, 182, 212, 0.4)';
+            selectedFocusDepth = 'settling';
+        } else if (stability >= 65 && equanimity >= 60) {
+            grad = 'radial-gradient(circle at 30% 30%, #3b82f6, #1d4ed8)';
+            emoji = '🌌';
+            title = 'Tranquil Stillness';
+            desc = 'Quiet Physical Stability & Peaceful Presence';
+            shadowColor = 'rgba(59, 130, 246, 0.4)';
+            selectedFocusDepth = 'settling';
+        } else if (stability >= 45 && focus < 35 && equanimity >= 40) {
+            grad = 'radial-gradient(circle at 30% 30%, #14b8a6, #0f766e)';
+            emoji = '🕯️';
+            title = 'Gentle Anchoring';
+            desc = 'Resting Baseline Stability without Striving Focus';
+            shadowColor = 'rgba(20, 184, 166, 0.4)';
+            selectedFocusDepth = 'settling';
         } else if (focus >= 50 && stability >= 50) {
             grad = 'radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9)';
             emoji = '🧘';
@@ -394,6 +458,13 @@ export function renderNewReflection(onComplete) {
             desc = 'Steady Concentration & Clear Mindfulness';
             shadowColor = 'rgba(139, 92, 246, 0.4)';
             selectedFocusDepth = 'focused';
+        } else {
+            grad = 'radial-gradient(circle at 30% 30%, #a855f7, #7e22ce)';
+            emoji = '🌱';
+            title = 'Gentle Awareness';
+            desc = 'Developing Concentration & Quiet Observation';
+            shadowColor = 'rgba(168, 85, 247, 0.4)';
+            selectedFocusDepth = 'settling';
         }
 
         if (orb) {
@@ -404,6 +475,7 @@ export function renderNewReflection(onComplete) {
         if (orbEmoji) orbEmoji.textContent = emoji;
         if (stateTitle) stateTitle.textContent = title;
         if (stateDesc) stateDesc.textContent = desc;
+
     };
 
     // Sliders input listeners
@@ -413,19 +485,22 @@ export function renderNewReflection(onComplete) {
 
     if (focusSlider) {
         focusSlider.addEventListener('input', (e) => {
-            currentFocusScore = parseInt(e.target.value) || 50;
+            const val = parseInt(e.target.value);
+            currentFocusScore = isNaN(val) ? 50 : val;
             updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
         });
     }
     if (stabilitySlider) {
         stabilitySlider.addEventListener('input', (e) => {
-            currentStabilityScore = parseInt(e.target.value) || 50;
+            const val = parseInt(e.target.value);
+            currentStabilityScore = isNaN(val) ? 50 : val;
             updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
         });
     }
     if (equanimitySlider) {
         equanimitySlider.addEventListener('input', (e) => {
-            currentEquanimityScore = parseInt(e.target.value) || 50;
+            const val = parseInt(e.target.value);
+            currentEquanimityScore = isNaN(val) ? 50 : val;
             updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
         });
     }
@@ -461,6 +536,18 @@ export function renderNewReflection(onComplete) {
         });
     });
 
+    // Skip button listener
+    const skipBtn = container.querySelector('#nr-skip-btn');
+    if (skipBtn) {
+        skipBtn.addEventListener('click', () => {
+            if (onComplete) {
+                onComplete();
+            } else {
+                window.dispatchEvent(new CustomEvent('siddha-navigate', { detail: { target: 'home' } }));
+            }
+        });
+    }
+
     // Back button → cancel, go home or back to reflect
     container.querySelector('#nr-back-btn').addEventListener('click', () => {
         document.querySelector('[data-target="reflect"]')?.click();
@@ -479,6 +566,7 @@ export function renderNewReflection(onComplete) {
             equanimityScore: currentEquanimityScore,
             hindrances: Array.from(selectedHindrances),
             text: text,
+            intention: container.sessionData?.intention || null,
             xp: isStandalone ? 0 : earnedXP,
             duration: isStandalone ? null : (container.sessionData?.duration || null),
             standalone: isStandalone
@@ -496,15 +584,42 @@ export function renderNewReflection(onComplete) {
         const subtitleEl = container.querySelector('#nr-subtitle');
         const spectsEl = container.querySelector('#nr-meditation-spectrums');
 
+        // Render intention banner if set for this sit
+        if (container.sessionData?.intention) {
+            let intentBanner = container.querySelector('#nr-intention-banner');
+            if (!intentBanner) {
+                intentBanner = document.createElement('div');
+                intentBanner.id = 'nr-intention-banner';
+                intentBanner.className = 'nr-section';
+                intentBanner.style.cssText = 'background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:14px; padding:12px 14px; margin-bottom:16px;';
+                if (xpZone && xpZone.nextSibling) {
+                    xpZone.parentNode.insertBefore(intentBanner, xpZone.nextSibling);
+                }
+            }
+            intentBanner.innerHTML = `
+                <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--color-accent); margin-bottom:4px; display:flex; align-items:center; gap:4px;">
+                    <span class="material-symbols-rounded" style="font-size:14px; color:#ffd166;">psychology_alt</span> Intention set for this sit
+                </div>
+                <div style="font-size:13.5px; font-weight:600; color:var(--color-text-primary); font-style:italic; line-height:1.4;">
+                    "${container.sessionData.intention}"
+                </div>
+            `;
+            intentBanner.style.display = 'block';
+        } else {
+            const intentBanner = container.querySelector('#nr-intention-banner');
+            if (intentBanner) intentBanner.style.display = 'none';
+        }
+
+        // Always ensure meditation state spectrums & orb are visible
+        if (spectsEl) spectsEl.style.display = 'block';
+
         if (isStandalone) {
-            // Hide XP celebration, meditation spectrums & orb for quick standalone reflection
+            // Hide XP celebration for quick standalone reflection
             xpZone.classList.add('hidden');
-            if (spectsEl) spectsEl.style.display = 'none';
             titleEl.textContent = 'Quick Reflection';
             subtitleEl.textContent = 'Capture your thoughts & mood';
         } else {
             xpZone.classList.remove('hidden');
-            if (spectsEl) spectsEl.style.display = 'block';
             const data = container.sessionData;
             const durationXP = (data.duration || 10) * 5;
             earnedXP = durationXP;
@@ -527,16 +642,24 @@ export function renderNewReflection(onComplete) {
             }
         }
 
-        // Reset textarea, mood, focus depth and hindrances
+        // Reset textarea, mood, spectrum sliders and hindrances
         container.querySelector('#reflection-text').value = '';
         moodBtns.forEach(b => b.classList.remove('active'));
-        container.querySelector('[data-mood="calm"]').classList.add('active');
+        const calmBtn = container.querySelector('[data-mood="calm"]');
+        if (calmBtn) calmBtn.classList.add('active');
         selectedMood = 'calm';
 
-        focusChips.forEach(c => c.classList.remove('active'));
-        const defaultFocusChip = container.querySelector('[data-depth="settling"]');
-        if (defaultFocusChip) defaultFocusChip.classList.add('active');
-        selectedFocusDepth = 'settling';
+        // Reset spectrum sliders to 50% baseline
+        const fSlider = container.querySelector('#nr-focus-slider');
+        const sSlider = container.querySelector('#nr-stability-slider');
+        const eSlider = container.querySelector('#nr-equanimity-slider');
+        if (fSlider) fSlider.value = 50;
+        if (sSlider) sSlider.value = 50;
+        if (eSlider) eSlider.value = 50;
+        currentFocusScore = 50;
+        currentStabilityScore = 50;
+        currentEquanimityScore = 50;
+        updateStateOrb(50, 50, 50);
 
         selectedHindrances.clear();
         hindranceChips.forEach(c => c.classList.remove('active'));

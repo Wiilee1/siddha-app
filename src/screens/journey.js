@@ -824,7 +824,7 @@ export function renderJourney() {
                         };
                         breathe.setTimerDuration(mission.duration);
                     }
-                    document.querySelector('[data-target="breathe"]')?.click();
+                    window.dispatchEvent(new CustomEvent('siddha-navigate', { detail: { target: 'breathe' } }));
                 });
             }
             list.appendChild(item);
@@ -949,14 +949,13 @@ export function renderJourney() {
         buildMap(PATHS[activePathId]);
 
         // Update Daily Quest UI
-        const questState = DB.getDailyQuestState();
-        const q = questState.quest;
+        const q = DB.getDailyQuest();
         const questSub = container.querySelector('#journey-quest-sub');
         const questBadge = container.querySelector('#journey-quest-badge');
         const questBar = container.querySelector('#journey-quest-bar');
 
-        if (q) {
-            questSub.textContent = q.label;
+        if (q && questSub && questBadge && questBar) {
+            questSub.textContent = `${q.emoji || '🎯'} ${q.label}`;
 
             if (q.claimed) {
                 questBadge.textContent = 'Claimed ✔';
@@ -974,7 +973,7 @@ export function renderJourney() {
                 questBar.style.opacity = '1';
                 questBar.style.cursor = 'pointer';
                 questBar.onclick = () => {
-                    const success = DB.claimDailyQuest();
+                    const success = DB.claimDailyQuest(q.type);
                     if (success) {
                         triggerQuestSplash();
                         container.updateData();
@@ -988,15 +987,8 @@ export function renderJourney() {
                 questBar.style.opacity = '1';
                 questBar.style.cursor = 'pointer';
                 questBar.onclick = () => {
-                    if (q.type.startsWith('sit_')) {
-                        document.querySelector('[data-target="breathe"]')?.click();
-                    } else if (q.type.startsWith('log_')) {
-                        document.querySelector('[data-target="reflect"]')?.click();
-                    } else if (q.type.startsWith('read_')) {
-                        document.querySelector('[data-target="wisdom"]')?.click();
-                    } else {
-                        document.querySelector('[data-target="breathe"]')?.click();
-                    }
+                    const targetTab = (q && q.target) ? q.target : (q && q.type === 'wisdom' ? 'wisdom' : q && q.type === 'reflect' ? 'reflect' : q && q.type === 'journey' ? 'journey' : 'breathe');
+                    window.dispatchEvent(new CustomEvent('siddha-navigate', { detail: { target: targetTab } }));
                 };
             }
         }

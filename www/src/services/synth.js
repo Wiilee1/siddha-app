@@ -210,6 +210,19 @@ export const Synth = {
         }
     },
 
+    playThreeBells: () => {
+        if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
+        
+        // Play 3 sequential meditation bells spaced ~1.4 seconds apart
+        Synth.playSingleBell();
+        setTimeout(() => {
+            Synth.playSingleBell();
+        }, 1400);
+        setTimeout(() => {
+            Synth.playSingleBell();
+        }, 2800);
+    },
+
     playMenuClick: () => {
         if (localStorage.getItem('siddha_sound_menu_muted') === 'true') return;
         try {

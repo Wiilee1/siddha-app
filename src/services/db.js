@@ -198,8 +198,62 @@ export const DB = {
         const state = getState();
         if (!state.user) state.user = { name: 'Alex' };
         state.user.reminderSchedule = { enabled, time: timeStr || '08:00' };
+        if (!state.user.notificationSettings) {
+            state.user.notificationSettings = {
+                dailyReminderEnabled: enabled,
+                reminderTime: timeStr || '08:00',
+                sessionCompletionEnabled: true,
+                vibrationEnabled: true
+            };
+        } else {
+            state.user.notificationSettings.dailyReminderEnabled = enabled;
+            state.user.notificationSettings.reminderTime = timeStr || '08:00';
+        }
         saveState(state);
         return state.user.reminderSchedule;
+    },
+
+    getNotificationSettings: () => {
+        const state = getState();
+        const user = state.user || {};
+        const reminder = user.reminderSchedule || {};
+        const notif = user.notificationSettings || {};
+
+        let reminders = notif.reminders;
+        if (!reminders || !Array.isArray(reminders) || reminders.length === 0) {
+            reminders = [
+                {
+                    id: 'rem_default',
+                    time: notif.reminderTime || reminder.time || '08:00',
+                    enabled: notif.dailyReminderEnabled ?? (reminder.enabled ?? false)
+                }
+            ];
+        }
+
+        return {
+            reminders,
+            dailyReminderEnabled: reminders.some(r => r.enabled),
+            sessionCompletionEnabled: notif.sessionCompletionEnabled ?? true,
+            vibrationEnabled: notif.vibrationEnabled ?? true
+        };
+    },
+
+    setNotificationSettings: (settings) => {
+        const state = getState();
+        if (!state.user) state.user = { name: 'Alex' };
+        const current = DB.getNotificationSettings();
+        state.user.notificationSettings = {
+            ...current,
+            ...settings
+        };
+        // Keep legacy schedule in sync
+        const activeReminder = (state.user.notificationSettings.reminders || []).find(r => r.enabled);
+        state.user.reminderSchedule = {
+            enabled: !!activeReminder,
+            time: activeReminder ? activeReminder.time : '08:00'
+        };
+        saveState(state);
+        return state.user.notificationSettings;
     },
 
     updateProfileAvatar: (avatarPath) => {
@@ -475,14 +529,20 @@ export const DB = {
 
     markArticleAsRead: (articleId) => {
         const state = getState();
+        const todayStr = todayDate();
         if (!state.readArticles) state.readArticles = [];
+        if (!state.readArticlesWithDates) state.readArticlesWithDates = {};
+        
+        state.readArticlesWithDates[articleId] = todayStr;
+
         if (!state.readArticles.includes(articleId)) {
             state.readArticles.push(articleId);
             saveState(state);
             DB.addXP(15);
             return true;
         }
-        return false;
+        saveState(state);
+        return true;
     },
 
     isArticleRead: (articleId) => {
@@ -575,99 +635,11 @@ export const DB = {
 
     // Daily Quests
     getDailyQuestState: () => {
-        const state = getState();
-        const todayStr = toDateStr(new Date());
-        const user = state.user;
-        const commitment = user ? parseInt(user.dailyCommitment) || 10 : 10;
-
-        if (!state.dailyQuests || state.dailyQuests.completedDate !== todayStr || !state.dailyQuests.quest) {
-            const pool = [
-                { type: 'sit_commitment', label: `Sit for your daily commitment (${commitment}m)` },
-                { type: 'sit_any', label: 'Complete any meditation session' },
-                { type: 'log_grateful', label: 'Log a Grateful mood reflection' },
-                { type: 'read_wisdom', label: 'Read any Wisdom Library article' },
-                { type: 'sit_anapana', label: 'Complete an Anapana session' },
-                { type: 'journey_path', label: 'Complete a Journey path session' }
-            ];
-
-            const unlocked = state.unlockedPathIds || [];
-            if (unlocked.includes('metta')) {
-                pool.push({ type: 'sit_metta', label: 'Complete a Kindness (Metta) session' });
-            }
-            if (unlocked.includes('vipassana')) {
-                pool.push({ type: 'sit_vipassana', label: 'Complete an Insight (Vipassana) session' });
-            }
-            if (unlocked.includes('tmi')) {
-                pool.push({ type: 'sit_tmi', label: 'Complete a Focus (TMI) session' });
-            }
-            if (unlocked.includes('zen')) {
-                pool.push({ type: 'sit_zen', label: 'Complete a Stillness (Zen) session' });
-            }
-
-            // Pick 1 random quest
-            const chosen = pool[Math.floor(Math.random() * pool.length)];
-
-            state.dailyQuests = {
-                completedDate: todayStr,
-                quest: {
-                    type: chosen.type,
-                    label: chosen.label,
-                    completed: false,
-                    claimed: false
-                }
-            };
-            saveState(state);
-        }
-
-        const questState = state.dailyQuests;
-        const q = questState.quest;
-        if (q && !q.completed) {
-            const todayHistory = (state.meditationHistory || []).filter(item => toDateStr(item.date) === todayStr);
-            const todayReflections = (state.reflectionHistory || []).filter(item => toDateStr(item.date) === todayStr);
-            const todayReadArticles = Object.keys(state.readArticlesWithDates || {}).filter(id => state.readArticlesWithDates[id] === todayStr);
-
-            if (q.type === 'sit_commitment') {
-                q.completed = todayHistory.some(h => h.duration >= commitment);
-            } else if (q.type === 'sit_any') {
-                q.completed = todayHistory.length > 0;
-            } else if (q.type === 'log_grateful') {
-                q.completed = todayReflections.some(r => r.mood === 'grateful');
-            } else if (q.type === 'read_wisdom') {
-                q.completed = todayReadArticles.length > 0;
-            } else if (q.type === 'sit_anapana') {
-                q.completed = todayHistory.some(h => h.path === 'anapana');
-            } else if (q.type === 'sit_metta') {
-                q.completed = todayHistory.some(h => h.path === 'metta');
-            } else if (q.type === 'sit_vipassana') {
-                q.completed = todayHistory.some(h => h.path === 'vipassana');
-            } else if (q.type === 'sit_tmi') {
-                q.completed = todayHistory.some(h => h.path === 'tmi');
-            } else if (q.type === 'sit_zen') {
-                q.completed = todayHistory.some(h => h.path === 'zen');
-            } else if (q.type === 'journey_path') {
-                q.completed = todayHistory.some(h => h.path && h.path !== 'free' && h.path !== 'standalone');
-            }
-            if (q.completed) {
-                saveState(state);
-            }
-        }
-
-        return questState;
-    },
-
-    claimDailyQuest: () => {
-        const state = getState();
-        const questState = state.dailyQuests;
-        if (questState && questState.quest) {
-            const q = questState.quest;
-            if (q.completed && !q.claimed) {
-                q.claimed = true;
-                saveState(state);
-                DB.addXP(25);
-                return true;
-            }
-        }
-        return false;
+        const quest = DB.getDailyQuest();
+        return {
+            completedDate: todayDate(),
+            quest
+        };
     },
 
     devSimulateTimePassing: (days) => {
@@ -757,7 +729,7 @@ export const DB = {
         // Evaluate dynamic completion for today
         const todayHistory = (state.meditationHistory || []).filter(item => toDateStr(item.date) === todayStr);
         const todayReflections = (state.reflectionHistory || []).filter(item => toDateStr(item.date) === todayStr);
-        const todayReadArticles = (state.readArticles || []);
+        const todayReadArticles = Object.keys(state.readArticlesWithDates || {}).filter(id => state.readArticlesWithDates[id] === todayStr);
 
         let isCompleted = false;
         if (quest.type === 'meditate') {
@@ -792,6 +764,12 @@ export const DB = {
         if (dq.claimed && dq.completedDate === todayStr) return false; // already claimed
 
         const currentQuest = DB.getDailyQuest();
+        // Strictly verify the quest is actually completed before allowing claim
+        if (!currentQuest || !currentQuest.completed || currentQuest.claimed) {
+            console.warn('[DB] Attempted to claim incomplete daily quest:', currentQuest);
+            return false;
+        }
+
         const xpEarned = currentQuest.xp || 25;
 
         const oldLevel = state.level;

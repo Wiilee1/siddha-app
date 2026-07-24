@@ -1185,8 +1185,15 @@ export function renderWisdom() {
             
             DB.checkAndTriggerAchievements(false);
             
-            // Re-trigger the active screen updates (in case reader updates or home page does)
+            // Re-trigger active screen updates
             container.updateData();
+
+            // Return to articles list after brief delay so user sees claimed status
+            setTimeout(() => {
+                readerModal.classList.remove('active');
+                activeArticleId = null;
+                container.updateData();
+            }, 600);
         }
     });
 

@@ -33,7 +33,7 @@ export function renderHome() {
             <!-- Header Box Card -->
             <div class="home-header home-header-box">
                 <div style="display:flex; align-items:center; gap:8px;">
-                    <img src="./src/assets/logo.png" class="home-logo-avatar" alt="Siddha">
+                    <img src="./src/assets/logo.png" class="home-logo-img" alt="Siddha Logo">
                     <span style="font-weight:700; font-size:16px; font-family:var(--font-heading); color:#2c3e38;">Siddha</span>
                     <button id="dev-add-xp" style="font-size:9px; padding:2px 5px; background:transparent; border:1px solid #dcdcdc; border-radius:4px; cursor:pointer; color:#777;">+500 XP</button>
                 </div>
@@ -66,8 +66,8 @@ export function renderHome() {
         <div class="home-stats-area">
 
 
-            <!-- Daily goal -->
-            <div class="home-stat-card row-card" data-link="profile" style="margin-top: 10px;">
+            <!-- Daily goal (Click opens Goal Modal) -->
+            <div class="home-stat-card row-card" id="home-goal-card" style="margin-top: 10px; cursor: pointer;">
                 <div style="flex:1;">
                     <p class="home-stat-title">Today's Goal</p>
                     <div style="display:flex; align-items:baseline; gap:4px; margin-top:2px;">
@@ -154,6 +154,56 @@ export function renderHome() {
             </div>
 
         </div>
+
+        <!-- Daily Goal Modal -->
+        <div id="home-goal-modal" class="home-goal-overlay">
+            <div style="background:var(--color-bg-card, #ffffff); border-radius:24px; padding:24px; width:90%; max-width:380px; box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="material-symbols-rounded" style="color:var(--color-accent); font-size:24px;">target</span>
+                        <h3 style="margin:0; font-size:17px; font-family:var(--font-heading); color:var(--color-text-primary);">Set Daily Meditation Goal</h3>
+                    </div>
+                    <button id="close-goal-modal-btn" style="background:none; border:none; cursor:pointer; padding:4px; color:var(--color-text-muted); display:flex; align-items:center;">
+                        <span class="material-symbols-rounded">close</span>
+                    </button>
+                </div>
+
+                <p style="font-size:12.5px; color:var(--color-text-secondary); margin:0 0 12px; line-height:1.4;">
+                    How many total minutes would you like to sit each day?
+                </p>
+
+                <!-- Explanation Callout Box -->
+                <div style="background:var(--color-bg-secondary); border-radius:14px; padding:10px 12px; margin-bottom:16px;">
+                    <div style="display:flex; align-items:flex-start; gap:8px;">
+                        <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-accent); margin-top:1px; flex-shrink:0;">info</span>
+                        <p style="font-size:11px; color:var(--color-text-secondary); margin:0; line-height:1.45;">
+                            <strong>Building a Habit:</strong> Sitting even for 5 minutes counts toward maintaining your daily streak. Reaching your goal completes your daily progress bar and earns bonus XP!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Preset Chips -->
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+                    <button class="goal-modal-chip" data-mins="5" style="flex:1; min-width:42px; padding:8px 0; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-secondary); font-size:12.5px; font-weight:700; cursor:pointer; color:var(--color-text-primary); text-align:center;">5m</button>
+                    <button class="goal-modal-chip" data-mins="10" style="flex:1; min-width:42px; padding:8px 0; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-secondary); font-size:12.5px; font-weight:700; cursor:pointer; color:var(--color-text-primary); text-align:center;">10m</button>
+                    <button class="goal-modal-chip" data-mins="15" style="flex:1; min-width:42px; padding:8px 0; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-secondary); font-size:12.5px; font-weight:700; cursor:pointer; color:var(--color-text-primary); text-align:center;">15m</button>
+                    <button class="goal-modal-chip active" data-mins="20" style="flex:1; min-width:42px; padding:8px 0; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-secondary); font-size:12.5px; font-weight:700; cursor:pointer; color:var(--color-text-primary); text-align:center;">20m</button>
+                    <button class="goal-modal-chip" data-mins="30" style="flex:1; min-width:42px; padding:8px 0; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-secondary); font-size:12.5px; font-weight:700; cursor:pointer; color:var(--color-text-primary); text-align:center;">30m</button>
+                    <button class="goal-modal-chip" data-mins="45" style="flex:1; min-width:42px; padding:8px 0; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-secondary); font-size:12.5px; font-weight:700; cursor:pointer; color:var(--color-text-primary); text-align:center;">45m</button>
+                    <button class="goal-modal-chip" data-mins="60" style="flex:1; min-width:42px; padding:8px 0; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-secondary); font-size:12.5px; font-weight:700; cursor:pointer; color:var(--color-text-primary); text-align:center;">60m</button>
+                </div>
+
+                <!-- Custom Input -->
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
+                    <input type="number" id="goal-modal-custom-input" placeholder="Custom minutes" min="1" max="480" style="flex:1; padding:10px 14px; border-radius:12px; border:1px solid var(--color-bg-secondary); font-size:13px; outline:none; font-family:inherit; color:var(--color-text-primary); background:var(--color-bg-card);">
+                </div>
+
+                <!-- Save Button -->
+                <button id="save-goal-modal-btn" class="btn" style="width:100%; padding:12px; font-size:14px; background:var(--color-accent); color:#fff; border:none; border-radius:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+                    Save Daily Goal 🎯
+                </button>
+            </div>
+        </div>
     `;
 
 
@@ -169,6 +219,28 @@ export function renderHome() {
             background-repeat: no-repeat;
             background-attachment: local;
             flex-direction: column;
+        }
+
+        .home-goal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+
+        .home-goal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .home-screen {
@@ -195,17 +267,17 @@ export function renderHome() {
             border-radius: 0;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
         }
-        .home-logo-avatar {
+        .home-logo-img {
             width: 28px; height: 28px;
-            border-radius: 50%;
-            object-fit: cover;
+            object-fit: contain;
+            border-radius: 0;
         }
         .home-icon-btn {
             background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center;
         }
         .home-icon-btn .material-symbols-rounded { font-size: 28px; }
 
-        /* Hero Area — background image only, no mascot */
+        /* Hero Area */
         .home-hero-area {
             width: 100%;
             height: 380px;
@@ -367,7 +439,7 @@ export function renderHome() {
         
         .companion-bubble {
             position: absolute;
-            top: 68px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%) scale(0.85);
             background: rgba(246, 245, 239, 0.42);
@@ -458,20 +530,77 @@ export function renderHome() {
         if (typeof container.updateData === 'function') container.updateData();
     });
 
+    // Goal Modal Listeners
+    const goalCard = container.querySelector('#home-goal-card');
+    const goalModal = container.querySelector('#home-goal-modal');
+    const closeGoalModalBtn = container.querySelector('#close-goal-modal-btn');
+    const saveGoalModalBtn = container.querySelector('#save-goal-modal-btn');
+    const goalInput = container.querySelector('#goal-modal-custom-input');
+    const goalChips = container.querySelectorAll('.goal-modal-chip');
+
+    if (goalCard && goalModal) {
+        goalCard.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const user = DB.getUser ? DB.getUser() : {};
+            const currentGoal = user.dailyCommitment || 20;
+            if (goalInput) goalInput.value = currentGoal;
+            
+            goalChips.forEach(chip => {
+                const mins = parseInt(chip.dataset.mins);
+                if (mins === currentGoal) {
+                    chip.style.background = 'var(--color-accent)';
+                    chip.style.color = '#ffffff';
+                } else {
+                    chip.style.background = 'var(--color-bg-secondary)';
+                    chip.style.color = 'var(--color-text-primary)';
+                }
+            });
+
+            goalModal.classList.add('active');
+        });
+
+        const closeGoalModal = () => {
+            goalModal.classList.remove('active');
+        };
+
+        if (closeGoalModalBtn) closeGoalModalBtn.addEventListener('click', closeGoalModal);
+        goalModal.addEventListener('click', (e) => {
+            if (e.target === goalModal) closeGoalModal();
+        });
+
+        goalChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const mins = chip.dataset.mins;
+                if (goalInput) goalInput.value = mins;
+                goalChips.forEach(c => {
+                    c.style.background = 'var(--color-bg-secondary)';
+                    c.style.color = 'var(--color-text-primary)';
+                });
+                chip.style.background = 'var(--color-accent)';
+                chip.style.color = '#ffffff';
+            });
+        });
+
+        if (saveGoalModalBtn) {
+            saveGoalModalBtn.addEventListener('click', () => {
+                const val = parseInt(goalInput?.value) || 20;
+                DB.setDailyCommitment(val);
+                closeGoalModal();
+                if (typeof container.updateData === 'function') {
+                    container.updateData();
+                }
+            });
+        }
+    }
+
     // Make stats interactive
-    const statCards = container.querySelectorAll('.home-stat-card:not(.dq-card)');
+    const statCards = container.querySelectorAll('.home-stat-card:not(.dq-card):not(#home-goal-card)');
     statCards.forEach(card => {
         card.addEventListener('click', () => {
             const target = card.getAttribute('data-link');
             if (target) {
                 const navBtn = document.querySelector(`[data-target="${target}"]`);
                 if (navBtn) navBtn.click();
-                if (card.querySelector('#home-today-minutes')) {
-                    setTimeout(() => {
-                        const goalCard = document.querySelector('#profile-goal-card');
-                        if (goalCard) goalCard.scrollIntoView({ behavior: 'smooth' });
-                    }, 50);
-                }
             }
         });
     });
@@ -484,17 +613,8 @@ export function renderHome() {
             if (dq && (dq.completed || dq.claimed)) {
                 return;
             }
-            if (dq && dq.target) {
-                document.querySelector(`[data-target="${dq.target}"]`)?.click();
-            } else if (dq && dq.type === 'journey') {
-                document.querySelector('[data-target="journey"]')?.click();
-            } else if (dq && dq.type === 'wisdom') {
-                document.querySelector('[data-target="wisdom"]')?.click();
-            } else if (dq && dq.type === 'reflect') {
-                document.querySelector('[data-target="reflect"]')?.click();
-            } else {
-                document.querySelector('[data-target="breathe"]')?.click();
-            }
+            const targetTab = (dq && dq.target) ? dq.target : (dq && dq.type === 'wisdom' ? 'wisdom' : dq && dq.type === 'reflect' ? 'reflect' : dq && dq.type === 'journey' ? 'journey' : 'breathe');
+            window.dispatchEvent(new CustomEvent('siddha-navigate', { detail: { target: targetTab } }));
         });
     }
 
@@ -753,10 +873,10 @@ export function renderHome() {
                 
                 dqCardEl.onclick = () => {
                     if (typeof DB.claimDailyQuest === 'function') {
-                        DB.claimDailyQuest(dq.type);
-                    }
-                    if (typeof container.updateData === 'function') {
-                        container.updateData();
+                        const success = DB.claimDailyQuest(dq.type);
+                        if (success && typeof container.updateData === 'function') {
+                            container.updateData();
+                        }
                     }
                 };
             } else if (dq.claimed) {
@@ -800,8 +920,7 @@ export function renderHome() {
                 
                 dqCardEl.onclick = () => {
                     const targetTab = (dq && dq.target) ? dq.target : (dq && dq.type === 'wisdom' ? 'wisdom' : dq && dq.type === 'reflect' ? 'reflect' : dq && dq.type === 'journey' ? 'journey' : 'breathe');
-                    const nav = document.querySelector('.bottom-nav [data-target="' + targetTab + '"]');
-                    if (nav) nav.click();
+                    window.dispatchEvent(new CustomEvent('siddha-navigate', { detail: { target: targetTab } }));
                 };
             }
         }
@@ -831,7 +950,7 @@ export function renderHome() {
         container.style.backgroundImage = `url('./src/assets/${bgImg}')`;
         updateHeroAnimations(stats.level, stats.daysSinceLastSession);
 
-        // Siddha Speech Bubble Dialogue (Pops in after 1.5s, stays visible)
+        // Siddha Speech Bubble Dialogue (Appears ONCE per screen visit)
         const bubble = container.querySelector('#companion-speech-bubble');
         const bubbleText = container.querySelector('#companion-bubble-text');
         
@@ -840,6 +959,8 @@ export function renderHome() {
         if (window.siddhaBubbleHideTimer) clearTimeout(window.siddhaBubbleHideTimer);
 
         if (bubble && bubbleText) {
+            bubble.classList.remove('visible');
+
             const showBubble = () => {
                 if (!document.contains(bubble)) return;
 
@@ -852,20 +973,16 @@ export function renderHome() {
                 bubbleText.textContent = newQuote;
                 bubble.classList.add('visible');
 
-                // Display for exactly 7 seconds then disappear
+                // Disappear after 7 seconds, then STOP (once per visit)
                 if (window.siddhaBubbleHideTimer) clearTimeout(window.siddhaBubbleHideTimer);
                 window.siddhaBubbleHideTimer = setTimeout(() => {
                     if (document.contains(bubble)) {
                         bubble.classList.remove('visible');
-                        
-                        // Schedule next appearance
-                        const nextWait = 14000 + Math.random() * 10000;
-                        window.siddhaBubbleTimer = setTimeout(showBubble, nextWait);
                     }
                 }, 7000);
             };
 
-            // Entrance after 5 seconds (with text ready)
+            // Entrance after 5 seconds delay (with text ready)
             window.siddhaBubbleTimer = setTimeout(showBubble, 5000);
             
             bubble.onclick = (e) => {
@@ -874,13 +991,9 @@ export function renderHome() {
                 setTimeout(() => {
                     bubble.style.transform = '';
                     bubble.classList.remove('visible');
-                    
                     if (window.siddhaBubbleTimer) clearTimeout(window.siddhaBubbleTimer);
                     if (window.siddhaBubbleHideTimer) clearTimeout(window.siddhaBubbleHideTimer);
-                    
-                    const nextWait = 10000 + Math.random() * 10000;
-                    window.siddhaBubbleTimer = setTimeout(showBubble, nextWait);
-                }, 200);
+                }, 150);
             };
         }
 

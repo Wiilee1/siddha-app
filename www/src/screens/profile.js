@@ -36,7 +36,13 @@ export function renderProfile() {
         <!-- Tabbed Analytics Card -->
         <div class="rfl-week-card card" id="rfl-analytics-card" style="margin-bottom: 32px;">
             <div class="rfl-week-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <h3 class="rfl-section-title" id="rfl-card-title">Analytics</h3>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <h3 class="rfl-section-title" id="rfl-card-title" style="margin:0;">Analytics</h3>
+                    <button id="open-analytics-modal-btn" style="background:var(--color-bg-secondary); border:none; cursor:pointer; color:var(--color-accent-dark); display:flex; align-items:center; gap:3px; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:10px;" title="Expand Full Analytics Modal">
+                        <span>Expand</span>
+                        <span class="material-symbols-rounded" style="font-size:14px;">open_in_full</span>
+                    </button>
+                </div>
                 <!-- Tab pills -->
                 <div class="rfl-tab-pills" style="display:flex; background:var(--color-bg-secondary); padding:2px; border-radius:12px;">
                     <button class="rfl-tab-btn active" data-tab="week" style="padding:4px 10px; border:none; background:var(--color-bg-card); border-radius:10px; font-size:11px; font-weight:600; cursor:pointer; color:var(--color-text-primary); transition:all 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.05);">Week</button>
@@ -72,11 +78,14 @@ export function renderProfile() {
 
             <!-- Tab View 2: 365-Day Consistency Heatmap -->
             <div class="rfl-tab-view hidden" id="rfl-view-heatmap">
+                <p style="font-size:10.5px; color:var(--color-text-secondary); margin:0 0 8px 0; line-height:1.35;">
+                    💡 <strong>Consistency Grid:</strong> Each vertical column is 1 week (Sun–Sat). Darker tiles indicate longer sits.
+                </p>
                 <div id="rfl-heatmap-container" style="overflow-x:auto; padding-bottom:6px; scrollbar-width:none;">
                     <!-- Rendered by JS -->
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; font-size:9px; color:var(--color-text-muted);">
-                    <span id="rfl-heatmap-popover">Tap a tile to inspect</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:10px; color:var(--color-text-muted);">
+                    <span id="rfl-heatmap-popover" style="font-weight:600; color:var(--color-text-secondary);">Tap any tile to view sit details</span>
                     <div style="display:flex; align-items:center; gap:3px;">
                         <span>Less</span>
                         <span style="width:8px; height:8px; border-radius:2px; background:var(--color-bg-secondary); display:inline-block;"></span>
@@ -114,90 +123,155 @@ export function renderProfile() {
             </div>
         </div>
 
-        <!-- Lifetime Statistics -->
-        <div class="card" style="margin-bottom: 32px;">
-            <h3 style="font-size: 16px; margin-bottom: 16px;">Lifetime Statistics</h3>
+        <!-- Lifetime Statistics Collapsible Card -->
+        <div class="card collapsible-card collapsed" id="lifetime-stats-card" style="margin-bottom: 32px;">
+            <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
+                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-rounded" style="color: var(--color-accent); font-size:20px;">analytics</span>
+                    Lifetime Practice Stats
+                </h3>
+                <span class="material-symbols-rounded collapsible-toggle" style="color: var(--color-text-muted);">expand_more</span>
+            </div>
             
-            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--color-bg-secondary);">
-                <span class="text-sm" style="color: var(--color-text-secondary);">Total Sessions</span>
-                <span id="stat-sessions" style="font-weight: 600;">0</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--color-bg-secondary);">
-                <span class="text-sm" style="color: var(--color-text-secondary);">Mindful Minutes</span>
-                <span id="stat-minutes" style="font-weight: 600;">0m</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding: 12px 0;">
-                <span class="text-sm" style="color: var(--color-text-secondary);">Current Streak</span>
-                <span id="stat-streak" style="font-weight: 600;">0 days</span>
+            <div class="collapsible-content" style="margin-top: 14px;">
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-bg-secondary);">
+                    <span class="text-sm" style="color: var(--color-text-secondary);">Total Sessions</span>
+                    <span id="stat-sessions" style="font-weight: 600;">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-bg-secondary);">
+                    <span class="text-sm" style="color: var(--color-text-secondary);">Mindful Minutes</span>
+                    <span id="stat-minutes" style="font-weight: 600;">0m</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-bg-secondary);">
+                    <span class="text-sm" style="color: var(--color-text-secondary);">Current Streak</span>
+                    <span id="stat-streak" style="font-weight: 600;">0 days</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-bg-secondary);">
+                    <span class="text-sm" style="color: var(--color-text-secondary);">Longest Streak</span>
+                    <span id="stat-longest-streak" style="font-weight: 600;">0 days</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                    <span class="text-sm" style="color: var(--color-text-secondary);">Avg. Sit Duration</span>
+                    <span id="stat-avg-duration" style="font-weight: 600;">0m</span>
+                </div>
             </div>
         </div>
 
-        <!-- Goal & Schedule Card -->
-        <div class="card" id="profile-goal-card" style="margin-bottom: 32px;">
-            <h3 style="font-size: 16px; margin-bottom: 16px; font-family: var(--font-heading); display:flex; align-items:center; gap:8px;">
-                <span class="material-symbols-rounded" style="color: var(--color-accent);">tune</span>
-                Goal & Schedule
-            </h3>
+        <!-- Settings Card (Collapsible, Daily Goal removed) -->
+        <div class="card collapsible-card collapsed" id="profile-settings-card" style="margin-bottom: 32px;">
+            <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
+                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-rounded" style="color: var(--color-accent);">settings</span>
+                    Settings & Preferences
+                </h3>
+                <span class="material-symbols-rounded collapsible-toggle" style="color: var(--color-text-muted);">expand_more</span>
+            </div>
             
-            <div style="margin-bottom: 20px;">
-                <label class="text-sm" style="font-weight: 600; color: var(--color-text-secondary); display:block; margin-bottom: 8px;">Daily Meditation Goal (minutes)</label>
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                        <button class="goal-chip-btn" data-mins="5" style="padding:6px 12px; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-card); font-size:12px; font-weight:600; cursor:pointer; color:var(--color-text-primary);">5m</button>
-                        <button class="goal-chip-btn" data-mins="10" style="padding:6px 12px; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-card); font-size:12px; font-weight:600; cursor:pointer; color:var(--color-text-primary);">10m</button>
-                        <button class="goal-chip-btn" data-mins="15" style="padding:6px 12px; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-card); font-size:12px; font-weight:600; cursor:pointer; color:var(--color-text-primary);">15m</button>
-                        <button class="goal-chip-btn" data-mins="20" style="padding:6px 12px; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-card); font-size:12px; font-weight:600; cursor:pointer; color:var(--color-text-primary);">20m</button>
-                        <button class="goal-chip-btn" data-mins="30" style="padding:6px 12px; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-card); font-size:12px; font-weight:600; cursor:pointer; color:var(--color-text-primary);">30m</button>
-                        <button class="goal-chip-btn" data-mins="45" style="padding:6px 12px; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-card); font-size:12px; font-weight:600; cursor:pointer; color:var(--color-text-primary);">45m</button>
-                        <button class="goal-chip-btn" data-mins="60" style="padding:6px 12px; border:1px solid var(--color-bg-secondary); border-radius:12px; background:var(--color-bg-card); font-size:12px; font-weight:600; cursor:pointer; color:var(--color-text-primary);">60m</button>
+            <div class="collapsible-content" style="margin-top: 16px;">
+                <!-- Notifications & Reminders Controls -->
+                <div>
+                    <h4 style="font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 0 0 12px; font-family: var(--font-heading);">Notifications & Reminders</h4>
+                    
+                    <!-- Multiple Sit Reminders -->
+                    <div style="margin-bottom: 14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                            <div>
+                                <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">📅 Sit Reminders</span>
+                                <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Multiple daily mindfulness prompts</p>
+                            </div>
+                            <button id="add-reminder-btn" class="btn" style="padding:4px 10px; font-size:11px; background:var(--color-bg-secondary); color:var(--color-text-primary); border:1px solid rgba(0,0,0,0.1); border-radius:8px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                                <span class="material-symbols-rounded" style="font-size:15px; color:var(--color-accent);">add</span> Add Time
+                            </button>
+                        </div>
+                        
+                        <div id="reminders-list-container" style="display:flex; flex-direction:column; gap:8px;"></div>
+                    </div>   </div>
+
+                    <!-- Session Completion Notification Toggle -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                        <div>
+                            <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🔔 Session End Notification</span>
+                            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Alert when timer completes</p>
+                        </div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" id="toggle-session-notification" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <input type="number" id="custom-goal-input" placeholder="Custom min" min="1" max="480" style="flex:1; padding:8px 12px; border-radius:10px; border:1px solid var(--color-bg-secondary); font-size:13px; outline:none; font-family:inherit; color:var(--color-text-primary); background:var(--color-bg-card);">
-                        <button id="save-custom-goal-btn" class="btn" style="padding:8px 16px; font-size:12px; background:var(--color-accent); color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer;">Save Custom</button>
+                </div>
+
+                <!-- Audio & Haptics Controls -->
+                <div style="border-top: 1px solid var(--color-bg-secondary); padding-top: 16px; margin-top: 16px;">
+                    <h4 style="font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 0 0 12px; font-family: var(--font-heading);">Audio & Haptics Controls</h4>
+                    
+                    <!-- Haptics / Vibration Toggle -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                        <div>
+                            <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">📳 Haptics & Vibration</span>
+                            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Tactile pulses on iOS, Android & web</p>
+                        </div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" id="toggle-vibration" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Meditation Sound Toggle -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                        <div>
+                            <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🧘 Meditation Bells & Ambient</span>
+                            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Sit interval bells & soundscapes</p>
+                        </div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" id="toggle-meditation-sound" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Menu / UI Sound Toggle -->
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🎵 Menu & Navigation Sounds</span>
+                            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">UI clicks & feedback audio</p>
+                        </div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" id="toggle-menu-sound" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div style="border-top: 1px solid var(--color-bg-secondary); padding-top: 16px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                    <div>
-                        <span style="font-weight: 600; font-size: 13px; color:var(--color-text-primary);">Daily Sit Reminder</span>
-                        <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Local daily notification</p>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <input type="time" id="reminder-time-input" value="08:00" style="padding:4px 8px; border-radius:8px; border:1px solid var(--color-bg-secondary); font-size:12px; outline:none; font-family:inherit; color:var(--color-text-primary); background:var(--color-bg-card);">
-                        <button id="save-reminder-btn" class="btn" style="padding:6px 12px; font-size:11px; background:var(--color-accent); color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Save</button>
-                    </div>
+        <!-- Share & Community Card -->
+        <div class="card" style="margin-bottom: 16px; padding: 20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                <span class="material-symbols-rounded" style="color:var(--color-accent); font-size:26px;">share</span>
+                <div>
+                    <h3 style="font-size: 15px; margin: 0; font-family: var(--font-heading); color:var(--color-text-primary);">Share & Community</h3>
+                    <p class="text-sm" style="color: var(--color-text-muted); font-size: 11.5px; margin:2px 0 0;">Connect with our mindfulness journey</p>
                 </div>
             </div>
 
-            <!-- Audio & Sound Controls -->
-            <div style="border-top: 1px solid var(--color-bg-secondary); padding-top: 16px; margin-top: 16px;">
-                <h4 style="font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 0 0 12px; font-family: var(--font-heading);">Audio & Sound Controls</h4>
-                
-                <!-- Meditation Sound Toggle -->
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-                    <div>
-                        <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🧘 Meditation Bells & Ambient</span>
-                        <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Sit interval bells & soundscapes</p>
-                    </div>
-                    <label class="switch-toggle">
-                        <input type="checkbox" id="toggle-meditation-sound" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
+            <!-- Share Button -->
+            <button id="profile-share-btn" class="btn" style="width:100%; padding:12px; font-size:13.5px; background:var(--color-accent); color:#ffffff; border:none; border-radius:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(0,0,0,0.12); margin-bottom:12px;">
+                <span class="material-symbols-rounded" style="font-size:18px;">share</span>
+                Share Siddha App 🧘
+            </button>
 
-                <!-- Menu / UI Sound Toggle -->
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🔔 Menu & Navigation Sounds</span>
-                        <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">UI clicks & feedback audio</p>
-                    </div>
-                    <label class="switch-toggle">
-                        <input type="checkbox" id="toggle-menu-sound" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
+            <!-- Social Links Row -->
+            <div style="display:flex; gap:10px;">
+                <!-- Instagram Link -->
+                <a id="profile-instagram-link" href="https://instagram.com/siddhamind" target="_blank" rel="noopener noreferrer" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color:#ffffff; text-decoration:none; border-radius:12px; font-size:12px; font-weight:700; box-shadow:0 2px 8px rgba(131, 58, 180, 0.25);">
+                    <span class="material-symbols-rounded" style="font-size:16px;">photo_camera</span>
+                    @siddhamind
+                </a>
+
+                <!-- Website Link -->
+                <a id="profile-website-link" href="https://siddha.app" target="_blank" rel="noopener noreferrer" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:var(--color-bg-secondary); color:var(--color-text-primary); text-decoration:none; border-radius:12px; font-size:12px; font-weight:700; border:1px solid rgba(0,0,0,0.08);">
+                    <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-accent);">language</span>
+                    siddha.app
+                </a>
             </div>
         </div>
 
@@ -296,6 +370,45 @@ export function renderProfile() {
                 </div>
 
                 <button id="close-avatar-modal" class="btn" style="width:100%; background:var(--color-bg-secondary); color:var(--color-text-primary); border:none; padding:10px; border-radius:12px; font-weight:600; cursor:pointer;">Close</button>
+            </div>
+        </div>
+
+        <!-- Full Analytics Pop-Up Modal Overlay -->
+        <div id="analytics-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:9999; justify-content:center; align-items:center; padding:16px;">
+            <div style="background:var(--color-bg-card, #ffffff); width:100%; max-width:440px; max-height:85vh; overflow-y:auto; border-radius:24px; padding:20px; box-shadow:0 16px 40px rgba(0,0,0,0.3); position:relative;">
+                <!-- Header -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--color-bg-secondary); padding-bottom:10px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="material-symbols-rounded" style="color:var(--color-accent); font-size:22px;">analytics</span>
+                        <h3 style="margin:0; font-size:16px; font-family:var(--font-heading); color:var(--color-text-primary);">Full Practice Analytics</h3>
+                    </div>
+                    <button id="close-analytics-modal-btn" style="background:var(--color-bg-secondary); border:none; color:var(--color-text-secondary); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                        <span class="material-symbols-rounded" style="font-size:18px;">close</span>
+                    </button>
+                </div>
+
+                <!-- Modal Subtitle -->
+                <p style="font-size:11px; color:var(--color-text-secondary); margin:0 0 14px 0; line-height:1.4;">
+                    Detailed breakdown of your meditation consistency, weekly progress, and long-term practice growth trends.
+                </p>
+
+                <!-- Expanded Analytics Content -->
+                <div id="modal-analytics-content" style="display:flex; flex-direction:column; gap:16px;">
+                    <!-- 1. Expanded Heatmap Section -->
+                    <div style="background:var(--color-bg-secondary); padding:14px; border-radius:16px;">
+                        <h4 style="margin:0 0 4px 0; font-size:13px; font-weight:700; color:var(--color-text-primary);">📅 Practice Consistency Heatmap</h4>
+                        <p style="font-size:10px; color:var(--color-text-muted); margin:0 0 10px 0;">Each vertical column is 1 week (Sun to Sat). Tap any tile to inspect.</p>
+                        
+                        <div id="modal-heatmap-container" style="overflow-x:auto; padding-bottom:4px; scrollbar-width:none;"></div>
+                        <p id="modal-heatmap-popover" style="font-size:10.5px; font-weight:700; color:var(--color-accent); margin:8px 0 0 0; text-align:center;">Tap a tile to view sit details</p>
+                    </div>
+
+                    <!-- 2. Practice Trend Summary -->
+                    <div style="background:var(--color-bg-secondary); padding:14px; border-radius:16px;">
+                        <h4 style="margin:0 0 4px 0; font-size:13px; font-weight:700; color:var(--color-text-primary);">📈 Practice Growth Wave</h4>
+                        <div id="modal-growth-chart" style="height:100px; width:100%; margin-top:8px;"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -495,8 +608,8 @@ export function renderProfile() {
         });
     };
 
-    const renderHeatmapGrid = () => {
-        const heatmapContainer = container.querySelector('#rfl-heatmap-container');
+    const renderHeatmapGrid = (targetContainer = null, targetPopover = null) => {
+        const heatmapContainer = targetContainer || container.querySelector('#rfl-heatmap-container');
         if (!heatmapContainer) return;
         heatmapContainer.innerHTML = '';
 
@@ -511,24 +624,61 @@ export function renderProfile() {
         });
 
         const today = new Date();
-        const daysToRender = 112; // 16 columns of 7 days
+        const daysToRender = 112; // 16 columns of 7 days (Sun-Sat)
         const startDate = new Date();
         startDate.setDate(today.getDate() - (daysToRender - 1));
+        // Align start date to previous Sunday for grid symmetry
+        startDate.setDate(startDate.getDate() - startDate.getDay());
 
+        // Main Wrapper with Day labels on left
+        const mainWrap = document.createElement('div');
+        mainWrap.style.cssText = 'display:flex; gap:6px; align-items:flex-start;';
+
+        // Day Labels Column (S, M, T, W, T, F, S)
+        const dayLabelsCol = document.createElement('div');
+        dayLabelsCol.style.cssText = 'display:flex; flex-direction:column; gap:3px; font-size:8px; font-weight:700; color:var(--color-text-muted); margin-top:14px; text-align:right; flex-shrink:0;';
+        const dayLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        dayLetters.forEach(letter => {
+            const lbl = document.createElement('div');
+            lbl.style.cssText = 'height:10px; line-height:10px;';
+            lbl.textContent = letter;
+            dayLabelsCol.appendChild(lbl);
+        });
+        mainWrap.appendChild(dayLabelsCol);
+
+        // Columns Wrap with Month Headers
         const gridWrap = document.createElement('div');
-        gridWrap.style.cssText = 'display:flex; gap:3px; align-items:center; min-width:max-content;';
+        gridWrap.style.cssText = 'display:flex; flex-direction:column; gap:2px; min-width:max-content;';
+
+        const monthRow = document.createElement('div');
+        monthRow.style.cssText = 'display:flex; gap:3px; font-size:8.5px; font-weight:700; color:var(--color-text-secondary); height:12px; margin-bottom:2px;';
+
+        const colsWrap = document.createElement('div');
+        colsWrap.style.cssText = 'display:flex; gap:3px; align-items:center;';
 
         let currentColumn = null;
+        let lastMonth = -1;
+
         for (let i = 0; i < daysToRender; i++) {
             const d = new Date(startDate);
             d.setDate(startDate.getDate() + i);
             const isoStr = d.toISOString().split('T')[0];
             const dayOfWeek = d.getDay();
+            const currentMonth = d.getMonth();
 
             if (dayOfWeek === 0 || !currentColumn) {
                 currentColumn = document.createElement('div');
                 currentColumn.style.cssText = 'display:flex; flex-direction:column; gap:3px;';
-                gridWrap.appendChild(currentColumn);
+                colsWrap.appendChild(currentColumn);
+
+                if (currentMonth !== lastMonth) {
+                    const mName = d.toLocaleDateString('en-US', { month: 'short' });
+                    const mSpan = document.createElement('span');
+                    mSpan.style.cssText = 'font-size:8.5px; color:var(--color-text-muted); width:26px; text-align:left; font-weight:700;';
+                    mSpan.textContent = mName;
+                    monthRow.appendChild(mSpan);
+                    lastMonth = currentMonth;
+                }
             }
 
             const mins = minsByDate[isoStr] || 0;
@@ -542,21 +692,25 @@ export function renderProfile() {
             tile.title = `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${mins} min`;
 
             tile.addEventListener('click', () => {
-                const popover = container.querySelector('#rfl-heatmap-popover');
+                const popover = targetPopover || container.querySelector('#rfl-heatmap-popover');
                 if (popover) {
-                    const formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    popover.textContent = `📅 ${formattedDate}: ${mins} min`;
-                    popover.style.color = 'var(--color-accent)';
+                    const formattedDate = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    popover.textContent = `📅 ${formattedDate}: ${mins > 0 ? `${mins} minutes sit` : 'No sit recorded'}`;
+                    popover.style.color = mins > 0 ? 'var(--color-accent)' : 'var(--color-text-muted)';
                 }
             });
 
             currentColumn.appendChild(tile);
         }
-        heatmapContainer.appendChild(gridWrap);
+
+        gridWrap.appendChild(monthRow);
+        gridWrap.appendChild(colsWrap);
+        mainWrap.appendChild(gridWrap);
+        heatmapContainer.appendChild(mainWrap);
     };
 
-    const renderGrowthWaveChart = (period) => {
-        const growthChartEl = container.querySelector('#rfl-growth-chart');
+    const renderGrowthWaveChart = (period, targetEl = null) => {
+        const growthChartEl = targetEl || container.querySelector('#rfl-growth-chart');
         const summaryEl = container.querySelector('#rfl-growth-summary');
         if (!growthChartEl) return;
         growthChartEl.innerHTML = '';
@@ -744,9 +898,18 @@ export function renderProfile() {
             if (goalInput) {
                 goalInput.value = user.dailyCommitment || 20;
             }
-            const reminderInput = container.querySelector('#reminder-time-input');
-            if (reminderInput && user.reminderSchedule) {
-                reminderInput.value = user.reminderSchedule.time || '08:00';
+            const notifSettings = DB.getNotificationSettings ? DB.getNotificationSettings() : {};
+            const toggleSessionNotif = container.querySelector('#toggle-session-notification');
+            const toggleVibration = container.querySelector('#toggle-vibration');
+
+            if (typeof container.renderRemindersUI === 'function') {
+                container.renderRemindersUI();
+            }
+            if (toggleSessionNotif) {
+                toggleSessionNotif.checked = notifSettings.sessionCompletionEnabled !== false;
+            }
+            if (toggleVibration) {
+                toggleVibration.checked = notifSettings.vibrationEnabled !== false;
             }
         }
 
@@ -767,6 +930,13 @@ export function renderProfile() {
         container.querySelector('#stat-sessions').textContent = stats.totalSessions;
         container.querySelector('#stat-minutes').textContent = stats.totalMinutes + 'm';
         container.querySelector('#stat-streak').textContent = stats.streak + ' days';
+
+        const longest = stats.longestStreak || stats.streak || 0;
+        const avgDur = stats.totalSessions > 0 ? Math.round(stats.totalMinutes / stats.totalSessions) : 0;
+        const longestEl = container.querySelector('#stat-longest-streak');
+        if (longestEl) longestEl.textContent = longest + ' days';
+        const avgEl = container.querySelector('#stat-avg-duration');
+        if (avgEl) avgEl.textContent = avgDur + 'm';
 
         container.querySelector('#rfl-total-mins').textContent = stats.weekMinutes;
         container.querySelector('#rfl-total-sessions').textContent = stats.weekSessions;
@@ -855,32 +1025,155 @@ export function renderProfile() {
         });
     }
 
-    // 4. Daily Reminder Schedule
-    const saveReminderBtn = container.querySelector('#save-reminder-btn');
-    if (saveReminderBtn) {
-        saveReminderBtn.addEventListener('click', () => {
-            const timeInput = container.querySelector('#reminder-time-input');
-            const timeVal = timeInput?.value || '08:00';
-            DB.setDailyReminder(true, timeVal);
-            
-            if (window.Capacitor?.Plugins?.LocalNotifications) {
-                const [hrs, mins] = timeVal.split(':').map(Number);
-                const now = new Date();
-                const schedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, 0);
-                if (schedDate <= now) schedDate.setDate(schedDate.getDate() + 1);
+    // Multiple Reminders Management
+    const remindersContainer = container.querySelector('#reminders-list-container');
+    const addReminderBtn = container.querySelector('#add-reminder-btn');
+    const toggleSessionNotif = container.querySelector('#toggle-session-notification');
+    const toggleVibration = container.querySelector('#toggle-vibration');
 
-                window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: [{ id: 101 }] }).then(() => {
-                    window.Capacitor.Plugins.LocalNotifications.schedule({
-                        notifications: [{
-                            title: "Time for Mindfulness 🧘",
-                            body: "Take a few moments to sit and find your center.",
-                            id: 101,
-                            schedule: { at: schedDate, repeats: true, every: 'day' }
-                        }]
-                    });
-                }).catch(err => console.log("Reminder schedule err:", err));
-            }
-            alert(`Daily meditation reminder set for ${timeVal}!`);
+    const syncNativeReminders = (remindersList) => {
+        const notifPlugin = window.Capacitor?.Plugins?.LocalNotifications;
+        if (!notifPlugin) return;
+
+        // Cancel all pending notifications to prevent ghost notifications
+        notifPlugin.getPending().then((pending) => {
+            const idsToCancel = (pending && pending.notifications) ? pending.notifications.map(n => ({ id: n.id })) : [];
+            const fallbackIds = Array.from({ length: 20 }, (_, i) => ({ id: 101 + i }));
+            const allCancel = [...idsToCancel, ...fallbackIds, { id: 99 }];
+
+            notifPlugin.cancel({ notifications: allCancel }).then(() => {
+                const enabledReminders = (remindersList || []).filter(r => r.enabled);
+                if (enabledReminders.length === 0) return;
+
+                const notificationsToSchedule = enabledReminders.map((r, index) => {
+                    const [hrs, mins] = (r.time || '08:00').split(':').map(Number);
+                    const now = new Date();
+                    const schedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, 0, 0);
+                    // Crucial Android Fix: If time has passed today, schedule for tomorrow so Android AlarmManager doesn't fire immediately
+                    if (schedDate <= now) {
+                        schedDate.setDate(schedDate.getDate() + 1);
+                    }
+
+                    return {
+                        title: "Time for Mindfulness 🧘",
+                        body: "Take a few moments to sit and find your center.",
+                        id: 101 + index,
+                        schedule: {
+                            at: schedDate,
+                            repeats: true,
+                            every: 'day'
+                        }
+                    };
+                });
+
+                notifPlugin.schedule({
+                    notifications: notificationsToSchedule
+                }).catch(err => console.log("[Profile] LocalNotifications schedule error:", err));
+            }).catch(err => console.log("[Profile] LocalNotifications cancel error:", err));
+        }).catch(() => {
+            // Fallback cancel
+            notifPlugin.cancel({ notifications: Array.from({ length: 20 }, (_, i) => ({ id: 101 + i })) });
+        });
+    };
+
+    container.renderRemindersUI = () => {
+        if (!remindersContainer) return;
+        const notifSettings = DB.getNotificationSettings ? DB.getNotificationSettings() : {};
+        const reminders = notifSettings.reminders || [];
+
+        remindersContainer.innerHTML = '';
+        if (reminders.length === 0) {
+            remindersContainer.innerHTML = `<p style="font-size:11.5px; color:var(--color-text-muted); margin:0;">No reminders set. Click "Add Time" to add one.</p>`;
+            return;
+        }
+
+        reminders.forEach((rem, idx) => {
+            const row = document.createElement('div');
+            row.className = 'reminder-item-row';
+            row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--color-bg-secondary); border-radius:10px;';
+            row.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-text-muted);">schedule</span>
+                    <input type="time" class="reminder-time-field" data-id="${rem.id}" value="${rem.time || '08:00'}" style="padding:3px 6px; border-radius:6px; border:1px solid rgba(0,0,0,0.1); font-size:12px; outline:none; font-family:inherit; color:var(--color-text-primary); background:var(--color-bg-card);">
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <label class="switch-toggle" style="transform:scale(0.85); transform-origin:right center;">
+                        <input type="checkbox" class="reminder-toggle-field" data-id="${rem.id}" ${rem.enabled ? 'checked' : ''}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    ${reminders.length > 1 ? `
+                    <button class="reminder-delete-btn" data-id="${rem.id}" aria-label="Delete" style="background:none; border:none; cursor:pointer; color:#d32f2f; padding:2px; display:flex; align-items:center;">
+                        <span class="material-symbols-rounded" style="font-size:16px;">delete</span>
+                    </button>
+                    ` : ''}
+                </div>
+            `;
+            remindersContainer.appendChild(row);
+        });
+
+        // Time change listener
+        remindersContainer.querySelectorAll('.reminder-time-field').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const id = e.target.getAttribute('data-id');
+                const newTime = e.target.value;
+                const notifSettings = DB.getNotificationSettings();
+                const list = (notifSettings.reminders || []).map(r => r.id === id ? { ...r, time: newTime } : r);
+                DB.setNotificationSettings({ reminders: list });
+                syncNativeReminders(list);
+            });
+        });
+
+        // Toggle change listener
+        remindersContainer.querySelectorAll('.reminder-toggle-field').forEach(chk => {
+            chk.addEventListener('change', (e) => {
+                const id = e.target.getAttribute('data-id');
+                const isChecked = e.target.checked;
+                const notifSettings = DB.getNotificationSettings();
+                const list = (notifSettings.reminders || []).map(r => r.id === id ? { ...r, enabled: isChecked } : r);
+                DB.setNotificationSettings({ reminders: list });
+                syncNativeReminders(list);
+            });
+        });
+
+        // Delete button listener
+        remindersContainer.querySelectorAll('.reminder-delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = btn.getAttribute('data-id');
+                const notifSettings = DB.getNotificationSettings();
+                const list = (notifSettings.reminders || []).filter(r => r.id !== id);
+                DB.setNotificationSettings({ reminders: list });
+                container.renderRemindersUI();
+                syncNativeReminders(list);
+            });
+        });
+    };
+
+    if (addReminderBtn) {
+        addReminderBtn.addEventListener('click', () => {
+            const notifSettings = DB.getNotificationSettings();
+            const list = notifSettings.reminders || [];
+            const newId = 'rem_' + Date.now();
+            const defaultTimes = ['08:00', '13:00', '20:00', '21:30'];
+            const nextTime = defaultTimes[list.length % defaultTimes.length];
+            
+            const updated = [...list, { id: newId, time: nextTime, enabled: true }];
+            DB.setNotificationSettings({ reminders: updated });
+            container.renderRemindersUI();
+            syncNativeReminders(updated);
+        });
+    }
+
+    container.renderRemindersUI();
+
+    if (toggleSessionNotif) {
+        toggleSessionNotif.addEventListener('change', (e) => {
+            DB.setNotificationSettings({ sessionCompletionEnabled: e.target.checked });
+        });
+    }
+
+    if (toggleVibration) {
+        toggleVibration.addEventListener('change', (e) => {
+            DB.setNotificationSettings({ vibrationEnabled: e.target.checked });
         });
     }
 
@@ -897,9 +1190,30 @@ export function renderProfile() {
     }
 
     if (toggleMenu) {
-        toggleMenu.addEventListener('change', (e) => {
+        toggleMenu.addEventListener('click', (e) => {
             const isSoundOn = e.target.checked;
             localStorage.setItem('siddha_sound_menu_muted', isSoundOn ? 'false' : 'true');
+        });
+    }
+
+    // Share App Listener
+    const shareBtn = container.querySelector('#profile-share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            const shareData = {
+                title: 'Siddha Meditation',
+                text: 'Find your inner calm and build a mindful habit with Siddha Meditation! 🧘✨',
+                url: 'https://siddha.app'
+            };
+
+            if (window.Capacitor?.Plugins?.Share) {
+                window.Capacitor.Plugins.Share.share(shareData).catch(err => console.log('[Profile] Native share error:', err));
+            } else if (navigator.share) {
+                navigator.share(shareData).catch(err => console.log('[Profile] Web share error:', err));
+            } else {
+                navigator.clipboard.writeText('https://siddha.app');
+                alert('App link copied to clipboard! (https://siddha.app)');
+            }
         });
     }
 
@@ -932,7 +1246,69 @@ export function renderProfile() {
         });
     });
 
+    // 5.5 Analytics Pop-Up Modal Event Handlers
+    const openAnalyticsModalBtn = container.querySelector('#open-analytics-modal-btn');
+    const analyticsModalOverlay = container.querySelector('#analytics-modal-overlay');
+    const closeAnalyticsModalBtn = container.querySelector('#close-analytics-modal-btn');
+
+    function openAnalyticsModal() {
+        if (!analyticsModalOverlay) return;
+        analyticsModalOverlay.style.display = 'flex';
+
+        const modalHeatmapContainer = container.querySelector('#modal-heatmap-container');
+        const modalHeatmapPopover = container.querySelector('#modal-heatmap-popover');
+        if (modalHeatmapContainer) {
+            renderHeatmapGrid(modalHeatmapContainer, modalHeatmapPopover);
+        }
+
+        const modalGrowthChart = container.querySelector('#modal-growth-chart');
+        if (modalGrowthChart) {
+            renderGrowthWaveChart(activeGrowthPeriod, modalGrowthChart);
+        }
+    }
+
+    if (openAnalyticsModalBtn) {
+        openAnalyticsModalBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openAnalyticsModal();
+        });
+    }
+
+    if (closeAnalyticsModalBtn) {
+        closeAnalyticsModalBtn.addEventListener('click', () => {
+            if (analyticsModalOverlay) analyticsModalOverlay.style.display = 'none';
+        });
+    }
+
+    if (analyticsModalOverlay) {
+        analyticsModalOverlay.addEventListener('click', (e) => {
+            if (e.target === analyticsModalOverlay) {
+                analyticsModalOverlay.style.display = 'none';
+            }
+        });
+    }
+
     // 6. Collapsible Cards
+    const lifetimeCard = container.querySelector('#lifetime-stats-card');
+    if (lifetimeCard) {
+        const header = lifetimeCard.querySelector('.collapsible-header');
+        if (header) {
+            header.addEventListener('click', () => {
+                lifetimeCard.classList.toggle('collapsed');
+            });
+        }
+    }
+
+    const settingsCard = container.querySelector('#profile-settings-card');
+    if (settingsCard) {
+        const header = settingsCard.querySelector('.collapsible-header');
+        if (header) {
+            header.addEventListener('click', () => {
+                settingsCard.classList.toggle('collapsed');
+            });
+        }
+    }
+
     const milesCard = container.querySelector('#milestones-card');
     if (milesCard) {
         const header = milesCard.querySelector('.collapsible-header');

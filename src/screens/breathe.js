@@ -1,5 +1,6 @@
 import { DB } from '../services/db.js';
 import { Synth } from '../services/synth.js';
+import { HapticService } from '../services/haptics.js';
 
 export function renderBreathe(onComplete) {
     const container = document.createElement('div');
@@ -31,7 +32,12 @@ export function renderBreathe(onComplete) {
 
         <!-- Mission info banner -->
         <div id="mission-info-banner" class="bh-mission-banner" style="display:none;">
-            <span class="bh-mission-tag">Active Mission</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span class="bh-mission-tag">Active Mission</span>
+                <button id="clear-active-mission-btn" aria-label="Cancel Mission" style="background:rgba(255,255,255,0.15); border:none; color:rgba(255,255,255,0.85); cursor:pointer; font-size:12px; padding:2px 8px; border-radius:12px; display:flex; align-items:center; gap:2px;">
+                    <span class="material-symbols-rounded" style="font-size:14px;">close</span> Exit
+                </button>
+            </div>
             <p id="mission-info-text" class="bh-mission-text"></p>
         </div>
 
@@ -53,8 +59,17 @@ export function renderBreathe(onComplete) {
 
         <!-- Controls area -->
         <div class="bh-controls">
+            <!-- Trigger Button for Intention Pop-Up Modal -->
+            <div id="intention-trigger-wrap" style="margin-bottom: 12px; transition: opacity 0.3s;">
+                <button id="open-intention-modal-btn" class="bh-intention-trigger-btn">
+                    <span class="material-symbols-rounded" style="font-size:16px; color:#ffd166;">psychology_alt</span>
+                    <span id="intention-trigger-label">Set Sit Intention (Optional)</span>
+                    <span class="material-symbols-rounded" style="font-size:14px; opacity:0.6;">edit</span>
+                </button>
+            </div>
+
             <!-- Interval Bell Input + Mute Toggle -->
-            <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); transition: opacity 0.3s;">
+            <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); transition: opacity 0.3s;">
                 <span class="material-symbols-rounded" style="font-size:18px;">notifications_active</span>
                 <label for="bell-interval-input">Bell every:</label>
                 <input type="number" id="bell-interval-input" min="0" placeholder="0" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 4px; font-size: 12px; width: 45px; text-align: center; outline: none;" value="0">
@@ -82,6 +97,12 @@ export function renderBreathe(onComplete) {
 
             <!-- Big timer -->
             <div class="bh-timer-wrap">
+                <!-- Active Session Intention Anchor Pill (placed just above timer) -->
+                <div id="active-intention-anchor" class="bh-active-intention" style="display:none;">
+                    <span class="material-symbols-rounded" style="font-size:14px; color:#ffd166;">auto_awesome</span>
+                    <span id="active-intention-text"></span>
+                </div>
+
                 <h1 class="bh-timer" id="breathe-timer">10:00</h1>
                 <p class="bh-timer-hint" id="bh-timer-hint" style="display:none;">Tap ⏭ to finish early</p>
             </div>
@@ -97,10 +118,252 @@ export function renderBreathe(onComplete) {
                 <div style="width:48px;"></div><!-- spacer to balance reset btn -->
             </div>
         </div>
+
+        <!-- Intention Pop-Up Modal Window -->
+        <div id="intention-modal-overlay" class="bh-modal-overlay" style="display:none;">
+            <div class="bh-modal-window">
+                <!-- Header -->
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                    <div>
+                        <h3 style="font-size:15px; font-weight:700; font-family:var(--font-heading); color:#ffffff; margin:0 0 3px 0; display:flex; align-items:center; gap:6px;">
+                            <span class="material-symbols-rounded" style="font-size:18px; color:#ffd166;">psychology_alt</span>
+                            Set Sit Intention (Sankalpa)
+                        </h3>
+                        <p style="font-size:11px; color:rgba(255,255,255,0.7); margin:0; line-height:1.4;">
+                            Ground your mind before sitting. Write your personal intention or pick an inspiration below.
+                        </p>
+                    </div>
+                    <button id="close-intention-modal-btn" style="background:rgba(255,255,255,0.12); border:none; color:rgba(255,255,255,0.8); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; margin-left:8px;">
+                        <span class="material-symbols-rounded" style="font-size:18px;">close</span>
+                    </button>
+                </div>
+
+                <!-- Explanation Callout Box -->
+                <div style="background:rgba(255, 209, 102, 0.1); border:1px solid rgba(255, 209, 102, 0.25); border-radius:12px; padding:10px 12px; margin-bottom:14px;">
+                    <div style="display:flex; align-items:flex-start; gap:8px;">
+                        <span class="material-symbols-rounded" style="font-size:16px; color:#ffd166; margin-top:1px; flex-shrink:0;">info</span>
+                        <p style="font-size:11px; color:rgba(255,255,255,0.9); margin:0; line-height:1.45;">
+                            <strong>What is a Sankalpa?</strong> A heartfelt intention formed in a calm mind. It sets a gentle direction for your sit—such as anchoring in breath or letting go of tension—without creating goals or pressure.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- User Custom Intention Input Box ON TOP -->
+                <div style="margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <label style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.9); display:flex; align-items:center; gap:4px;">
+                            ✍️ Your Intention
+                        </label>
+                        <span id="modal-clear-text-btn" style="font-size:10.5px; color:rgba(255,255,255,0.5); cursor:pointer; display:none;">Clear text</span>
+                    </div>
+                    <textarea id="modal-intention-input" placeholder="What is your intention or motivation for this sit?" class="bh-modal-intention-field" rows="3"></textarea>
+                </div>
+
+                <!-- Collapsible Inspiration Accordion Trigger -->
+                <div style="margin-bottom:12px;">
+                    <button id="modal-inspiration-toggle" style="width:100%; text-align:left; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); border-radius:12px; padding:9px 12px; color:#ffd166; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="display:flex; align-items:center; gap:6px;">
+                            <span class="material-symbols-rounded" style="font-size:16px; color:#ffd166;">auto_awesome</span>
+                            Need Inspiration? Explore Intentions
+                        </span>
+                        <span id="modal-inspiration-chevron" style="font-size:11px; transition:transform 0.2s;">▼</span>
+                    </button>
+
+                    <!-- Collapsible Content -->
+                    <div id="modal-inspiration-body" style="display:none; flex-direction:column; gap:10px; margin-top:10px; max-height:260px; overflow-y:auto; padding-right:4px;">
+                        
+                        <!-- Category 1: Grounding & Calming -->
+                        <div class="bh-intent-cat-group">
+                            <div class="bh-intent-cat-title">🌿 Grounding & Calming</div>
+                            <div class="bh-modal-intent-card" data-fullintent="My intention for this sit is to step out of the mental chatter and anchor myself in the quiet rhythm of my breath.">
+                                <div class="bh-intent-card-title">Anchor in the Breath</div>
+                                <div class="bh-intent-card-sub">“Step out of mental chatter and anchor in the quiet rhythm of breath.”</div>
+                            </div>
+                            <div class="bh-modal-intent-card" data-fullintent="I intend to give my nervous system permission to rest, letting go of physical tightness and mental stress with every exhale.">
+                                <div class="bh-intent-card-title">Nervous System Rest</div>
+                                <div class="bh-intent-card-sub">“Give nervous system permission to rest, letting go of stress with every exhale.”</div>
+                            </div>
+                            <div class="bh-modal-intent-card" data-fullintent="I sit to create space between my emotions and my actions, so I can meet difficulty with calm rather than impulse.">
+                                <div class="bh-intent-card-title">Respond, Not React</div>
+                                <div class="bh-intent-card-sub">“Create space between emotions & actions, meeting difficulty with calm.”</div>
+                            </div>
+                        </div>
+
+                        <!-- Category 2: Sharpening the Mind -->
+                        <div class="bh-intent-cat-group">
+                            <div class="bh-intent-cat-title">🧘 Sharpening the Mind</div>
+                            <div class="bh-modal-intent-card" data-fullintent="My intention is to gently bring my mind back to the breath whenever it wanders, strengthening my ability to focus.">
+                                <div class="bh-intent-card-title">Single-Pointed Focus</div>
+                                <div class="bh-intent-card-sub">“Gently return to breath whenever mind wanders, strengthening focus.”</div>
+                            </div>
+                            <div class="bh-modal-intent-card" data-fullintent="I intend to cultivate a bright, clear, and alert presence, resting in awareness without slipping into dullness or sleep.">
+                                <div class="bh-intent-card-title">Bright & Alert Presence</div>
+                                <div class="bh-intent-card-sub">“Cultivate bright, clear presence without slipping into dullness or sleep.”</div>
+                            </div>
+                            <div class="bh-modal-intent-card" data-fullintent="I sit to watch the landscape of my thoughts without getting swept up in the storylines.">
+                                <div class="bh-intent-card-title">Observe Without Judgment</div>
+                                <div class="bh-intent-card-sub">“Watch the landscape of thoughts without getting swept up in storylines.”</div>
+                            </div>
+                        </div>
+
+                        <!-- Category 3: Openness & Acceptance -->
+                        <div class="bh-intent-cat-group">
+                            <div class="bh-intent-cat-title">🌊 Openness & Acceptance</div>
+                            <div class="bh-modal-intent-card" data-fullintent="My intention is to meet pleasant, unpleasant, or neutral sensations with equal openness, without trying to push or pull.">
+                                <div class="bh-intent-card-title">Welcome Whatever Arises</div>
+                                <div class="bh-intent-card-sub">“Meet all sensations with equal openness, without pushing or pulling.”</div>
+                            </div>
+                            <div class="bh-modal-intent-card" data-fullintent="I intend to treat my impatient or wandering mind with patience and kindness today, rather than criticism.">
+                                <div class="bh-intent-card-title">Self-Compassion & Kindness</div>
+                                <div class="bh-intent-card-sub">“Treat impatient mind with patience & kindness today, not criticism.”</div>
+                            </div>
+                            <div class="bh-modal-intent-card" data-fullintent="I sit to practice non-striving—releasing the need to accomplish anything and simply being as I am.">
+                                <div class="bh-intent-card-title">Non-Striving & Letting Go</div>
+                                <div class="bh-intent-card-sub">“Release the need to accomplish anything and simply be as I am.”</div>
+                            </div>
+                        </div>
+
+                        <!-- Category 4: Insight & Connection -->
+                        <div class="bh-intent-cat-group">
+                            <div class="bh-intent-cat-title">✨ Insight & Connection</div>
+                            <div class="bh-modal-intent-card" data-fullintent="My intention is to sit in the spacious quiet beneath my thoughts and rest in pure awareness.">
+                                <div class="bh-intent-card-title">Rest in Pure Awareness</div>
+                                <div class="bh-intent-card-sub">“Sit in the spacious quiet beneath thoughts and rest in pure awareness.”</div>
+                            </div>
+                            <div class="bh-modal-intent-card" data-fullintent="I sit to cultivate clarity and peace within myself, so I can bring greater patience and kindness to others.">
+                                <div class="bh-intent-card-title">Dedicate the Practice</div>
+                                <div class="bh-intent-card-sub">“Cultivate clarity & peace so I can bring kindness to others.”</div>
+                            </div>
+                            <div class="bh-modal-intent-card" data-fullintent="My intention is to simply show up for this moment, trusting the practice one breath at a time.">
+                                <div class="bh-intent-card-title">Honor the Path</div>
+                                <div class="bh-intent-card-sub">“Simply show up for this moment, trusting the practice one breath at a time.”</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:8px;">
+                    <button id="modal-clear-intention-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18); color:rgba(255,255,255,0.7); font-size:12px; font-weight:600; padding:8px 14px; border-radius:12px; cursor:pointer;">
+                        Clear
+                    </button>
+                    <button id="modal-save-intention-btn" style="background:linear-gradient(135deg, #ffd166, #f59e0b); border:none; color:#1a1a1a; font-size:13px; font-weight:700; padding:9px 20px; border-radius:12px; cursor:pointer; box-shadow:0 3px 12px rgba(255,209,102,0.3);">
+                        Set Intention
+                    </button>
+                </div>
+            </div>
+        </div>
     `;
 
     const style = document.createElement('style');
     style.textContent = `
+        /* Intention Pop-Up Modal & Trigger Button */
+        .bh-intention-trigger-btn {
+            background: rgba(255, 255, 255, 0.09);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            padding: 7px 16px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+        }
+        .bh-intention-trigger-btn:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .bh-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 18, 0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .bh-modal-window {
+            width: 100%;
+            max-width: 360px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: linear-gradient(160deg, #2D3D32 0%, #1A261D 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 18px 16px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+        }
+
+        .bh-intent-cat-group {
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .bh-intent-cat-title {
+            font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.85);
+            margin: 4px 0 2px 0;
+        }
+
+        .bh-modal-intent-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 8px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .bh-modal-intent-card:active {
+            transform: scale(0.98);
+        }
+        .bh-modal-intent-card.active {
+            background: rgba(255, 209, 102, 0.16);
+            border-color: #ffd166;
+            box-shadow: 0 0 10px rgba(255, 209, 102, 0.15);
+        }
+        .bh-intent-card-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .bh-intent-card-sub {
+            font-size: 10.5px;
+            color: rgba(255, 255, 255, 0.65);
+            margin-top: 2px;
+            line-height: 1.35;
+            font-style: italic;
+        }
+        .bh-modal-intention-field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 12.5px;
+            padding: 10px 12px;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+            resize: none;
+            line-height: 1.4;
+        }
+        .bh-active-intention {
+            margin: 0 auto 10px auto; font-size: 12px; font-weight: 600;
+            color: rgba(255, 230, 160, 0.95); background: rgba(255, 255, 255, 0.12);
+            padding: 5px 16px; border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 16px rgba(255, 209, 102, 0.2);
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            max-width: 280px; text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
         /* ---- Breathe screen ---- */
         .breathe-screen {
             background: linear-gradient(160deg, #3D5142 0%, #1E2C22 100%);
@@ -308,6 +571,125 @@ export function renderBreathe(onComplete) {
         let promptInterval = null;
         let lastTickTime = null;
 
+        // Intention Modal State & Elements
+        const intentionTriggerWrap = container.querySelector('#intention-trigger-wrap');
+        const openModalBtn = container.querySelector('#open-intention-modal-btn');
+        const triggerLabel = container.querySelector('#intention-trigger-label');
+        const modalOverlay = container.querySelector('#intention-modal-overlay');
+        const closeModalBtn = container.querySelector('#close-intention-modal-btn');
+        const saveModalBtn = container.querySelector('#modal-save-intention-btn');
+        const clearModalBtn = container.querySelector('#modal-clear-intention-btn');
+        const modalCards = container.querySelectorAll('.bh-modal-intent-card');
+        const modalInput = container.querySelector('#modal-intention-input');
+        const modalClearTextBtn = container.querySelector('#modal-clear-text-btn');
+        const inspirationToggle = container.querySelector('#modal-inspiration-toggle');
+        const inspirationBody = container.querySelector('#modal-inspiration-body');
+        const inspirationChevron = container.querySelector('#modal-inspiration-chevron');
+        const activeIntentionAnchor = container.querySelector('#active-intention-anchor');
+        const activeIntentionText = container.querySelector('#active-intention-text');
+
+        let currentIntention = '';
+
+        function updateTriggerButtonUI() {
+            if (currentIntention) {
+                const previewText = currentIntention.length > 28 ? currentIntention.slice(0, 28) + '...' : currentIntention;
+                triggerLabel.textContent = `✨ Intention: "${previewText}"`;
+                openModalBtn.style.borderColor = 'rgba(255,209,102,0.5)';
+                openModalBtn.style.background = 'rgba(255,209,102,0.15)';
+                openModalBtn.style.color = '#ffffff';
+            } else {
+                triggerLabel.textContent = 'Set Sit Intention (Optional)';
+                openModalBtn.style.borderColor = 'rgba(255,255,255,0.18)';
+                openModalBtn.style.background = 'rgba(255,255,255,0.09)';
+                openModalBtn.style.color = 'rgba(255,255,255,0.85)';
+            }
+        }
+
+        if (openModalBtn) {
+            openModalBtn.addEventListener('click', () => {
+                modalOverlay.style.display = 'flex';
+            });
+        }
+
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => {
+                modalOverlay.style.display = 'none';
+            });
+        }
+
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) modalOverlay.style.display = 'none';
+            });
+        }
+
+        if (inspirationToggle && inspirationBody) {
+            inspirationToggle.addEventListener('click', () => {
+                const isHidden = inspirationBody.style.display === 'none';
+                inspirationBody.style.display = isHidden ? 'flex' : 'none';
+                if (inspirationChevron) {
+                    inspirationChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+                }
+            });
+        }
+
+        modalCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const fullText = card.dataset.fullintent;
+                if (card.classList.contains('active')) {
+                    card.classList.remove('active');
+                    modalInput.value = '';
+                    if (modalClearTextBtn) modalClearTextBtn.style.display = 'none';
+                } else {
+                    modalCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    modalInput.value = fullText;
+                    if (modalClearTextBtn) modalClearTextBtn.style.display = 'inline';
+                }
+            });
+        });
+
+        if (modalInput) {
+            modalInput.addEventListener('input', () => {
+                const val = modalInput.value.trim();
+                if (modalClearTextBtn) modalClearTextBtn.style.display = val ? 'inline' : 'none';
+                modalCards.forEach(c => {
+                    if (c.dataset.fullintent === val) {
+                        c.classList.add('active');
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        if (modalClearTextBtn) {
+            modalClearTextBtn.addEventListener('click', () => {
+                modalInput.value = '';
+                modalCards.forEach(c => c.classList.remove('active'));
+                modalClearTextBtn.style.display = 'none';
+            });
+        }
+
+        if (clearModalBtn) {
+            clearModalBtn.addEventListener('click', () => {
+                currentIntention = '';
+                modalInput.value = '';
+                modalCards.forEach(c => c.classList.remove('active'));
+                if (modalClearTextBtn) modalClearTextBtn.style.display = 'none';
+                updateTriggerButtonUI();
+                modalOverlay.style.display = 'none';
+            });
+        }
+
+        if (saveModalBtn) {
+            saveModalBtn.addEventListener('click', () => {
+                currentIntention = modalInput.value.trim();
+                updateTriggerButtonUI();
+                modalOverlay.style.display = 'none';
+            });
+        }
+
         // Persist mute state across sessions
         let isMuted = localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true';
         function applyMuteState() {
@@ -342,6 +724,7 @@ export function renderBreathe(onComplete) {
                         const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
                         if (currentBoundary > prevBoundary && timeLeft > 0) {
                             Synth.playSingleBell();
+                            HapticService.vibrate('bell');
                         }
                     }
 
@@ -423,6 +806,22 @@ export function renderBreathe(onComplete) {
             const soundscapeEl = container.querySelector('#soundscape-container');
             soundscapeEl.style.opacity = running ? '0' : '1';
             soundscapeEl.style.pointerEvents = running ? 'none' : 'auto';
+
+            if (intentionTriggerWrap) {
+                intentionTriggerWrap.style.opacity = running ? '0' : '1';
+                intentionTriggerWrap.style.pointerEvents = running ? 'none' : 'auto';
+            }
+
+            const activeIntentionAnchor = container.querySelector('#active-intention-anchor');
+            const activeIntentionText = container.querySelector('#active-intention-text');
+            if (activeIntentionAnchor && activeIntentionText) {
+                if (running && currentIntention) {
+                    activeIntentionText.textContent = `Intention: "${currentIntention}"`;
+                    activeIntentionAnchor.style.display = 'inline-flex';
+                } else {
+                    activeIntentionAnchor.style.display = 'none';
+                }
+            }
             
             if (!running && !container.activeMission && customBtn.classList.contains('active')) {
                 customCont.style.display = 'flex';
@@ -491,13 +890,11 @@ export function renderBreathe(onComplete) {
             sessionElapsed = 0;
             updateDisplay();
 
-            // Play completion bell & 2 end-of-session vibration pulses
-            if (!isMuted) Synth.playSingleBell();
-            if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                try { navigator.vibrate([400, 200, 400]); } catch(e) {}
-            }
+            // Play 3 completion bells & end-of-session vibration pulses
+            if (!isMuted) Synth.playThreeBells();
+            HapticService.vibrate('completion');
 
-            if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped });
+            if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped, intention: currentIntention });
         }
 
         // ---- Button Listeners ----
@@ -549,8 +946,9 @@ export function renderBreathe(onComplete) {
                 }
 
                 // Schedule local notification for completion when running on mobile native platforms
+                const notifSettings = DB.getNotificationSettings ? DB.getNotificationSettings() : {};
                 const localNotifications = window.Capacitor?.Plugins?.LocalNotifications;
-                if (localNotifications) {
+                if (localNotifications && notifSettings.sessionCompletionEnabled !== false) {
                     localNotifications.requestPermissions().then((result) => {
                         if (result.display === 'granted') {
                             localNotifications.cancel({ notifications: [{ id: 99 }] }).then(() => {
@@ -561,7 +959,6 @@ export function renderBreathe(onComplete) {
                                             body: "Your session is complete. Return to your day with peace.",
                                             id: 99,
                                             schedule: { at: new Date(Date.now() + timeLeft * 1000) },
-                                            sound: 'bell.wav',
                                             actionTypeId: "",
                                             extra: null
                                         }
@@ -591,6 +988,7 @@ export function renderBreathe(onComplete) {
                             const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
                             if (currentBoundary > prevBoundary && timeLeft > 0) {
                                 Synth.playSingleBell();
+                                HapticService.vibrate('bell');
                             }
                         }
 
@@ -603,11 +1001,25 @@ export function renderBreathe(onComplete) {
             }
         });
 
+        // Clear mission button listener
+        const clearMissionBtn = container.querySelector('#clear-active-mission-btn');
+        if (clearMissionBtn) {
+            clearMissionBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                container.activeMission = null;
+                container.querySelector('#mission-info-banner').style.display = 'none';
+                container.querySelector('#breathe-screen-title').textContent = 'Meditation';
+                container.querySelector('#breathe-screen-desc').textContent = 'Find your center';
+                updatePresetsState();
+            });
+        }
+
         // Presets
         presetBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 if (!isPaused) return;
                 if (btn.classList.contains('disabled')) return; // Disable clicking muted/disabled buttons
+
                 presetBtns.forEach(b => b.classList.remove('active'));
                 customBtn.classList.remove('active');
                 customCont.style.display = 'none';
@@ -616,6 +1028,7 @@ export function renderBreathe(onComplete) {
                 timeLeft = START_MINUTES * 60;
                 sessionElapsed = 0;
                 updateDisplay();
+                updatePresetsState();
             });
         });
 
