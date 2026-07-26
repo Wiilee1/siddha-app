@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const noNav = ['login', 'breathe', 'new_reflection', 'wisdom'];
         bottomNav.style.display = noNav.includes(targetId) ? 'none' : 'flex';
 
+        currentActiveScreen = targetId;
+
         // Background Music & Nature Ambiance Control
         if (targetId === 'breathe') {
             MenuMusic.fadeOut(800);
@@ -109,6 +111,47 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             navigateTo('login');
         }
+    }
+
+    // Global App Lifecycle Audio Management (Pause all audio when app is backgrounded/minimized)
+    let currentActiveScreen = 'home';
+
+    function pauseAllAppAudio() {
+        MenuMusic.pause();
+        NatureMusic.pause();
+    }
+
+    function resumeAppAudioIfAppropriate() {
+        if (currentActiveScreen !== 'breathe') {
+            MenuMusic.start();
+            NatureMusic.start();
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            pauseAllAppAudio();
+        } else {
+            resumeAppAudioIfAppropriate();
+        }
+    });
+
+    window.addEventListener('blur', () => {
+        pauseAllAppAudio();
+    });
+
+    window.addEventListener('focus', () => {
+        resumeAppAudioIfAppropriate();
+    });
+
+    if (window.Capacitor?.Plugins?.App) {
+        window.Capacitor.Plugins.App.addListener('appStateChange', (state) => {
+            if (!state.isActive) {
+                pauseAllAppAudio();
+            } else {
+                resumeAppAudioIfAppropriate();
+            }
+        });
     }
 
     // Start
