@@ -1439,7 +1439,7 @@ export function renderProfile() {
     }
 
     if (submitBugBtn && bugModal) {
-        submitBugBtn.addEventListener('click', () => {
+        submitBugBtn.addEventListener('click', async () => {
             const type = container.querySelector('#bug-type-select')?.value || 'bug';
             const desc = container.querySelector('#bug-desc-input')?.value.trim();
             const email = container.querySelector('#bug-email-input')?.value.trim();
@@ -1449,9 +1449,41 @@ export function renderProfile() {
                 return;
             }
 
+            submitBugBtn.disabled = true;
+            const originalText = submitBugBtn.textContent;
+            submitBugBtn.textContent = 'Sending Report... ⏳';
+
+            // Save locally
             DB.saveFeedback({ type, summary: desc, email });
 
-            alert('Thank you for your feedback! 🐛 Your report has been saved.');
+            // Send directly to email inbox via FormSubmit API
+            try {
+                await fetch("https://formsubmit.co/ajax/siddhameditation@gmail.com", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        _subject: `[Siddha ${type.toUpperCase()}] ${desc.slice(0, 40)}...`,
+                        _template: "table",
+                        _captcha: "false",
+                        issue_type: type,
+                        description: desc,
+                        user_email: email || 'Not provided',
+                        app_version: "1.4.0 (Build 7)",
+                        device_platform: navigator.platform || 'Unknown',
+                        submitted_at: new Date().toLocaleString()
+                    })
+                });
+            } catch (err) {
+                console.warn('[Profile] Email dispatch error:', err);
+            }
+
+            submitBugBtn.disabled = false;
+            submitBugBtn.textContent = originalText;
+
+            alert('Thank you! 🐛 Your report has been sent directly to siddhameditation@gmail.com.');
 
             const descInput = container.querySelector('#bug-desc-input');
             if (descInput) descInput.value = '';
