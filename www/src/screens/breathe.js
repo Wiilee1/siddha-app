@@ -857,6 +857,7 @@ export function renderBreathe(onComplete) {
             isPaused = true;
             Synth.stop();
             Synth.stopKeepAlive();
+            if (Synth.SitAudioKeepAlive) Synth.SitAudioKeepAlive.stop();
 
             if (wakeLockSentinel) {
                 try { wakeLockSentinel.release(); } catch(e) {}
@@ -868,11 +869,17 @@ export function renderBreathe(onComplete) {
             }
 
             if (window.Capacitor?.Plugins?.LocalNotifications) {
-                const cancelIds = Array.from({ length: 30 }, (_, i) => ({ id: 201 + i }));
+                const cancelIds = Array.from({ length: 100 }, (_, i) => ({ id: 201 + i }));
                 cancelIds.push({ id: 99 });
-                window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: cancelIds }).catch(err => {
-                    console.log("Error cancelling notification:", err);
-                });
+                window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: cancelIds }).catch(() => {});
+                window.Capacitor.Plugins.LocalNotifications.getPending().then(pending => {
+                    if (pending && pending.notifications && pending.notifications.length > 0) {
+                        const sitNotifs = pending.notifications.filter(n => n.id === 99 || n.id >= 201);
+                        if (sitNotifs.length > 0) {
+                            window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: sitNotifs }).catch(() => {});
+                        }
+                    }
+                }).catch(() => {});
             }
         }
 
@@ -908,8 +915,8 @@ export function renderBreathe(onComplete) {
             sessionElapsed = 0;
             updateDisplay();
 
-            // Play completion bell & 2 end-of-session vibration pulses
-            if (!isMuted) Synth.playSingleBell();
+            // Play end of meditation bell & vibration pulses
+            if (!isMuted) Synth.playEndBell();
             HapticService.vibrate('completion');
 
             if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped, intention: currentIntention });
@@ -960,9 +967,10 @@ export function renderBreathe(onComplete) {
                 
                 // Play starting bell & start audio keep-alive
                 if (!isMuted) {
-                    Synth.playSingleBell();
+                    Synth.playStartBell();
                 }
                 Synth.ensureKeepAlive();
+                if (Synth.SitAudioKeepAlive) Synth.SitAudioKeepAlive.start();
 
                 // Request Screen WakeLock to prevent Android Doze CPU sleep
                 if ('wakeLock' in navigator) {
@@ -1062,7 +1070,7 @@ export function renderBreathe(onComplete) {
                             const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
                             const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
                             if (currentBoundary > prevBoundary && timeLeft > 0) {
-                                Synth.playSingleBell();
+                                Synth.playIntervalBell();
                                 HapticService.vibrate('bell');
                             }
                         }

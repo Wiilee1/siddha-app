@@ -154,6 +154,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Cancel any stale sit interval notifications on app startup
+    if (window.Capacitor?.Plugins?.LocalNotifications) {
+        window.Capacitor.Plugins.LocalNotifications.getPending().then(pending => {
+            if (pending && pending.notifications && pending.notifications.length > 0) {
+                // Cancel any non-reminder notifications (IDs 99, 201+)
+                const sitNotifs = pending.notifications.filter(n => n.id === 99 || n.id >= 201);
+                if (sitNotifs.length > 0) {
+                    window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: sitNotifs }).catch(() => {});
+                }
+            }
+        }).catch(() => {});
+    }
+
     // Start
     handleAuthChange();
 });

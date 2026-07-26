@@ -35,6 +35,42 @@ function stopSilentKeepAlive() {
     }
 }
 
+function playBellAudioWithFade(src, fadeAfterMs = 4500, fadeDurationMs = 2000) {
+    if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
+    try {
+        const audio = new Audio(src);
+        audio.preload = 'auto';
+        const targetVol = getScaledGain(0.75);
+        audio.volume = targetVol;
+
+        audio.play().catch(e => {
+            console.warn('[Synth] Bell play fallback:', e);
+        });
+
+        setTimeout(() => {
+            if (!audio || audio.paused) return;
+            const startVol = audio.volume;
+            const steps = 20;
+            const stepTime = fadeDurationMs / steps;
+            let step = 0;
+            const timer = setInterval(() => {
+                step++;
+                const newVol = Math.max(0, startVol * (1 - step / steps));
+                if (audio) audio.volume = newVol;
+                if (step >= steps) {
+                    clearInterval(timer);
+                    if (audio) {
+                        audio.pause();
+                        audio.currentTime = 0;
+                    }
+                }
+            }, stepTime);
+        }, fadeAfterMs);
+    } catch(e) {
+        console.warn('[Synth] Error playing bell file:', e);
+    }
+}
+
 export const Synth = {
     ensureKeepAlive: () => {
         initAudioContext();
@@ -211,45 +247,30 @@ export const Synth = {
                 node.disconnect();
             } catch (err) {}
         });
-        
         synthNodes = [];
     },
 
-    playSingleBell: () => {
-        if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
-        try {
-            initAudioContext();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(293.66, audioCtx.currentTime); // D4
-            
-            gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + 0.1); // Peak gain 0.2
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 4.5);
+    playStartBell: () => {
+        // Start bell (Beginning of med bell 7 sec.wav): Fades smoothly after 4.5s over 2.0s
+        playBellAudioWithFade('./src/assets/audio/start_bell.wav', 4500, 2000);
+    },
 
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + 4.5);
-        } catch(e) {
-            console.warn("Could not play bell tone:", e);
-        }
+    playIntervalBell: () => {
+        // Awareness / interval bell (Meditation bell 5 sec.mp3): Fades smoothly after 3.0s over 1.5s
+        playBellAudioWithFade('./src/assets/audio/interval_bell.mp3', 3000, 1500);
+    },
+
+    playEndBell: () => {
+        // End bell (End of meditation 30 sec.wav): Plays all 3 built-in chimes & fades smoothly at 26s over 4.0s (finishing at 30s)
+        playBellAudioWithFade('./src/assets/audio/end_bell.wav', 26000, 4000);
+    },
+
+    playSingleBell: () => {
+        Synth.playStartBell();
     },
 
     playThreeBells: () => {
-        if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
-        
-        // Play 3 sequential meditation bells spaced ~1.4 seconds apart
-        Synth.playSingleBell();
-        setTimeout(() => {
-            Synth.playSingleBell();
-        }, 1400);
-        setTimeout(() => {
-            Synth.playSingleBell();
-        }, 2800);
+        Synth.playEndBell();
     },
 
     playMenuClick: () => {
@@ -722,5 +743,39 @@ export const NatureMusic = {
 };
 
 Synth.NatureMusic = NatureMusic;
+
+export const SitAudioKeepAlive = {
+    start: () => {
+        if (!silentAudioEl) {
+            // Self-contained 1-second silent WAV audio loop that registers as continuous MediaSession playback
+            silentAudioEl = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
+            silentAudioEl.loop = true;
+        }
+        silentAudioEl.play().catch(() => {});
+        if ('mediaSession' in navigator) {
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: 'Meditation Sit 🧘',
+                    artist: 'Siddha Mindfulness',
+                    album: 'Mindful Practice'
+                });
+                navigator.mediaSession.playbackState = 'playing';
+            } catch(e) {}
+        }
+    },
+    stop: () => {
+        if (silentAudioEl) {
+            silentAudioEl.pause();
+            silentAudioEl.currentTime = 0;
+        }
+        if ('mediaSession' in navigator) {
+            try {
+                navigator.mediaSession.playbackState = 'paused';
+            } catch(e) {}
+        }
+    }
+};
+
+Synth.SitAudioKeepAlive = SitAudioKeepAlive;
 
 
