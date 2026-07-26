@@ -1,4 +1,6 @@
 import { DB, xpInCurrentLevel } from '../services/db.js';
+import { Synth } from '../services/synth.js';
+import { HapticService } from '../services/haptics.js';
 
 // All meditation paths
 const PATHS = {
@@ -954,7 +956,7 @@ export function renderJourney() {
         const questBadge = container.querySelector('#journey-quest-badge');
         const questBar = container.querySelector('#journey-quest-bar');
 
-        if (q) {
+        if (q && questSub && questBadge && questBar) {
             questSub.textContent = `${q.emoji || '🎯'} ${q.label}`;
 
             if (q.claimed) {
@@ -975,6 +977,8 @@ export function renderJourney() {
                 questBar.onclick = () => {
                     const success = DB.claimDailyQuest(q.type);
                     if (success) {
+                        Synth.playQuestClaimSound();
+                        HapticService.vibrate('medium');
                         triggerQuestSplash();
                         container.updateData();
                     }

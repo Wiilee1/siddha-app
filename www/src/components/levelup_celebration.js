@@ -1,6 +1,8 @@
 // Siddha Meditation App - Level Up Celebration Component
 // Plays a synthetic singing bowl chime, shows rotating sacred geometry, falling leaf particles, and a grounding quote.
 
+import { Synth } from '../services/synth.js';
+
 const LEVEL_NAMES = [
     "Novice", "Initiate", "Adept", "Seeker", "Wanderer",
     "Practitioner", "Disciple", "Guide", "Sage", "Master"

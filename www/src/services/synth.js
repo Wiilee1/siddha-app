@@ -4,6 +4,8 @@ let audioCtx = null;
 let synthNodes = [];
 let chimeInterval = null;
 
+let silentAudioEl = null;
+
 function initAudioContext() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -13,7 +15,34 @@ function initAudioContext() {
     }
 }
 
+function ensureSilentKeepAlive() {
+    try {
+        if (!silentAudioEl) {
+            silentAudioEl = new Audio('data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YRAAAAAAAAAAAAAAAAAA');
+            silentAudioEl.loop = true;
+            silentAudioEl.volume = 0.01;
+        }
+        silentAudioEl.play().catch(() => {});
+    } catch(e) {}
+}
+
+function stopSilentKeepAlive() {
+    if (silentAudioEl) {
+        try {
+            silentAudioEl.pause();
+            silentAudioEl.currentTime = 0;
+        } catch(e) {}
+    }
+}
+
 export const Synth = {
+    ensureKeepAlive: () => {
+        initAudioContext();
+        ensureSilentKeepAlive();
+    },
+    stopKeepAlive: () => {
+        stopSilentKeepAlive();
+    },
     start: (type) => {
         if (window.Capacitor?.getPlatform() === 'ios') {
             console.log('[Synth iOS] Soundscapes are disabled on iOS:', type);
@@ -243,5 +272,455 @@ export const Synth = {
             osc.start();
             osc.stop(audioCtx.currentTime + 0.08);
         } catch(e) {}
+    },
+
+    playLevelUpChime: () => {
+        if (localStorage.getItem('siddha_sound_menu_muted') === 'true') return;
+        try {
+            initAudioContext();
+            const now = audioCtx.currentTime;
+            const freqs = [523.25, 783.99, 1046.50]; // C5 -> G5 -> C6
+            
+            freqs.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const startTime = now + (idx * 0.14);
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, startTime);
+
+                gain.gain.setValueAtTime(0.001, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.18, startTime + 0.04);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 1.6);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(startTime);
+                osc.stop(startTime + 1.6);
+            });
+        } catch(e) {}
+    },
+
+    playQuestClaimSound: () => {
+        if (localStorage.getItem('siddha_sound_menu_muted') === 'true') return;
+        try {
+            initAudioContext();
+            const now = audioCtx.currentTime;
+            const freqs = [659.25, 987.77]; // E5 -> B5
+            
+            freqs.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const startTime = now + (idx * 0.08);
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, startTime);
+
+                gain.gain.setValueAtTime(0.001, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.15, startTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.45);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(startTime);
+                osc.stop(startTime + 0.45);
+            });
+        } catch(e) {}
+    },
+
+    playStreakGongSound: () => {
+        if (localStorage.getItem('siddha_sound_menu_muted') === 'true') return;
+        try {
+            initAudioContext();
+            const now = audioCtx.currentTime;
+            
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            const gain2 = audioCtx.createGain();
+
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(108, now);
+
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(216, now);
+
+            gain1.gain.setValueAtTime(0.001, now);
+            gain1.gain.exponentialRampToValueAtTime(0.25, now + 0.06);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 4.5);
+
+            gain2.gain.setValueAtTime(0.001, now);
+            gain2.gain.exponentialRampToValueAtTime(0.10, now + 0.06);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
+            osc1.connect(gain1);
+            osc2.connect(gain2);
+            gain1.connect(audioCtx.destination);
+            gain2.connect(audioCtx.destination);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + 4.5);
+            osc2.stop(now + 3.2);
+        } catch(e) {}
+    },
+
+    playSliderTick: () => {
+        if (localStorage.getItem('siddha_sound_menu_muted') === 'true') return;
+        try {
+            initAudioContext();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.exponentialRampToValueAtTime(0.03, now + 0.004);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.02);
+        } catch(e) {}
+    },
+
+    playSankalpaHum: () => {
+        if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
+        try {
+            initAudioContext();
+            const now = audioCtx.currentTime;
+            
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(174, now);
+            
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(261, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.exponentialRampToValueAtTime(0.12, now + 0.6);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
+            osc1.connect(gain);
+            osc2.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + 3.2);
+            osc2.stop(now + 3.2);
+        } catch(e) {}
     }
 };
+
+// Logarithmic exponential gain scaling (maps 0.0-1.0 slider to ultra-gentle 0.0-0.08 max gain)
+function getScaledGain(rawVol) {
+    const v = Math.max(0, Math.min(1, parseFloat(rawVol)));
+    if (v === 0) return 0;
+    // Logarithmic curve: 1% gives ~0.00002 (whisper quiet), 100% gives 0.08 (gentle ambient)
+    return Math.pow(v, 2.4) * 0.08;
+}
+
+const MENU_TRACKS = [
+    { id: 'himalayan', name: 'Himalayan Sanctuary', src: './src/assets/audio/himalayan_sanctuary.mp3' },
+    { id: 'temple_wind', name: 'Temple Wind Echoes', src: './src/assets/audio/temple_wind_echoes.wav' },
+    { id: 'fairytale_harp', name: 'Fairytale Harp', src: './src/assets/audio/fairytale_harp.mp3' }
+];
+
+let bgAudioEl = null;
+let currentTrackIdx = 0;
+
+export const MenuMusic = {
+    tracks: MENU_TRACKS,
+
+    init: () => {
+        if (bgAudioEl) return;
+        bgAudioEl = new Audio();
+        bgAudioEl.preload = 'auto';
+
+        bgAudioEl.addEventListener('ended', () => {
+            const trackPref = localStorage.getItem('siddha_bg_music_track') || 'cycle';
+            if (trackPref === 'cycle') {
+                currentTrackIdx = (currentTrackIdx + 1) % MENU_TRACKS.length;
+                MenuMusic.playTrack(currentTrackIdx);
+            } else {
+                bgAudioEl.currentTime = 0;
+                bgAudioEl.play().catch(() => {});
+            }
+        });
+
+        const enableAutoplay = () => {
+            if (localStorage.getItem('siddha_bg_music_enabled') !== 'false') {
+                MenuMusic.start();
+            }
+            window.removeEventListener('click', enableAutoplay);
+            window.removeEventListener('touchstart', enableAutoplay);
+        };
+        window.addEventListener('click', enableAutoplay, { once: true });
+        window.addEventListener('touchstart', enableAutoplay, { once: true });
+    },
+
+    getVolume: () => {
+        const stored = localStorage.getItem('siddha_bg_music_volume');
+        return stored !== null ? parseFloat(stored) : 0.25;
+    },
+
+    setVolume: (vol) => {
+        const clamped = Math.max(0, Math.min(1, parseFloat(vol)));
+        localStorage.setItem('siddha_bg_music_volume', clamped);
+        if (bgAudioEl) {
+            bgAudioEl.volume = getScaledGain(clamped);
+        }
+    },
+
+    isEnabled: () => {
+        return localStorage.getItem('siddha_bg_music_enabled') !== 'false';
+    },
+
+    setEnabled: (enabled) => {
+        localStorage.setItem('siddha_bg_music_enabled', enabled ? 'true' : 'false');
+        if (enabled) {
+            MenuMusic.start();
+        } else {
+            MenuMusic.pause();
+        }
+    },
+
+    getSelectedTrackId: () => {
+        return localStorage.getItem('siddha_bg_music_track') || 'cycle';
+    },
+
+    setSelectedTrackId: (trackId) => {
+        localStorage.setItem('siddha_bg_music_track', trackId);
+        if (trackId === 'cycle') {
+            currentTrackIdx = 0;
+        } else {
+            const idx = MENU_TRACKS.findIndex(t => t.id === trackId);
+            if (idx !== -1) currentTrackIdx = idx;
+        }
+        if (MenuMusic.isEnabled()) {
+            MenuMusic.playTrack(currentTrackIdx);
+        }
+    },
+
+    playTrack: (idx) => {
+        if (!bgAudioEl) MenuMusic.init();
+        currentTrackIdx = idx % MENU_TRACKS.length;
+        const track = MENU_TRACKS[currentTrackIdx];
+        if (!track) return;
+
+        bgAudioEl.src = track.src;
+        bgAudioEl.volume = getScaledGain(MenuMusic.getVolume());
+        
+        const trackPref = MenuMusic.getSelectedTrackId();
+        bgAudioEl.loop = trackPref !== 'cycle';
+
+        if (MenuMusic.isEnabled()) {
+            bgAudioEl.play().catch(() => {});
+        }
+    },
+
+    start: () => {
+        if (!MenuMusic.isEnabled()) return;
+        if (!bgAudioEl) MenuMusic.init();
+
+        const trackPref = MenuMusic.getSelectedTrackId();
+        if (trackPref !== 'cycle') {
+            const idx = MENU_TRACKS.findIndex(t => t.id === trackPref);
+            if (idx !== -1) currentTrackIdx = idx;
+        }
+
+        if (!bgAudioEl.src || bgAudioEl.ended || bgAudioEl.paused) {
+            MenuMusic.playTrack(currentTrackIdx);
+        } else {
+            bgAudioEl.volume = getScaledGain(MenuMusic.getVolume());
+            bgAudioEl.play().catch(() => {});
+        }
+    },
+
+    pause: () => {
+        if (bgAudioEl) {
+            bgAudioEl.pause();
+        }
+    },
+
+    fadeOut: (durationMs = 800) => {
+        if (!bgAudioEl || bgAudioEl.paused) return;
+        const startVol = bgAudioEl.volume;
+        const steps = 16;
+        const stepTime = durationMs / steps;
+        let step = 0;
+
+        const timer = setInterval(() => {
+            step++;
+            const newVol = Math.max(0, startVol * (1 - step / steps));
+            if (bgAudioEl) bgAudioEl.volume = newVol;
+            if (step >= steps) {
+                clearInterval(timer);
+                if (bgAudioEl) {
+                    bgAudioEl.pause();
+                    bgAudioEl.volume = startVol;
+                }
+            }
+        }, stepTime);
+    }
+};
+
+Synth.MenuMusic = MenuMusic;
+
+const NATURE_TRACKS = [
+    { id: 'water_stream', name: 'Water Stream & Creek', src: './src/assets/audio/water_stream.mp3' },
+    { id: 'birds_calm_river', name: 'Birds & Calm River', src: './src/assets/audio/birds_calm_river.mp3' }
+];
+
+let natureAudioEl = null;
+let currentNatureIdx = 0;
+
+export const NatureMusic = {
+    tracks: NATURE_TRACKS,
+
+    init: () => {
+        if (natureAudioEl) return;
+        natureAudioEl = new Audio();
+        natureAudioEl.preload = 'auto';
+
+        natureAudioEl.addEventListener('ended', () => {
+            const trackPref = localStorage.getItem('siddha_nature_music_track') || 'water_stream';
+            if (trackPref === 'cycle') {
+                currentNatureIdx = (currentNatureIdx + 1) % NATURE_TRACKS.length;
+                NatureMusic.playTrack(currentNatureIdx);
+            } else {
+                natureAudioEl.currentTime = 0;
+                natureAudioEl.play().catch(() => {});
+            }
+        });
+
+        const enableAutoplay = () => {
+            if (localStorage.getItem('siddha_nature_music_enabled') === 'true') {
+                NatureMusic.start();
+            }
+            window.removeEventListener('click', enableAutoplay);
+            window.removeEventListener('touchstart', enableAutoplay);
+        };
+        window.addEventListener('click', enableAutoplay, { once: true });
+        window.addEventListener('touchstart', enableAutoplay, { once: true });
+    },
+
+    getVolume: () => {
+        const stored = localStorage.getItem('siddha_nature_music_volume');
+        return stored !== null ? parseFloat(stored) : 0.35;
+    },
+
+    setVolume: (vol) => {
+        const clamped = Math.max(0, Math.min(1, parseFloat(vol)));
+        localStorage.setItem('siddha_nature_music_volume', clamped);
+        if (natureAudioEl) {
+            natureAudioEl.volume = getScaledGain(clamped);
+        }
+    },
+
+    isEnabled: () => {
+        return localStorage.getItem('siddha_nature_music_enabled') === 'true';
+    },
+
+    setEnabled: (enabled) => {
+        localStorage.setItem('siddha_nature_music_enabled', enabled ? 'true' : 'false');
+        if (enabled) {
+            NatureMusic.start();
+        } else {
+            NatureMusic.pause();
+        }
+    },
+
+    getSelectedTrackId: () => {
+        return localStorage.getItem('siddha_nature_music_track') || 'water_stream';
+    },
+
+    setSelectedTrackId: (trackId) => {
+        localStorage.setItem('siddha_nature_music_track', trackId);
+        if (trackId === 'cycle') {
+            currentNatureIdx = 0;
+        } else {
+            const idx = NATURE_TRACKS.findIndex(t => t.id === trackId);
+            if (idx !== -1) currentNatureIdx = idx;
+        }
+        if (NatureMusic.isEnabled()) {
+            NatureMusic.playTrack(currentNatureIdx);
+        }
+    },
+
+    playTrack: (idx) => {
+        if (!natureAudioEl) NatureMusic.init();
+        currentNatureIdx = idx % NATURE_TRACKS.length;
+        const track = NATURE_TRACKS[currentNatureIdx];
+        if (!track) return;
+
+        natureAudioEl.src = track.src;
+        natureAudioEl.volume = getScaledGain(NatureMusic.getVolume());
+        
+        const trackPref = NatureMusic.getSelectedTrackId();
+        natureAudioEl.loop = trackPref !== 'cycle';
+
+        if (NatureMusic.isEnabled()) {
+            natureAudioEl.play().catch(() => {});
+        }
+    },
+
+    start: () => {
+        if (!NatureMusic.isEnabled()) return;
+        if (!natureAudioEl) NatureMusic.init();
+
+        const trackPref = NatureMusic.getSelectedTrackId();
+        if (trackPref !== 'cycle') {
+            const idx = NATURE_TRACKS.findIndex(t => t.id === trackPref);
+            if (idx !== -1) currentNatureIdx = idx;
+        }
+
+        if (!natureAudioEl.src || natureAudioEl.ended || natureAudioEl.paused) {
+            NatureMusic.playTrack(currentNatureIdx);
+        } else {
+            natureAudioEl.volume = getScaledGain(NatureMusic.getVolume());
+            natureAudioEl.play().catch(() => {});
+        }
+    },
+
+    pause: () => {
+        if (natureAudioEl) {
+            natureAudioEl.pause();
+        }
+    },
+
+    fadeOut: (durationMs = 800) => {
+        if (!natureAudioEl || natureAudioEl.paused) return;
+        const startVol = natureAudioEl.volume;
+        const steps = 16;
+        const stepTime = durationMs / steps;
+        let step = 0;
+
+        const timer = setInterval(() => {
+            step++;
+            const newVol = Math.max(0, startVol * (1 - step / steps));
+            if (natureAudioEl) natureAudioEl.volume = newVol;
+            if (step >= steps) {
+                clearInterval(timer);
+                if (natureAudioEl) {
+                    natureAudioEl.pause();
+                    natureAudioEl.volume = startVol;
+                }
+            }
+        }, stepTime);
+    }
+};
+
+Synth.NatureMusic = NatureMusic;
+
+

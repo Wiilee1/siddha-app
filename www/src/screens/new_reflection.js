@@ -1,4 +1,6 @@
 import { DB } from '../services/db.js';
+import { Synth } from '../services/synth.js';
+import { HapticService } from '../services/haptics.js';
 
 export function renderNewReflection(onComplete) {
     const container = document.createElement('div');
@@ -488,6 +490,7 @@ export function renderNewReflection(onComplete) {
             const val = parseInt(e.target.value);
             currentFocusScore = isNaN(val) ? 50 : val;
             updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
+            HapticService.vibrate('light');
         });
     }
     if (stabilitySlider) {
@@ -495,6 +498,7 @@ export function renderNewReflection(onComplete) {
             const val = parseInt(e.target.value);
             currentStabilityScore = isNaN(val) ? 50 : val;
             updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
+            HapticService.vibrate('light');
         });
     }
     if (equanimitySlider) {
@@ -502,6 +506,7 @@ export function renderNewReflection(onComplete) {
             const val = parseInt(e.target.value);
             currentEquanimityScore = isNaN(val) ? 50 : val;
             updateStateOrb(currentFocusScore, currentStabilityScore, currentEquanimityScore);
+            HapticService.vibrate('light');
         });
     }
 

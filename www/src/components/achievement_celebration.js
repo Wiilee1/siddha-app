@@ -1,6 +1,8 @@
 // Siddha Meditation App - Achievement Celebration Component
 // Plays a singing bowl chord, shows rotating geometry, leaf particles, and the unlocked badge name & description.
 
+import { Synth } from '../services/synth.js';
+
 // Synth chime using Web Audio API (singing bowl)
 function playSingingBowlChime() {
     try {
@@ -411,6 +413,7 @@ export function triggerAchievementModal(ach) {
     engine.start();
 
     playSingingBowlChime();
+    Synth.playStreakGongSound();
 
     setTimeout(() => {
         overlay.classList.add("active");

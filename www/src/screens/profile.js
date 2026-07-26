@@ -78,10 +78,7 @@ export function renderProfile() {
 
             <!-- Tab View 2: 365-Day Consistency Heatmap -->
             <div class="rfl-tab-view hidden" id="rfl-view-heatmap">
-                <p style="font-size:10.5px; color:var(--color-text-secondary); margin:0 0 8px 0; line-height:1.35;">
-                    💡 <strong>Consistency Grid:</strong> Each vertical column is 1 week (Sun–Sat). Darker tiles indicate longer sits.
-                </p>
-                <div id="rfl-heatmap-container" style="overflow-x:auto; padding-bottom:6px; scrollbar-width:none;">
+                <div id="rfl-heatmap-container" style="overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; scrollbar-width:thin; width:100%;">
                     <!-- Rendered by JS -->
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:10px; color:var(--color-text-muted);">
@@ -89,8 +86,8 @@ export function renderProfile() {
                     <div style="display:flex; align-items:center; gap:3px;">
                         <span>Less</span>
                         <span style="width:8px; height:8px; border-radius:2px; background:var(--color-bg-secondary); display:inline-block;"></span>
-                        <span style="width:8px; height:8px; border-radius:2px; background:rgba(99, 102, 241, 0.35); display:inline-block;"></span>
-                        <span style="width:8px; height:8px; border-radius:2px; background:rgba(99, 102, 241, 0.7); display:inline-block;"></span>
+                        <span style="width:8px; height:8px; border-radius:2px; background:rgba(74, 144, 98, 0.35); display:inline-block;"></span>
+                        <span style="width:8px; height:8px; border-radius:2px; background:rgba(74, 144, 98, 0.7); display:inline-block;"></span>
                         <span style="width:8px; height:8px; border-radius:2px; background:var(--color-accent); display:inline-block;"></span>
                         <span>More</span>
                     </div>
@@ -115,8 +112,11 @@ export function renderProfile() {
         <!-- Milestones Grid -->
         <div class="card collapsible-card collapsed" id="milestones-card" style="margin-bottom: 32px;">
             <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
-                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading);">Milestones & Badges</h3>
-                <span class="material-symbols-rounded collapsible-toggle">expand_more</span>
+                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display:flex; align-items:center; gap:8px;">
+                    <span class="material-symbols-rounded" style="color: var(--color-accent); font-size:20px;">workspace_premium</span>
+                    Milestones & Badges
+                </h3>
+                <span class="material-symbols-rounded collapsible-toggle" style="color: var(--color-text-muted);">expand_more</span>
             </div>
             <div class="ach-grid collapsible-content" id="achievements-grid" style="margin-top: 12px;">
                 <!-- Achievements injected by JS -->
@@ -185,7 +185,7 @@ export function renderProfile() {
                         </div>
                         
                         <div id="reminders-list-container" style="display:flex; flex-direction:column; gap:8px;"></div>
-                    </div>   </div>
+                    </div>
 
                     <!-- Session Completion Notification Toggle -->
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
@@ -203,7 +203,80 @@ export function renderProfile() {
                 <!-- Audio & Haptics Controls -->
                 <div style="border-top: 1px solid var(--color-bg-secondary); padding-top: 16px; margin-top: 16px;">
                     <h4 style="font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 0 0 12px; font-family: var(--font-heading);">Audio & Haptics Controls</h4>
-                    
+
+                    <!-- Background Menu Music Controls -->
+                    <div style="margin-bottom: 14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🎶 Background Menu Music</span>
+                                <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Looping ambient music in main menus</p>
+                            </div>
+                            <label class="switch-toggle">
+                                <input type="checkbox" id="toggle-bg-music" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Track Selector & Volume controls wrapper -->
+                        <div id="bg-music-options-wrap" style="display:flex; flex-direction:column; gap:10px; padding:10px 12px; background:var(--color-bg-secondary); border-radius:12px; margin-top:10px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:11.5px; font-weight:600; color:var(--color-text-secondary);">Select Track</span>
+                                <select id="select-bg-music-track" style="padding:4px 8px; border-radius:8px; border:1px solid rgba(0,0,0,0.1); font-size:11.5px; font-weight:600; background:var(--color-bg-card); color:var(--color-text-primary); outline:none; font-family:inherit; cursor:pointer;">
+                                    <option value="cycle">🔄 Cycle All 3 Tracks</option>
+                                    <option value="himalayan">🏔️ Himalayan Sanctuary</option>
+                                    <option value="temple_wind">🍃 Temple Wind Echoes</option>
+                                    <option value="fairytale_harp">🎶 Fairytale Harp</option>
+                                </select>
+                            </div>
+
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-text-muted);">volume_up</span>
+                                    <span style="font-size:11.5px; font-weight:600; color:var(--color-text-secondary);">Music Volume</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <input type="range" id="slider-bg-music-volume" min="0" max="100" value="25" style="width:90px; accent-color:var(--color-accent); cursor:pointer;">
+                                    <span id="label-bg-music-volume" style="font-size:11px; font-weight:700; color:var(--color-accent); min-width:28px; text-align:right;">25%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Nature Sound Ambiance Controls -->
+                    <div style="margin-bottom: 14px; border-top: 1px dashed var(--color-bg-secondary); padding-top: 12px; margin-top: 12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🌿 Nature Sound Ambiance</span>
+                                <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Birds & stream background soundscapes</p>
+                            </div>
+                            <label class="switch-toggle">
+                                <input type="checkbox" id="toggle-nature-sound">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Nature Track Selector & Volume controls wrapper -->
+                        <div id="nature-sound-options-wrap" style="display:flex; flex-direction:column; gap:10px; padding:10px 12px; background:var(--color-bg-secondary); border-radius:12px; margin-top:10px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:11.5px; font-weight:600; color:var(--color-text-secondary);">Select Ambiance</span>
+                                <select id="select-nature-sound-track" style="padding:4px 8px; border-radius:8px; border:1px solid rgba(0,0,0,0.1); font-size:11.5px; font-weight:600; background:var(--color-bg-card); color:var(--color-text-primary); outline:none; font-family:inherit; cursor:pointer;">
+                                    <option value="water_stream">🏞️ Water Stream & Creek</option>
+                                    <option value="birds_calm_river">🌳 Birds & Calm River</option>
+                                    <option value="cycle">🔄 Cycle All Nature Sounds</option>
+                                </select>
+                            </div>
+
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-text-muted);">volume_up</span>
+                                    <span style="font-size:11.5px; font-weight:600; color:var(--color-text-secondary);">Ambiance Volume</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <input type="range" id="slider-nature-volume" min="0" max="100" value="35" style="width:90px; accent-color:var(--color-accent); cursor:pointer;">
+                                    <span id="label-nature-volume" style="font-size:11px; font-weight:700; color:var(--color-accent); min-width:28px; text-align:right;">35%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Haptics / Vibration Toggle -->
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
                         <div>
@@ -394,13 +467,12 @@ export function renderProfile() {
 
                 <!-- Expanded Analytics Content -->
                 <div id="modal-analytics-content" style="display:flex; flex-direction:column; gap:16px;">
-                    <!-- 1. Expanded Heatmap Section -->
+                    <!-- 1. Expanded Heatmap Section (52 Weeks - Sideways Scrollable) -->
                     <div style="background:var(--color-bg-secondary); padding:14px; border-radius:16px;">
-                        <h4 style="margin:0 0 4px 0; font-size:13px; font-weight:700; color:var(--color-text-primary);">📅 Practice Consistency Heatmap</h4>
-                        <p style="font-size:10px; color:var(--color-text-muted); margin:0 0 10px 0;">Each vertical column is 1 week (Sun to Sat). Tap any tile to inspect.</p>
+                        <h4 style="margin:0 0 8px 0; font-size:13px; font-weight:700; color:var(--color-text-primary);">📅 Practice Consistency Heatmap</h4>
                         
-                        <div id="modal-heatmap-container" style="overflow-x:auto; padding-bottom:4px; scrollbar-width:none;"></div>
-                        <p id="modal-heatmap-popover" style="font-size:10.5px; font-weight:700; color:var(--color-accent); margin:8px 0 0 0; text-align:center;">Tap a tile to view sit details</p>
+                        <div id="modal-heatmap-container" style="overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; scrollbar-width:thin; width:100%;"></div>
+                        <p id="modal-heatmap-popover" style="font-size:10.5px; font-weight:700; color:var(--color-accent); margin:8px 0 0 0; text-align:center;">Tap any tile to view sit details</p>
                     </div>
 
                     <!-- 2. Practice Trend Summary -->
@@ -624,7 +696,7 @@ export function renderProfile() {
         });
 
         const today = new Date();
-        const daysToRender = 112; // 16 columns of 7 days (Sun-Sat)
+        const daysToRender = 364; // 52 full weeks (Sun-Sat) for 1 full year
         const startDate = new Date();
         startDate.setDate(today.getDate() - (daysToRender - 1));
         // Align start date to previous Sunday for grid symmetry
@@ -632,63 +704,69 @@ export function renderProfile() {
 
         // Main Wrapper with Day labels on left
         const mainWrap = document.createElement('div');
-        mainWrap.style.cssText = 'display:flex; gap:6px; align-items:flex-start;';
+        mainWrap.style.cssText = 'display:flex; gap:6px; align-items:flex-start; min-width:max-content;';
 
         // Day Labels Column (S, M, T, W, T, F, S)
         const dayLabelsCol = document.createElement('div');
-        dayLabelsCol.style.cssText = 'display:flex; flex-direction:column; gap:3px; font-size:8px; font-weight:700; color:var(--color-text-muted); margin-top:14px; text-align:right; flex-shrink:0;';
+        dayLabelsCol.style.cssText = 'display:flex; flex-direction:column; gap:3px; font-size:8px; font-weight:700; color:var(--color-text-muted); margin-top:18px; text-align:right; flex-shrink:0; width:14px;';
         const dayLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
         dayLetters.forEach(letter => {
             const lbl = document.createElement('div');
-            lbl.style.cssText = 'height:10px; line-height:10px;';
+            lbl.style.cssText = 'height:11px; line-height:11px;';
             lbl.textContent = letter;
             dayLabelsCol.appendChild(lbl);
         });
         mainWrap.appendChild(dayLabelsCol);
 
-        // Columns Wrap with Month Headers
+        // Columns Wrap with Month Headers aligned via CSS Grid
         const gridWrap = document.createElement('div');
-        gridWrap.style.cssText = 'display:flex; flex-direction:column; gap:2px; min-width:max-content;';
+        gridWrap.style.cssText = 'display:flex; flex-direction:column; gap:4px; min-width:max-content;';
 
         const monthRow = document.createElement('div');
-        monthRow.style.cssText = 'display:flex; gap:3px; font-size:8.5px; font-weight:700; color:var(--color-text-secondary); height:12px; margin-bottom:2px;';
+        monthRow.style.cssText = 'display:grid; grid-template-columns:repeat(52, 11px); gap:3px; height:14px; position:relative; width:max-content;';
 
         const colsWrap = document.createElement('div');
-        colsWrap.style.cssText = 'display:flex; gap:3px; align-items:center;';
+        colsWrap.style.cssText = 'display:grid; grid-template-columns:repeat(52, 11px); gap:3px; width:max-content;';
 
-        let currentColumn = null;
+        // 1. Render Month Headers exactly at their column start
         let lastMonth = -1;
+        for (let colIdx = 0; colIdx < 52; colIdx++) {
+            const colSunDate = new Date(startDate);
+            colSunDate.setDate(startDate.getDate() + (colIdx * 7));
+
+            const m = colSunDate.getMonth();
+            if (m !== lastMonth) {
+                const mSpan = document.createElement('span');
+                mSpan.style.cssText = `grid-column-start: ${colIdx + 1}; font-size:9.5px; font-weight:700; color:var(--color-text-secondary); white-space:nowrap; pointer-events:none;`;
+                mSpan.textContent = colSunDate.toLocaleDateString('en-US', { month: 'short' });
+                monthRow.appendChild(mSpan);
+                lastMonth = m;
+            }
+        }
+
+        // 2. Render 52 Column Tiles
+        let currentColumn = null;
 
         for (let i = 0; i < daysToRender; i++) {
             const d = new Date(startDate);
             d.setDate(startDate.getDate() + i);
             const isoStr = d.toISOString().split('T')[0];
             const dayOfWeek = d.getDay();
-            const currentMonth = d.getMonth();
 
             if (dayOfWeek === 0 || !currentColumn) {
                 currentColumn = document.createElement('div');
                 currentColumn.style.cssText = 'display:flex; flex-direction:column; gap:3px;';
                 colsWrap.appendChild(currentColumn);
-
-                if (currentMonth !== lastMonth) {
-                    const mName = d.toLocaleDateString('en-US', { month: 'short' });
-                    const mSpan = document.createElement('span');
-                    mSpan.style.cssText = 'font-size:8.5px; color:var(--color-text-muted); width:26px; text-align:left; font-weight:700;';
-                    mSpan.textContent = mName;
-                    monthRow.appendChild(mSpan);
-                    lastMonth = currentMonth;
-                }
             }
 
             const mins = minsByDate[isoStr] || 0;
-            let bg = 'var(--color-bg-secondary)';
-            if (mins > 0 && mins <= 15) bg = 'rgba(99, 102, 241, 0.35)';
-            else if (mins > 15 && mins <= 30) bg = 'rgba(99, 102, 241, 0.7)';
-            else if (mins > 30) bg = 'var(--color-accent)';
+            let bg = 'rgba(0, 0, 0, 0.07)';
+            if (mins > 0 && mins <= 15) bg = 'rgba(74, 144, 98, 0.45)';
+            else if (mins > 15 && mins <= 30) bg = 'rgba(74, 144, 98, 0.8)';
+            else if (mins > 30) bg = '#2e7d32';
 
             const tile = document.createElement('div');
-            tile.style.cssText = `width:10px; height:10px; border-radius:2.5px; background:${bg}; cursor:pointer; transition:transform 0.1s;`;
+            tile.style.cssText = `width:11px; height:11px; border-radius:2.5px; background:${bg}; border:1px solid rgba(0,0,0,0.04); cursor:pointer; transition:transform 0.1s; flex-shrink:0;`;
             tile.title = `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${mins} min`;
 
             tile.addEventListener('click', () => {
@@ -707,6 +785,11 @@ export function renderProfile() {
         gridWrap.appendChild(colsWrap);
         mainWrap.appendChild(gridWrap);
         heatmapContainer.appendChild(mainWrap);
+
+        // Auto-scroll to show the most recent weeks on the right
+        setTimeout(() => {
+            heatmapContainer.scrollLeft = heatmapContainer.scrollWidth;
+        }, 50);
     };
 
     const renderGrowthWaveChart = (period, targetEl = null) => {
@@ -1180,6 +1263,78 @@ export function renderProfile() {
     // Audio Toggle Event Listeners
     const toggleMeditation = container.querySelector('#toggle-meditation-sound');
     const toggleMenu = container.querySelector('#toggle-menu-sound');
+    const toggleBgMusic = container.querySelector('#toggle-bg-music');
+    const selectBgTrack = container.querySelector('#select-bg-music-track');
+    const sliderBgVolume = container.querySelector('#slider-bg-music-volume');
+    const labelBgVolume = container.querySelector('#label-bg-music-volume');
+    const optionsWrapBg = container.querySelector('#bg-music-options-wrap');
+
+    if (toggleBgMusic && selectBgTrack && sliderBgVolume && labelBgVolume) {
+        import('../services/synth.js').then(({ MenuMusic }) => {
+            const enabled = MenuMusic.isEnabled();
+            toggleBgMusic.checked = enabled;
+            if (optionsWrapBg) optionsWrapBg.style.opacity = enabled ? '1' : '0.45';
+
+            selectBgTrack.value = MenuMusic.getSelectedTrackId();
+            
+            const currentVolPct = Math.round(MenuMusic.getVolume() * 100);
+            sliderBgVolume.value = currentVolPct;
+            labelBgVolume.textContent = currentVolPct + '%';
+
+            toggleBgMusic.addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                MenuMusic.setEnabled(isChecked);
+                if (optionsWrapBg) optionsWrapBg.style.opacity = isChecked ? '1' : '0.45';
+            });
+
+            selectBgTrack.addEventListener('change', (e) => {
+                MenuMusic.setSelectedTrackId(e.target.value);
+            });
+
+            sliderBgVolume.addEventListener('input', (e) => {
+                const pct = parseInt(e.target.value);
+                labelBgVolume.textContent = pct + '%';
+                MenuMusic.setVolume(pct / 100);
+            });
+        });
+    }
+
+    // Nature Sound Ambiance Listeners & Initial State
+    const toggleNature = container.querySelector('#toggle-nature-sound');
+    const selectNatureTrack = container.querySelector('#select-nature-sound-track');
+    const sliderNatureVolume = container.querySelector('#slider-nature-volume');
+    const labelNatureVolume = container.querySelector('#label-nature-volume');
+    const optionsWrapNature = container.querySelector('#nature-sound-options-wrap');
+
+    if (toggleNature && selectNatureTrack && sliderNatureVolume && labelNatureVolume) {
+        import('../services/synth.js').then(({ NatureMusic }) => {
+            const enabled = NatureMusic.isEnabled();
+            toggleNature.checked = enabled;
+            if (optionsWrapNature) optionsWrapNature.style.opacity = enabled ? '1' : '0.45';
+
+            selectNatureTrack.value = NatureMusic.getSelectedTrackId();
+
+            const currentVolPct = Math.round(NatureMusic.getVolume() * 100);
+            sliderNatureVolume.value = currentVolPct;
+            labelNatureVolume.textContent = currentVolPct + '%';
+
+            toggleNature.addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                NatureMusic.setEnabled(isChecked);
+                if (optionsWrapNature) optionsWrapNature.style.opacity = isChecked ? '1' : '0.45';
+            });
+
+            selectNatureTrack.addEventListener('change', (e) => {
+                NatureMusic.setSelectedTrackId(e.target.value);
+            });
+
+            sliderNatureVolume.addEventListener('input', (e) => {
+                const pct = parseInt(e.target.value);
+                labelNatureVolume.textContent = pct + '%';
+                NatureMusic.setVolume(pct / 100);
+            });
+        });
+    }
 
     if (toggleMeditation) {
         toggleMeditation.addEventListener('change', (e) => {
@@ -1190,7 +1345,7 @@ export function renderProfile() {
     }
 
     if (toggleMenu) {
-        toggleMenu.addEventListener('click', (e) => {
+        toggleMenu.addEventListener('change', (e) => {
             const isSoundOn = e.target.checked;
             localStorage.setItem('siddha_sound_menu_muted', isSoundOn ? 'false' : 'true');
         });
@@ -1259,6 +1414,9 @@ export function renderProfile() {
         const modalHeatmapPopover = container.querySelector('#modal-heatmap-popover');
         if (modalHeatmapContainer) {
             renderHeatmapGrid(modalHeatmapContainer, modalHeatmapPopover);
+            setTimeout(() => {
+                modalHeatmapContainer.scrollLeft = modalHeatmapContainer.scrollWidth;
+            }, 80);
         }
 
         const modalGrowthChart = container.querySelector('#modal-growth-chart');

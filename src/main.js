@@ -7,6 +7,7 @@ import { renderProfile } from './screens/profile.js';
 import { renderNewReflection } from './screens/new_reflection.js';
 import { renderWisdom } from './screens/wisdom.js';
 import { DB } from './services/db.js';
+import { MenuMusic, NatureMusic } from './services/synth.js';
 import './components/levelup_celebration.js';
 import './components/achievement_celebration.js';
 
@@ -14,6 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const screenContainer = document.getElementById('screen-container');
     const navItems = document.querySelectorAll('.nav-item');
     const bottomNav = document.querySelector('.bottom-nav');
+
+    // Initialize Menu & Nature Music
+    MenuMusic.init();
+    NatureMusic.init();
 
     // Initialize screens
     const screens = {
@@ -49,6 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function navigateTo(targetId) {
         const noNav = ['login', 'breathe', 'new_reflection', 'wisdom'];
         bottomNav.style.display = noNav.includes(targetId) ? 'none' : 'flex';
+
+        // Background Music & Nature Ambiance Control
+        if (targetId === 'breathe') {
+            MenuMusic.fadeOut(800);
+            NatureMusic.fadeOut(800);
+        } else if (['home', 'journey', 'reflect', 'profile', 'wisdom'].includes(targetId)) {
+            MenuMusic.start();
+            NatureMusic.start();
+        }
 
         navItems.forEach(item => {
             item.classList.toggle('active', item.dataset.target === targetId);

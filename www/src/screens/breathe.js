@@ -685,6 +685,9 @@ export function renderBreathe(onComplete) {
         if (saveModalBtn) {
             saveModalBtn.addEventListener('click', () => {
                 currentIntention = modalInput.value.trim();
+                if (currentIntention) {
+                    Synth.playSankalpaHum();
+                }
                 updateTriggerButtonUI();
                 modalOverlay.style.display = 'none';
             });
@@ -846,13 +849,28 @@ export function renderBreathe(onComplete) {
             }
         }
 
+        let wakeLockSentinel = null;
+
         function stopTimer() {
             clearInterval(timerInterval);
             timerInterval = null;
             isPaused = true;
             Synth.stop();
+            Synth.stopKeepAlive();
+
+            if (wakeLockSentinel) {
+                try { wakeLockSentinel.release(); } catch(e) {}
+                wakeLockSentinel = null;
+            }
+
+            if ('mediaSession' in navigator) {
+                try { navigator.mediaSession.playbackState = 'paused'; } catch(e) {}
+            }
+
             if (window.Capacitor?.Plugins?.LocalNotifications) {
-                window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: [{ id: 99 }] }).catch(err => {
+                const cancelIds = Array.from({ length: 30 }, (_, i) => ({ id: 201 + i }));
+                cancelIds.push({ id: 99 });
+                window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: cancelIds }).catch(err => {
                     console.log("Error cancelling notification:", err);
                 });
             }
@@ -890,8 +908,8 @@ export function renderBreathe(onComplete) {
             sessionElapsed = 0;
             updateDisplay();
 
-            // Play 3 completion bells & end-of-session vibration pulses
-            if (!isMuted) Synth.playThreeBells();
+            // Play completion bell & 2 end-of-session vibration pulses
+            if (!isMuted) Synth.playSingleBell();
             HapticService.vibrate('completion');
 
             if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped, intention: currentIntention });
@@ -940,29 +958,86 @@ export function renderBreathe(onComplete) {
                 isPaused = false;
                 setRunningUI(true);
                 
-                // Play starting bell
+                // Play starting bell & start audio keep-alive
                 if (!isMuted) {
                     Synth.playSingleBell();
                 }
+                Synth.ensureKeepAlive();
 
-                // Schedule local notification for completion when running on mobile native platforms
+                // Request Screen WakeLock to prevent Android Doze CPU sleep
+                if ('wakeLock' in navigator) {
+                    navigator.wakeLock.request('screen').then(wl => {
+                        wakeLockSentinel = wl;
+                    }).catch(() => {});
+                }
+
+                // MediaSession Keep-Alive
+                if ('mediaSession' in navigator) {
+                    try {
+                        navigator.mediaSession.metadata = new MediaMetadata({
+                            title: 'Meditation Sit 🧘',
+                            artist: 'Siddha',
+                            album: 'Mindfulness Practice'
+                        });
+                        navigator.mediaSession.playbackState = 'playing';
+                    } catch(e) {}
+                }
+
+                // Schedule local notifications for intermediate interval bells & completion
                 const notifSettings = DB.getNotificationSettings ? DB.getNotificationSettings() : {};
                 const localNotifications = window.Capacitor?.Plugins?.LocalNotifications;
                 if (localNotifications && notifSettings.sessionCompletionEnabled !== false) {
                     localNotifications.requestPermissions().then((result) => {
                         if (result.display === 'granted') {
-                            localNotifications.cancel({ notifications: [{ id: 99 }] }).then(() => {
+                            // Ensure High-Importance Channel exists on Android
+                            localNotifications.createChannel({
+                                id: 'meditation_bells',
+                                name: 'Meditation Bells & Chimes',
+                                description: 'Bells and interval chimes during meditation sits',
+                                importance: 5, // High Importance
+                                visibility: 1, // Public lock screen visibility
+                                vibration: true
+                            }).catch(() => {});
+
+                            const intervalVal = parseInt(container.querySelector('#bell-interval-input').value) || 0;
+                            const cancelIds = Array.from({ length: 30 }, (_, i) => ({ id: 201 + i }));
+                            cancelIds.push({ id: 99 });
+
+                            localNotifications.cancel({ notifications: cancelIds }).then(() => {
+                                const notificationsToSchedule = [];
+                                const nowMs = Date.now();
+
+                                // Intermediate Interval Bells
+                                if (intervalVal > 0 && !isMuted) {
+                                    const intervalMs = intervalVal * 60 * 1000;
+                                    const totalDurationMs = timeLeft * 1000;
+                                    let targetMs = intervalMs;
+                                    let notifIdx = 0;
+
+                                    while (targetMs < totalDurationMs && notifIdx < 25) {
+                                        notificationsToSchedule.push({
+                                            title: "Meditation Bell 🔔",
+                                            body: "Interval chime during your sit.",
+                                            id: 201 + notifIdx,
+                                            channelId: 'meditation_bells',
+                                            schedule: { at: new Date(nowMs + targetMs) }
+                                        });
+                                        targetMs += intervalMs;
+                                        notifIdx++;
+                                    }
+                                }
+
+                                // Final Completion Bell
+                                notificationsToSchedule.push({
+                                    title: "Meditation Complete 🔔",
+                                    body: "Your session is complete. Return to your day with peace.",
+                                    id: 99,
+                                    channelId: 'meditation_bells',
+                                    schedule: { at: new Date(nowMs + timeLeft * 1000) }
+                                });
+
                                 localNotifications.schedule({
-                                    notifications: [
-                                        {
-                                            title: "Meditation Complete 🔔",
-                                            body: "Your session is complete. Return to your day with peace.",
-                                            id: 99,
-                                            schedule: { at: new Date(Date.now() + timeLeft * 1000) },
-                                            actionTypeId: "",
-                                            extra: null
-                                        }
-                                    ]
+                                    notifications: notificationsToSchedule
                                 }).catch(err => console.log("Schedule err:", err));
                             });
                         }
