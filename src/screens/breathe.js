@@ -1023,12 +1023,15 @@ export function renderBreathe(onComplete) {
                                     let notifIdx = 0;
 
                                     while (targetMs < totalDurationMs && notifIdx < 25) {
-                                        notificationsToSchedule.push({
+                                    notificationsToSchedule.push({
                                             title: "Meditation Bell 🔔",
                                             body: "Interval chime during your sit.",
                                             id: 201 + notifIdx,
                                             channelId: 'meditation_bells',
-                                            schedule: { at: new Date(nowMs + targetMs) }
+                                            schedule: {
+                                                at: new Date(nowMs + targetMs),
+                                                allowWhileIdle: true
+                                            }
                                         });
                                         targetMs += intervalMs;
                                         notifIdx++;
@@ -1041,7 +1044,10 @@ export function renderBreathe(onComplete) {
                                     body: "Your session is complete. Return to your day with peace.",
                                     id: 99,
                                     channelId: 'meditation_bells',
-                                    schedule: { at: new Date(nowMs + timeLeft * 1000) }
+                                    schedule: {
+                                        at: new Date(nowMs + timeLeft * 1000),
+                                        allowWhileIdle: true
+                                    }
                                 });
 
                                 localNotifications.schedule({

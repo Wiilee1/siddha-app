@@ -18,11 +18,22 @@ function initAudioContext() {
 function ensureSilentKeepAlive() {
     try {
         if (!silentAudioEl) {
-            silentAudioEl = new Audio('data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YRAAAAAAAAAAAAAAAAAA');
+            // Clean 1-second silent WAV loop with proper header alignment & zero DC offset
+            silentAudioEl = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
             silentAudioEl.loop = true;
-            silentAudioEl.volume = 0.01;
+            silentAudioEl.volume = 0.0001; // Ultra silent zero DC offset
         }
         silentAudioEl.play().catch(() => {});
+        if ('mediaSession' in navigator) {
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: 'Meditation Sit 🧘',
+                    artist: 'Siddha Mindfulness',
+                    album: 'Mindful Practice'
+                });
+                navigator.mediaSession.playbackState = 'playing';
+            } catch(e) {}
+        }
     } catch(e) {}
 }
 
@@ -31,6 +42,11 @@ function stopSilentKeepAlive() {
         try {
             silentAudioEl.pause();
             silentAudioEl.currentTime = 0;
+        } catch(e) {}
+    }
+    if ('mediaSession' in navigator) {
+        try {
+            navigator.mediaSession.playbackState = 'paused';
         } catch(e) {}
     }
 }
@@ -746,33 +762,10 @@ Synth.NatureMusic = NatureMusic;
 
 export const SitAudioKeepAlive = {
     start: () => {
-        if (!silentAudioEl) {
-            // Self-contained 1-second silent WAV audio loop that registers as continuous MediaSession playback
-            silentAudioEl = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
-            silentAudioEl.loop = true;
-        }
-        silentAudioEl.play().catch(() => {});
-        if ('mediaSession' in navigator) {
-            try {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: 'Meditation Sit 🧘',
-                    artist: 'Siddha Mindfulness',
-                    album: 'Mindful Practice'
-                });
-                navigator.mediaSession.playbackState = 'playing';
-            } catch(e) {}
-        }
+        ensureSilentKeepAlive();
     },
     stop: () => {
-        if (silentAudioEl) {
-            silentAudioEl.pause();
-            silentAudioEl.currentTime = 0;
-        }
-        if ('mediaSession' in navigator) {
-            try {
-                navigator.mediaSession.playbackState = 'paused';
-            } catch(e) {}
-        }
+        stopSilentKeepAlive();
     }
 };
 
