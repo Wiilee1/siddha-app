@@ -346,6 +346,54 @@ export function renderProfile() {
                     siddha.app
                 </a>
             </div>
+
+            <!-- Bug Report Button -->
+            <button id="profile-bug-report-btn" class="btn" style="width:100%; padding:10px; font-size:12.5px; background:var(--color-bg-secondary); color:var(--color-text-secondary); border:1px dashed rgba(0,0,0,0.15); border-radius:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px;">
+                <span class="material-symbols-rounded" style="font-size:18px; color:var(--color-accent);">bug_report</span>
+                Report a Bug / Feedback 🐛
+            </button>
+        </div>
+
+        <!-- Bug Report / Feedback Modal -->
+        <div class="modal-overlay" id="bug-report-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); z-index:999; align-items:center; justify-content:center; padding:20px;">
+            <div class="card" style="width:100%; max-width:400px; padding:24px; border-radius:20px; background:var(--color-bg-card); position:relative; box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+                <button id="close-bug-modal-btn" aria-label="Close modal" style="position:absolute; top:16px; right:16px; background:none; border:none; cursor:pointer; color:var(--color-text-muted); display:flex; align-items:center;">
+                    <span class="material-symbols-rounded" style="font-size:22px;">close</span>
+                </button>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                    <span class="material-symbols-rounded" style="color:var(--color-accent); font-size:28px;">bug_report</span>
+                    <div>
+                        <h3 style="font-size:17px; margin:0; font-family:var(--font-heading); color:var(--color-text-primary);">Report a Bug or Idea 🐛</h3>
+                        <p style="font-size:11.5px; color:var(--color-text-muted); margin:2px 0 0;">We appreciate your help making Siddha better!</p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:11.5px; font-weight:700; color:var(--color-text-secondary); display:block; margin-bottom:6px;">Issue Type</label>
+                    <select id="bug-type-select" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.1); font-size:12.5px; background:var(--color-bg-secondary); color:var(--color-text-primary); outline:none; font-family:inherit;">
+                        <option value="bug">🐛 Bug Report</option>
+                        <option value="feature">✨ Feature Suggestion</option>
+                        <option value="audio">🎵 Audio / Sound Feedback</option>
+                        <option value="ui">🎨 UI & Visual Issue</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:11.5px; font-weight:700; color:var(--color-text-secondary); display:block; margin-bottom:6px;">Description</label>
+                    <textarea id="bug-desc-input" placeholder="What happened or what would you like to improve?" style="width:100%; min-height:90px; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.1); font-size:12.5px; background:var(--color-bg-secondary); color:var(--color-text-primary); outline:none; font-family:inherit; resize:none; box-sizing:border-box;"></textarea>
+                </div>
+
+                <div style="margin-bottom:16px;">
+                    <label style="font-size:11.5px; font-weight:700; color:var(--color-text-secondary); display:block; margin-bottom:6px;">Your Email (optional for updates)</label>
+                    <input type="email" id="bug-email-input" placeholder="you@example.com" style="width:100%; padding:9px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.1); font-size:12.5px; background:var(--color-bg-secondary); color:var(--color-text-primary); outline:none; font-family:inherit; box-sizing:border-box;">
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <button id="submit-bug-btn" class="btn" style="flex:1; padding:12px; font-size:13px; font-weight:700; background:var(--color-accent); color:white; border:none; border-radius:12px; cursor:pointer;">
+                        Submit Report 🚀
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Support & Donation Card -->
@@ -1369,6 +1417,45 @@ export function renderProfile() {
                 navigator.clipboard.writeText('https://siddha.app');
                 alert('App link copied to clipboard! (https://siddha.app)');
             }
+        });
+    }
+
+    // Bug Report Modal Listeners
+    const bugBtn = container.querySelector('#profile-bug-report-btn');
+    const bugModal = container.querySelector('#bug-report-modal');
+    const closeBugBtn = container.querySelector('#close-bug-modal-btn');
+    const submitBugBtn = container.querySelector('#submit-bug-btn');
+
+    if (bugBtn && bugModal) {
+        bugBtn.addEventListener('click', () => {
+            bugModal.style.display = 'flex';
+        });
+    }
+
+    if (closeBugBtn && bugModal) {
+        closeBugBtn.addEventListener('click', () => {
+            bugModal.style.display = 'none';
+        });
+    }
+
+    if (submitBugBtn && bugModal) {
+        submitBugBtn.addEventListener('click', () => {
+            const type = container.querySelector('#bug-type-select')?.value || 'bug';
+            const desc = container.querySelector('#bug-desc-input')?.value.trim();
+            const email = container.querySelector('#bug-email-input')?.value.trim();
+
+            if (!desc) {
+                alert('Please provide a brief description of the issue or idea.');
+                return;
+            }
+
+            DB.saveFeedback({ type, summary: desc, email });
+
+            alert('Thank you for your feedback! 🐛 Your report has been saved.');
+
+            const descInput = container.querySelector('#bug-desc-input');
+            if (descInput) descInput.value = '';
+            bugModal.style.display = 'none';
         });
     }
 

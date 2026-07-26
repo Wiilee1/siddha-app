@@ -501,6 +501,24 @@ export const DB = {
         return [...(state.reflectionHistory || [])].reverse();
     },
 
+    saveFeedback: (item) => {
+        const state = getState();
+        if (!state.feedbackHistory) state.feedbackHistory = [];
+        const entry = {
+            id: 'fb_' + Date.now(),
+            date: new Date().toISOString(),
+            ...item
+        };
+        state.feedbackHistory.push(entry);
+        saveState(state);
+        return entry;
+    },
+
+    getFeedbackHistory: () => {
+        const state = getState();
+        return [...(state.feedbackHistory || [])].reverse();
+    },
+
     // Dev Tools
     resetProgress: () => {
         const state = getState();

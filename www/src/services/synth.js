@@ -432,7 +432,7 @@ function getScaledGain(rawVol) {
 
 const MENU_TRACKS = [
     { id: 'himalayan', name: 'Himalayan Sanctuary', src: './src/assets/audio/himalayan_sanctuary.mp3' },
-    { id: 'temple_wind', name: 'Temple Wind Echoes', src: './src/assets/audio/temple_wind_echoes.wav' },
+    { id: 'temple_wind', name: 'Temple Wind Echoes', src: './src/assets/audio/temple_wind_echoes.mp3' },
     { id: 'fairytale_harp', name: 'Fairytale Harp', src: './src/assets/audio/fairytale_harp.mp3' }
 ];
 
