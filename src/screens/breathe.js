@@ -1015,30 +1015,7 @@ export function renderBreathe(onComplete) {
                                 const notificationsToSchedule = [];
                                 const nowMs = Date.now();
 
-                                // Intermediate Interval Bells
-                                if (intervalVal > 0 && !isMuted) {
-                                    const intervalMs = intervalVal * 60 * 1000;
-                                    const totalDurationMs = timeLeft * 1000;
-                                    let targetMs = intervalMs;
-                                    let notifIdx = 0;
-
-                                    while (targetMs < totalDurationMs && notifIdx < 25) {
-                                    notificationsToSchedule.push({
-                                            title: "Meditation Bell 🔔",
-                                            body: "Interval chime during your sit.",
-                                            id: 201 + notifIdx,
-                                            channelId: 'meditation_bells',
-                                            schedule: {
-                                                at: new Date(nowMs + targetMs),
-                                                allowWhileIdle: true
-                                            }
-                                        });
-                                        targetMs += intervalMs;
-                                        notifIdx++;
-                                    }
-                                }
-
-                                // Final Completion Bell
+                                // Final Completion Bell - Reliable fallback if app is in background
                                 notificationsToSchedule.push({
                                     title: "Meditation Complete 🔔",
                                     body: "Your session is complete. Return to your day with peace.",

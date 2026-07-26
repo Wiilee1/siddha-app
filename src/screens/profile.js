@@ -302,7 +302,7 @@ export function renderProfile() {
                     </div>
 
                     <!-- Menu / UI Sound Toggle -->
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--color-bg-secondary); padding-bottom: 16px; margin-bottom: 16px;">
                         <div>
                             <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🎵 Menu & Navigation Sounds</span>
                             <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">UI clicks & feedback audio</p>
@@ -311,6 +311,30 @@ export function renderProfile() {
                             <input type="checkbox" id="toggle-menu-sound" checked>
                             <span class="toggle-slider"></span>
                         </label>
+                    </div>
+
+                    <!-- Battery Optimization Note -->
+                    <div style="background: rgba(226, 184, 87, 0.1); border: 1px solid rgba(226, 184, 87, 0.2); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+                        <h4 style="font-size: 11.5px; font-weight: 700; color: #856404; margin: 0 0 4px; display: flex; align-items: center; gap: 4px;">
+                            <span class="material-symbols-rounded" style="font-size: 16px;">battery_saver</span>
+                            Android Battery Saver Note
+                        </h4>
+                        <p style="font-size: 10.5px; color: #856404; margin: 0; line-height: 1.4;">
+                            If meditation bells don't ring while your phone is locked, please disable <strong>"Battery Optimization"</strong> for Siddha in your Android system settings.
+                        </p>
+                    </div>
+
+                    <!-- Privacy & Data Controls -->
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button id="open-privacy-policy-btn" style="background: var(--color-bg-secondary); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 10px; font-size: 12px; font-weight: 600; color: var(--color-text-primary); cursor: pointer; display: flex; align-items: center; gap: 8px; justify-content: center;">
+                            <span class="material-symbols-rounded" style="font-size: 18px; color: var(--color-accent);">policy</span>
+                            View Privacy Policy
+                        </button>
+
+                        <button id="reset-account-btn" style="background: transparent; border: 1px dashed #ff6b6b; border-radius: 10px; padding: 10px; font-size: 12px; font-weight: 600; color: #ff6b6b; cursor: pointer; display: flex; align-items: center; gap: 8px; justify-content: center;">
+                            <span class="material-symbols-rounded" style="font-size: 18px;">delete_forever</span>
+                            Reset Account & Delete All Data
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1178,21 +1202,15 @@ export function renderProfile() {
 
                 const notificationsToSchedule = enabledReminders.map((r, index) => {
                     const [hrs, mins] = (r.time || '08:00').split(':').map(Number);
-                    const now = new Date();
-                    const schedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hrs, mins, 0, 0);
-                    // Crucial Android Fix: If time has passed today, schedule for tomorrow so Android AlarmManager doesn't fire immediately
-                    if (schedDate <= now) {
-                        schedDate.setDate(schedDate.getDate() + 1);
-                    }
 
                     return {
                         title: "Time for Mindfulness 🧘",
                         body: "Take a few moments to sit and find your center.",
                         id: 101 + index,
                         schedule: {
-                            at: schedDate,
+                            on: { hour: hrs, minute: mins },
                             repeats: true,
-                            every: 'day'
+                            allowWhileIdle: true
                         }
                     };
                 });
@@ -1471,7 +1489,7 @@ export function renderProfile() {
                         issue_type: type,
                         description: desc,
                         user_email: email || 'Not provided',
-                        app_version: "1.4.0 (Build 7)",
+                        app_version: "1.4.5 (Build 12)",
                         device_platform: navigator.platform || 'Unknown',
                         submitted_at: new Date().toLocaleString()
                     })
@@ -1651,13 +1669,20 @@ export function renderProfile() {
         });
     }
 
-    const resetBtn = container.querySelector('#dev-reset-btn');
+    const resetBtn = container.querySelector('#reset-account-btn');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            if (confirm('Reset all progress and return to setup? This cannot be undone.')) {
+            if (confirm('Delete all progress and return to setup? This action is permanent and cannot be undone.')) {
                 DB.resetProgress();
                 window.location.reload();
             }
+        });
+    }
+
+    const privacyBtn = container.querySelector('#open-privacy-policy-btn');
+    if (privacyBtn) {
+        privacyBtn.addEventListener('click', () => {
+            window.open('privacy_policy.html', '_blank');
         });
     }
 
