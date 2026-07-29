@@ -6,6 +6,18 @@ let chimeInterval = null;
 
 let silentAudioEl = null;
 
+const BELL_SOURCES = {
+    start: './src/assets/audio/start_bell.mp3',
+    interval: './src/assets/audio/interval_bell.mp3',
+    end: './src/assets/audio/end_bell.mp3'
+};
+
+const BELL_AUDIO = {
+    start: null,
+    interval: null,
+    end: null
+};
+
 function initAudioContext() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -18,10 +30,10 @@ function initAudioContext() {
 function ensureSilentKeepAlive() {
     try {
         if (!silentAudioEl) {
-            // Clean 1-second silent WAV loop with proper header alignment & zero DC offset
-            silentAudioEl = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
+            // High-reliability 30-second silent WAV loop with proper header alignment
+            silentAudioEl = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
             silentAudioEl.loop = true;
-            silentAudioEl.volume = 0.0001; // Ultra silent zero DC offset
+            silentAudioEl.volume = 0.0001;
         }
         silentAudioEl.play().catch(() => {});
         if ('mediaSession' in navigator) {
@@ -51,39 +63,58 @@ function stopSilentKeepAlive() {
     }
 }
 
-function playBellAudioWithFade(src, fadeAfterMs = 4500, fadeDurationMs = 2000) {
+function playBellAudioWithFade(audioKey, fadeAfterMs = 4500, fadeDurationMs = 2000) {
     if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
     try {
-        const audio = new Audio(src);
-        audio.preload = 'auto';
-        const targetVol = getScaledGain(0.75);
-        audio.volume = targetVol;
+        if (!BELL_AUDIO[audioKey]) {
+            BELL_AUDIO[audioKey] = new Audio(BELL_SOURCES[audioKey]);
+            BELL_AUDIO[audioKey].preload = 'auto';
+        }
+        const audio = BELL_AUDIO[audioKey];
 
-        audio.play().catch(e => {
-            console.warn('[Synth] Bell play fallback:', e);
-        });
+        // Reset state
+        if (audio.fadeInterval) clearInterval(audio.fadeInterval);
+        if (audio.fadeTimeout) clearTimeout(audio.fadeTimeout);
 
-        setTimeout(() => {
-            if (!audio || audio.paused) return;
-            const startVol = audio.volume;
-            const steps = 20;
-            const stepTime = fadeDurationMs / steps;
-            let step = 0;
-            const timer = setInterval(() => {
-                step++;
-                const newVol = Math.max(0, startVol * (1 - step / steps));
-                if (audio) audio.volume = newVol;
-                if (step >= steps) {
-                    clearInterval(timer);
-                    if (audio) {
-                        audio.pause();
-                        audio.currentTime = 0;
+        audio.pause();
+        audio.currentTime = 0;
+        audio.muted = false;
+        audio.volume = getScaledGain(0.75);
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(e => {
+                console.warn(`[Synth] ${audioKey} bell play blocked:`, e);
+            });
+        }
+
+        // Clear any existing fade timeouts/intervals if we play again
+        if (audio.fadeInterval) clearInterval(audio.fadeInterval);
+        if (audio.fadeTimeout) clearTimeout(audio.fadeTimeout);
+
+        if (fadeAfterMs > 0) {
+            audio.fadeTimeout = setTimeout(() => {
+                if (!audio || audio.paused) return;
+                const startVol = audio.volume;
+                const steps = 20;
+                const stepTime = fadeDurationMs / steps;
+                let step = 0;
+                audio.fadeInterval = setInterval(() => {
+                    step++;
+                    const newVol = Math.max(0, startVol * (1 - step / steps));
+                    if (audio) audio.volume = newVol;
+                    if (step >= steps) {
+                        clearInterval(audio.fadeInterval);
+                        if (audio) {
+                            audio.pause();
+                            audio.currentTime = 0;
+                        }
                     }
-                }
-            }, stepTime);
-        }, fadeAfterMs);
+                }, stepTime);
+            }, fadeAfterMs);
+        }
     } catch(e) {
-        console.warn('[Synth] Error playing bell file:', e);
+        console.warn('[Synth] Error playing bell:', e);
     }
 }
 
@@ -267,18 +298,43 @@ export const Synth = {
     },
 
     playStartBell: () => {
-        // Start bell (Beginning of med bell 7 sec.wav): Fades smoothly after 4.5s over 2.0s
-        playBellAudioWithFade('./src/assets/audio/start_bell.wav', 4500, 2000);
+        if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
+        if (!BELL_AUDIO.start) {
+            BELL_AUDIO.start = new Audio(BELL_SOURCES.start);
+            BELL_AUDIO.start.preload = 'auto';
+        }
+        playBellAudioWithFade('start', 0, 0); // Plays full 7s start bell naturally
     },
 
     playIntervalBell: () => {
-        // Awareness / interval bell (Meditation bell 5 sec.mp3): Fades smoothly after 3.0s over 1.5s
-        playBellAudioWithFade('./src/assets/audio/interval_bell.mp3', 3000, 1500);
+        playBellAudioWithFade('interval', 0, 0); // Plays full 5s awareness bell naturally
     },
 
     playEndBell: () => {
-        // End bell (End of meditation 30 sec.wav): Plays all 3 built-in chimes & fades smoothly at 26s over 4.0s (finishing at 30s)
-        playBellAudioWithFade('./src/assets/audio/end_bell.wav', 26000, 4000);
+        // End bell: Plays all 3 full built-in chimes naturally across 30 seconds
+        playBellAudioWithFade('end', 0, 0);
+    },
+
+    primeBells: () => {
+        // Call this when user starts a session to authorize background playback
+        Object.keys(BELL_SOURCES).forEach(key => {
+            if (!BELL_AUDIO[key]) {
+                const audio = new Audio(BELL_SOURCES[key]);
+                audio.preload = 'auto';
+                BELL_AUDIO[key] = audio;
+            }
+            const audio = BELL_AUDIO[key];
+            if (audio.paused) {
+                audio.muted = true;
+                const p = audio.play();
+                if (p !== undefined) {
+                    p.then(() => {
+                        audio.pause();
+                        audio.muted = false;
+                    }).catch(() => {});
+                }
+            }
+        });
     },
 
     playSingleBell: () => {

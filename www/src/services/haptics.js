@@ -22,19 +22,23 @@ export const HapticService = {
         if (nativeHaptics) {
             try {
                 if (style === 'completion' || style === 'success') {
+                    // Trigger 3 distinct gentle pulse bursts for sacred completion
                     if (typeof nativeHaptics.notification === 'function') {
-                        await nativeHaptics.notification({ type: 'SUCCESS' });
-                        setTimeout(() => {
-                            nativeHaptics.notification({ type: 'SUCCESS' }).catch(() => {});
-                        }, 350);
-                    } else if (typeof nativeHaptics.vibrate === 'function') {
-                        await nativeHaptics.vibrate({ duration: 400 });
+                        nativeHaptics.notification({ type: 'SUCCESS' }).catch(() => {});
+                    }
+                    if (typeof nativeHaptics.vibrate === 'function') {
+                        await nativeHaptics.vibrate({ duration: 250 });
+                        await new Promise(r => setTimeout(r, 150));
+                        await nativeHaptics.vibrate({ duration: 250 });
+                        await new Promise(r => setTimeout(r, 150));
+                        await nativeHaptics.vibrate({ duration: 250 });
                     }
                     return;
                 } else if (style === 'bell') {
                     if (typeof nativeHaptics.impact === 'function') {
-                        await nativeHaptics.impact({ style: 'HEAVY' });
-                    } else if (typeof nativeHaptics.vibrate === 'function') {
+                        nativeHaptics.impact({ style: 'HEAVY' }).catch(() => {});
+                    }
+                    if (typeof nativeHaptics.vibrate === 'function') {
                         await nativeHaptics.vibrate({ duration: 300 });
                     }
                     return;
@@ -89,7 +93,7 @@ export const HapticService = {
         if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
             try {
                 if (style === 'completion') {
-                    navigator.vibrate([400, 200, 400]);
+                    navigator.vibrate([250, 150, 250, 150, 250]);
                 } else if (style === 'bell') {
                     navigator.vibrate([300, 150, 300]);
                 } else {

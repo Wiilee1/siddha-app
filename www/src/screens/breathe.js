@@ -72,8 +72,8 @@ export function renderBreathe(onComplete) {
             <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); transition: opacity 0.3s;">
                 <span class="material-symbols-rounded" style="font-size:18px;">notifications_active</span>
                 <label for="bell-interval-input">Bell every:</label>
-                <input type="number" id="bell-interval-input" min="0" placeholder="0" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 4px; font-size: 12px; width: 45px; text-align: center; outline: none;" value="0">
-                <span>mins</span>
+                <input type="number" id="bell-interval-input" min="0" placeholder="10" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 4px; font-size: 12px; width: 48px; text-align: center; outline: none;" value="10">
+                <span>sec</span>
                 <button id="sound-mute-btn" title="Toggle sound" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: rgba(255,255,255,0.85); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s;">
                     <span class="material-symbols-rounded" id="mute-icon" style="font-size: 18px;">volume_up</span>
                 </button>
@@ -719,14 +719,16 @@ export function renderBreathe(onComplete) {
                     updateDisplay();
                     
                     // Interval bell catch up check
-                    const intervalVal = parseInt(container.querySelector('#bell-interval-input').value);
+                    const intervalVal = parseFloat(container.querySelector('#bell-interval-input').value);
                     if (intervalVal > 0 && !isMuted) {
-                        const intervalSeconds = intervalVal * 60;
+                        const intervalSeconds = intervalVal;
                         const prevElapsed = sessionElapsed - delta;
                         const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
                         const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
                         if (currentBoundary > prevBoundary && timeLeft > 0) {
-                            Synth.playSingleBell();
+                            if (!(window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative)) {
+                                Synth.playIntervalBell();
+                            }
                             HapticService.vibrate('bell');
                         }
                     }
@@ -859,6 +861,11 @@ export function renderBreathe(onComplete) {
             Synth.stopKeepAlive();
             if (Synth.SitAudioKeepAlive) Synth.SitAudioKeepAlive.stop();
 
+            // Stop Native Foreground Service (Android only)
+            if (window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative) {
+                window.Capacitor.Plugins.MeditationNative.stopService().catch(() => {});
+            }
+
             if (wakeLockSentinel) {
                 try { wakeLockSentinel.release(); } catch(e) {}
                 wakeLockSentinel = null;
@@ -884,6 +891,7 @@ export function renderBreathe(onComplete) {
         }
 
         function finishSession(minutesOverride) {
+            const isNaturalFinish = (timeLeft <= 0);
             stopTimer();
             setRunningUI(false);
             const actualMins = minutesOverride != null ? minutesOverride : START_MINUTES;
@@ -916,7 +924,12 @@ export function renderBreathe(onComplete) {
             updateDisplay();
 
             // Play end of meditation bell & vibration pulses
-            if (!isMuted) Synth.playEndBell();
+            if (!isMuted) {
+                const isAndroidNative = window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative;
+                if (!(isAndroidNative && isNaturalFinish)) {
+                    Synth.playEndBell();
+                }
+            }
             HapticService.vibrate('completion');
 
             if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped, intention: currentIntention });
@@ -967,7 +980,11 @@ export function renderBreathe(onComplete) {
                 
                 // Play starting bell & start audio keep-alive
                 if (!isMuted) {
-                    Synth.playStartBell();
+                    Synth.primeBells();
+                    // Small delay to ensure priming play() doesn't conflict with start bell play()
+                    setTimeout(() => {
+                        Synth.playStartBell();
+                    }, 100);
                 }
                 Synth.ensureKeepAlive();
                 if (Synth.SitAudioKeepAlive) Synth.SitAudioKeepAlive.start();
@@ -977,6 +994,15 @@ export function renderBreathe(onComplete) {
                     navigator.wakeLock.request('screen').then(wl => {
                         wakeLockSentinel = wl;
                     }).catch(() => {});
+                }
+
+                // Start Native Foreground Service (Android only)
+                if (window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative) {
+                    const intervalVal = parseInt(container.querySelector('#bell-interval-input').value) || 0;
+                    window.Capacitor.Plugins.MeditationNative.startService({
+                        intervalMinutes: isMuted ? 0 : intervalVal,
+                        totalSeconds: timeLeft
+                    }).catch(e => console.error('[Breathe] Native service error:', e));
                 }
 
                 // MediaSession Keep-Alive
@@ -991,71 +1017,9 @@ export function renderBreathe(onComplete) {
                     } catch(e) {}
                 }
 
-                // Schedule local notifications for intermediate interval bells & completion
-                const notifSettings = DB.getNotificationSettings ? DB.getNotificationSettings() : {};
-                const localNotifications = window.Capacitor?.Plugins?.LocalNotifications;
-                if (localNotifications && notifSettings.sessionCompletionEnabled !== false) {
-                    localNotifications.requestPermissions().then((result) => {
-                        if (result.display === 'granted') {
-                            // Ensure High-Importance Channel exists on Android
-                            localNotifications.createChannel({
-                                id: 'meditation_bells',
-                                name: 'Meditation Bells & Chimes',
-                                description: 'Bells and interval chimes during meditation sits',
-                                importance: 5, // High Importance
-                                visibility: 1, // Public lock screen visibility
-                                vibration: true
-                            }).catch(() => {});
-
-                            const intervalVal = parseInt(container.querySelector('#bell-interval-input').value) || 0;
-                            const cancelIds = Array.from({ length: 30 }, (_, i) => ({ id: 201 + i }));
-                            cancelIds.push({ id: 99 });
-
-                            localNotifications.cancel({ notifications: cancelIds }).then(() => {
-                                const notificationsToSchedule = [];
-                                const nowMs = Date.now();
-
-                                // Intermediate Interval Bells
-                                if (intervalVal > 0 && !isMuted) {
-                                    const intervalMs = intervalVal * 60 * 1000;
-                                    const totalDurationMs = timeLeft * 1000;
-                                    let targetMs = intervalMs;
-                                    let notifIdx = 0;
-
-                                    while (targetMs < totalDurationMs && notifIdx < 25) {
-                                    notificationsToSchedule.push({
-                                            title: "Meditation Bell 🔔",
-                                            body: "Interval chime during your sit.",
-                                            id: 201 + notifIdx,
-                                            channelId: 'meditation_bells',
-                                            schedule: {
-                                                at: new Date(nowMs + targetMs),
-                                                allowWhileIdle: true
-                                            }
-                                        });
-                                        targetMs += intervalMs;
-                                        notifIdx++;
-                                    }
-                                }
-
-                                // Final Completion Bell
-                                notificationsToSchedule.push({
-                                    title: "Meditation Complete 🔔",
-                                    body: "Your session is complete. Return to your day with peace.",
-                                    id: 99,
-                                    channelId: 'meditation_bells',
-                                    schedule: {
-                                        at: new Date(nowMs + timeLeft * 1000),
-                                        allowWhileIdle: true
-                                    }
-                                });
-
-                                localNotifications.schedule({
-                                    notifications: notificationsToSchedule
-                                }).catch(err => console.log("Schedule err:", err));
-                            });
-                        }
-                    }).catch(err => console.log("Permission err:", err));
+                // Ensure notification permissions are requested/granted for the Foreground Service
+                if (window.Capacitor?.Plugins?.LocalNotifications) {
+                    window.Capacitor.Plugins.LocalNotifications.requestPermissions().catch(() => {});
                 }
 
                 lastTickTime = Date.now();
@@ -1068,15 +1032,17 @@ export function renderBreathe(onComplete) {
                         lastTickTime += delta * 1000;
                         updateDisplay();
 
-                        // Play interval bell every X minutes if set
-                        const intervalVal = parseInt(container.querySelector('#bell-interval-input').value);
+                        // Play interval bell every X seconds if set
+                        const intervalVal = parseFloat(container.querySelector('#bell-interval-input').value);
                         if (intervalVal > 0 && !isMuted) {
-                            const intervalSeconds = intervalVal * 60;
+                            const intervalSeconds = intervalVal;
                             const prevElapsed = sessionElapsed - delta;
                             const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
                             const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
                             if (currentBoundary > prevBoundary && timeLeft > 0) {
-                                Synth.playIntervalBell();
+                                if (!(window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative)) {
+                                    Synth.playIntervalBell();
+                                }
                                 HapticService.vibrate('bell');
                             }
                         }

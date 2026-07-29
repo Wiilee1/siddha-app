@@ -1,15 +1,20 @@
 import { DB } from '../services/db.js';
 
-export function renderProfile() {
+export function renderProfile(onOpenSettings) {
     const container = document.createElement('div');
     container.className = 'screen scrollable profile-screen';
     
     container.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px;">
-            <h1 style="font-size: 24px;">Profile</h1>
-            <button class="icon-btn" style="color: var(--color-text-primary);" id="logout-btn">
-                <span class="material-symbols-rounded">logout</span>
-            </button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h1 style="font-size: 24px; margin: 0;">Profile</h1>
+            <div style="display: flex; gap: 8px;">
+                <button class="icon-btn" style="color: var(--color-text-primary);" id="open-settings-screen-btn" title="Settings" aria-label="Open Settings">
+                    <span class="material-symbols-rounded">settings</span>
+                </button>
+                <button class="icon-btn" style="color: var(--color-text-primary);" id="logout-btn" title="Logout" aria-label="Logout">
+                    <span class="material-symbols-rounded">logout</span>
+                </button>
+            </div>
         </div>
 
         <div style="text-align: center; margin-bottom: 32px;">
@@ -157,315 +162,91 @@ export function renderProfile() {
             </div>
         </div>
 
-        <!-- Settings Card (Collapsible, Daily Goal removed) -->
-        <div class="card collapsible-card collapsed" id="profile-settings-card" style="margin-bottom: 32px;">
+        <!-- Sit Reminders Card (Collapsible) -->
+        <div class="card collapsible-card collapsed" id="sit-reminders-card" style="margin-bottom: 32px;">
             <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
-                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display:flex; align-items:center; gap:8px;">
-                    <span class="material-symbols-rounded" style="color: var(--color-accent);">settings</span>
-                    Settings & Preferences
+                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-rounded" style="color: var(--color-accent); font-size: 20px;">schedule</span>
+                    Sit Reminders
                 </h3>
                 <span class="material-symbols-rounded collapsible-toggle" style="color: var(--color-text-muted);">expand_more</span>
             </div>
             
-            <div class="collapsible-content" style="margin-top: 16px;">
-                <!-- Notifications & Reminders Controls -->
-                <div>
-                    <h4 style="font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 0 0 12px; font-family: var(--font-heading);">Notifications & Reminders</h4>
-                    
-                    <!-- Multiple Sit Reminders -->
-                    <div style="margin-bottom: 14px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-                            <div>
-                                <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">📅 Sit Reminders</span>
-                                <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Multiple daily mindfulness prompts</p>
-                            </div>
-                            <button id="add-reminder-btn" class="btn" style="padding:4px 10px; font-size:11px; background:var(--color-bg-secondary); color:var(--color-text-primary); border:1px solid rgba(0,0,0,0.1); border-radius:8px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;">
-                                <span class="material-symbols-rounded" style="font-size:15px; color:var(--color-accent);">add</span> Add Time
-                            </button>
-                        </div>
-                        
-                        <div id="reminders-list-container" style="display:flex; flex-direction:column; gap:8px;"></div>
-                    </div>
-
-                    <!-- Session Completion Notification Toggle -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-                        <div>
-                            <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🔔 Session End Notification</span>
-                            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Alert when timer completes</p>
-                        </div>
-                        <label class="switch-toggle">
-                            <input type="checkbox" id="toggle-session-notification" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Audio & Haptics Controls -->
-                <div style="border-top: 1px solid var(--color-bg-secondary); padding-top: 16px; margin-top: 16px;">
-                    <h4 style="font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 0 0 12px; font-family: var(--font-heading);">Audio & Haptics Controls</h4>
-
-                    <!-- Background Menu Music Controls -->
-                    <div style="margin-bottom: 14px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🎶 Background Menu Music</span>
-                                <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Looping ambient music in main menus</p>
-                            </div>
-                            <label class="switch-toggle">
-                                <input type="checkbox" id="toggle-bg-music" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-
-                        <!-- Track Selector & Volume controls wrapper -->
-                        <div id="bg-music-options-wrap" style="display:flex; flex-direction:column; gap:10px; padding:10px 12px; background:var(--color-bg-secondary); border-radius:12px; margin-top:10px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-size:11.5px; font-weight:600; color:var(--color-text-secondary);">Select Track</span>
-                                <select id="select-bg-music-track" style="padding:4px 8px; border-radius:8px; border:1px solid rgba(0,0,0,0.1); font-size:11.5px; font-weight:600; background:var(--color-bg-card); color:var(--color-text-primary); outline:none; font-family:inherit; cursor:pointer;">
-                                    <option value="cycle">🔄 Cycle All 3 Tracks</option>
-                                    <option value="himalayan">🏔️ Himalayan Sanctuary</option>
-                                    <option value="temple_wind">🍃 Temple Wind Echoes</option>
-                                    <option value="fairytale_harp">🎶 Fairytale Harp</option>
-                                </select>
-                            </div>
-
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div style="display:flex; align-items:center; gap:6px;">
-                                    <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-text-muted);">volume_up</span>
-                                    <span style="font-size:11.5px; font-weight:600; color:var(--color-text-secondary);">Music Volume</span>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <input type="range" id="slider-bg-music-volume" min="0" max="100" value="25" style="width:90px; accent-color:var(--color-accent); cursor:pointer;">
-                                    <span id="label-bg-music-volume" style="font-size:11px; font-weight:700; color:var(--color-accent); min-width:28px; text-align:right;">25%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Nature Sound Ambiance Controls -->
-                    <div style="margin-bottom: 14px; border-top: 1px dashed var(--color-bg-secondary); padding-top: 12px; margin-top: 12px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🌿 Nature Sound Ambiance</span>
-                                <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Birds & stream background soundscapes</p>
-                            </div>
-                            <label class="switch-toggle">
-                                <input type="checkbox" id="toggle-nature-sound">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-
-                        <!-- Nature Track Selector & Volume controls wrapper -->
-                        <div id="nature-sound-options-wrap" style="display:flex; flex-direction:column; gap:10px; padding:10px 12px; background:var(--color-bg-secondary); border-radius:12px; margin-top:10px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-size:11.5px; font-weight:600; color:var(--color-text-secondary);">Select Ambiance</span>
-                                <select id="select-nature-sound-track" style="padding:4px 8px; border-radius:8px; border:1px solid rgba(0,0,0,0.1); font-size:11.5px; font-weight:600; background:var(--color-bg-card); color:var(--color-text-primary); outline:none; font-family:inherit; cursor:pointer;">
-                                    <option value="water_stream">🏞️ Water Stream & Creek</option>
-                                    <option value="birds_calm_river">🌳 Birds & Calm River</option>
-                                    <option value="cycle">🔄 Cycle All Nature Sounds</option>
-                                </select>
-                            </div>
-
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <div style="display:flex; align-items:center; gap:6px;">
-                                    <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-text-muted);">volume_up</span>
-                                    <span style="font-size:11.5px; font-weight:600; color:var(--color-text-secondary);">Ambiance Volume</span>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <input type="range" id="slider-nature-volume" min="0" max="100" value="35" style="width:90px; accent-color:var(--color-accent); cursor:pointer;">
-                                    <span id="label-nature-volume" style="font-size:11px; font-weight:700; color:var(--color-accent); min-width:28px; text-align:right;">35%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Haptics / Vibration Toggle -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-                        <div>
-                            <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">📳 Haptics & Vibration</span>
-                            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Tactile pulses on iOS, Android & web</p>
-                        </div>
-                        <label class="switch-toggle">
-                            <input type="checkbox" id="toggle-vibration" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <!-- Meditation Sound Toggle -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-                        <div>
-                            <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🧘 Meditation Bells & Ambient</span>
-                            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">Sit interval bells & soundscapes</p>
-                        </div>
-                        <label class="switch-toggle">
-                            <input type="checkbox" id="toggle-meditation-sound" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <!-- Menu / UI Sound Toggle -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--color-bg-secondary); padding-bottom: 16px; margin-bottom: 16px;">
-                        <div>
-                            <span style="font-weight: 600; font-size: 12.5px; color:var(--color-text-primary);">🎵 Menu & Navigation Sounds</span>
-                            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin:2px 0 0;">UI clicks & feedback audio</p>
-                        </div>
-                        <label class="switch-toggle">
-                            <input type="checkbox" id="toggle-menu-sound" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <!-- Battery Optimization Note -->
-                    <div style="background: rgba(226, 184, 87, 0.1); border: 1px solid rgba(226, 184, 87, 0.2); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
-                        <h4 style="font-size: 11.5px; font-weight: 700; color: #856404; margin: 0 0 4px; display: flex; align-items: center; gap: 4px;">
-                            <span class="material-symbols-rounded" style="font-size: 16px;">battery_saver</span>
-                            Android Battery Saver Note
-                        </h4>
-                        <p style="font-size: 10.5px; color: #856404; margin: 0; line-height: 1.4;">
-                            If meditation bells don't ring while your phone is locked, please disable <strong>"Battery Optimization"</strong> for Siddha in your Android system settings.
-                        </p>
-                    </div>
-
-                    <!-- Privacy & Data Controls -->
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button id="open-privacy-policy-btn" style="background: var(--color-bg-secondary); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 10px; font-size: 12px; font-weight: 600; color: var(--color-text-primary); cursor: pointer; display: flex; align-items: center; gap: 8px; justify-content: center;">
-                            <span class="material-symbols-rounded" style="font-size: 18px; color: var(--color-accent);">policy</span>
-                            View Privacy Policy
-                        </button>
-
-                        <button id="reset-account-btn" style="background: transparent; border: 1px dashed #ff6b6b; border-radius: 10px; padding: 10px; font-size: 12px; font-weight: 600; color: #ff6b6b; cursor: pointer; display: flex; align-items: center; gap: 8px; justify-content: center;">
-                            <span class="material-symbols-rounded" style="font-size: 18px;">delete_forever</span>
-                            Reset Account & Delete All Data
+            <div class="collapsible-content" style="margin-top: 14px;">
+                <!-- Sit Reminders -->
+                <div style="margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-weight: 600; font-size: 12.5px; color: var(--color-text-primary);">📅 Daily Prompts</span>
+                        <button id="add-reminder-btn" class="btn" style="padding: 5px 12px; font-size: 11px; background: var(--color-bg-secondary); color: var(--color-text-primary); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                            <span class="material-symbols-rounded" style="font-size: 15px; color: var(--color-accent);">add</span> Add Time
                         </button>
                     </div>
+                    <div id="reminders-list-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Share & Community Card -->
-        <div class="card" style="margin-bottom: 16px; padding: 20px;">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-                <span class="material-symbols-rounded" style="color:var(--color-accent); font-size:26px;">share</span>
-                <div>
-                    <h3 style="font-size: 15px; margin: 0; font-family: var(--font-heading); color:var(--color-text-primary);">Share & Community</h3>
-                    <p class="text-sm" style="color: var(--color-text-muted); font-size: 11.5px; margin:2px 0 0;">Connect with our mindfulness journey</p>
-                </div>
-            </div>
-
-            <!-- Share Button -->
-            <button id="profile-share-btn" class="btn" style="width:100%; padding:12px; font-size:13.5px; background:var(--color-accent); color:#ffffff; border:none; border-radius:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(0,0,0,0.12); margin-bottom:12px;">
-                <span class="material-symbols-rounded" style="font-size:18px;">share</span>
-                Share Siddha App 🧘
-            </button>
-
-            <!-- Social Links Row -->
-            <div style="display:flex; gap:10px;">
-                <!-- Instagram Link -->
-                <a id="profile-instagram-link" href="https://instagram.com/siddhamind" target="_blank" rel="noopener noreferrer" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color:#ffffff; text-decoration:none; border-radius:12px; font-size:12px; font-weight:700; box-shadow:0 2px 8px rgba(131, 58, 180, 0.25);">
-                    <span class="material-symbols-rounded" style="font-size:16px;">photo_camera</span>
-                    @siddhamind
-                </a>
-
-                <!-- Website Link -->
-                <a id="profile-website-link" href="https://siddha.app" target="_blank" rel="noopener noreferrer" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:var(--color-bg-secondary); color:var(--color-text-primary); text-decoration:none; border-radius:12px; font-size:12px; font-weight:700; border:1px solid rgba(0,0,0,0.08);">
-                    <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-accent);">language</span>
-                    siddha.app
-                </a>
-            </div>
-
-            <!-- Bug Report Button -->
-            <button id="profile-bug-report-btn" class="btn" style="width:100%; padding:10px; font-size:12.5px; background:var(--color-bg-secondary); color:var(--color-text-secondary); border:1px dashed rgba(0,0,0,0.15); border-radius:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px;">
-                <span class="material-symbols-rounded" style="font-size:18px; color:var(--color-accent);">bug_report</span>
-                Report a Bug / Feedback 🐛
-            </button>
-        </div>
-
-        <!-- Bug Report / Feedback Modal -->
-        <div class="modal-overlay" id="bug-report-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); z-index:999; align-items:center; justify-content:center; padding:20px;">
-            <div class="card" style="width:100%; max-width:400px; padding:24px; border-radius:20px; background:var(--color-bg-card); position:relative; box-shadow:0 12px 40px rgba(0,0,0,0.25);">
-                <button id="close-bug-modal-btn" aria-label="Close modal" style="position:absolute; top:16px; right:16px; background:none; border:none; cursor:pointer; color:var(--color-text-muted); display:flex; align-items:center;">
-                    <span class="material-symbols-rounded" style="font-size:22px;">close</span>
-                </button>
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-                    <span class="material-symbols-rounded" style="color:var(--color-accent); font-size:28px;">bug_report</span>
+                <!-- Session End Notification Toggle -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-bg-secondary); padding-top: 14px;">
                     <div>
-                        <h3 style="font-size:17px; margin:0; font-family:var(--font-heading); color:var(--color-text-primary);">Report a Bug or Idea 🐛</h3>
-                        <p style="font-size:11.5px; color:var(--color-text-muted); margin:2px 0 0;">We appreciate your help making Siddha better!</p>
+                        <span style="font-weight: 600; font-size: 12.5px; color: var(--color-text-primary);">🔔 Session End Notification</span>
+                        <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin: 2px 0 0;">Chime & alert when timer completes</p>
                     </div>
-                </div>
-
-                <div style="margin-bottom:14px;">
-                    <label style="font-size:11.5px; font-weight:700; color:var(--color-text-secondary); display:block; margin-bottom:6px;">Issue Type</label>
-                    <select id="bug-type-select" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.1); font-size:12.5px; background:var(--color-bg-secondary); color:var(--color-text-primary); outline:none; font-family:inherit;">
-                        <option value="bug">🐛 Bug Report</option>
-                        <option value="feature">✨ Feature Suggestion</option>
-                        <option value="audio">🎵 Audio / Sound Feedback</option>
-                        <option value="ui">🎨 UI & Visual Issue</option>
-                    </select>
-                </div>
-
-                <div style="margin-bottom:14px;">
-                    <label style="font-size:11.5px; font-weight:700; color:var(--color-text-secondary); display:block; margin-bottom:6px;">Description</label>
-                    <textarea id="bug-desc-input" placeholder="What happened or what would you like to improve?" style="width:100%; min-height:90px; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.1); font-size:12.5px; background:var(--color-bg-secondary); color:var(--color-text-primary); outline:none; font-family:inherit; resize:none; box-sizing:border-box;"></textarea>
-                </div>
-
-                <div style="margin-bottom:16px;">
-                    <label style="font-size:11.5px; font-weight:700; color:var(--color-text-secondary); display:block; margin-bottom:6px;">Your Email (optional for updates)</label>
-                    <input type="email" id="bug-email-input" placeholder="you@example.com" style="width:100%; padding:9px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.1); font-size:12.5px; background:var(--color-bg-secondary); color:var(--color-text-primary); outline:none; font-family:inherit; box-sizing:border-box;">
-                </div>
-
-                <div style="display:flex; gap:10px;">
-                    <button id="submit-bug-btn" class="btn" style="flex:1; padding:12px; font-size:13px; font-weight:700; background:var(--color-accent); color:white; border:none; border-radius:12px; cursor:pointer;">
-                        Submit Report 🚀
-                    </button>
+                    <label class="switch-toggle">
+                        <input type="checkbox" id="toggle-session-notification" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
             </div>
         </div>
 
-        <!-- Support & Donation Card -->
-        <div class="card" style="margin-bottom: 32px; text-align: center; padding: 20px;">
-            <span class="material-symbols-rounded" style="color: #e2b857; font-size: 32px; margin-bottom: 8px;">favorite</span>
-            <h3 style="font-size: 16px; margin: 0 0 8px; font-family: var(--font-heading);">Support Siddha</h3>
-            <p class="text-sm" style="color: var(--color-text-secondary); margin-bottom: 16px; line-height: 1.4;">
+        <!-- Support Siddha Card (Dedicated Card - Placed Above Community) -->
+        <div class="card" style="margin-bottom: 24px; padding: 20px; text-align: center;">
+            <span class="material-symbols-rounded" style="color: #e2b857; font-size: 32px; margin-bottom: 6px;">favorite</span>
+            <h3 style="font-size: 16px; margin: 0 0 6px; font-family: var(--font-heading); color: var(--color-text-primary);">Support Siddha</h3>
+            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11.5px; margin-bottom: 14px; line-height: 1.4;">
                 Siddha is free and built with love. If it helps you stay mindful, consider supporting our journey.
             </p>
-            <button id="profile-donate-btn" class="btn" style="background: var(--color-accent); color: #fff; border: none; font-size: 14px; font-weight: 600; padding: 10px 24px; border-radius: 20px; width: 100%;">
+            <button id="profile-donate-btn" class="btn" style="width: 100%; background: var(--color-accent); color: #fff; border: none; font-size: 13px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.12);">
+                <span class="material-symbols-rounded" style="font-size: 18px;">coffee</span>
                 Support the App ☕
             </button>
         </div>
 
-        <!-- Feedback Card -->
-        <div class="card collapsible-card collapsed" id="feedback-card" style="margin-bottom: 32px;">
-            <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
-                <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
-                    <span class="material-symbols-rounded" style="color: var(--color-accent); font-size: 20px;">rate_review</span>
-                    Give Feedback
-                </h3>
-                <span class="material-symbols-rounded collapsible-toggle">expand_more</span>
-            </div>
-            <div class="collapsible-content" style="margin-top: 12px;">
-                <form id="feedback-form" style="display: flex; flex-direction: column; gap: 12px;">
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label class="text-sm" style="font-weight: 600; color: var(--color-text-secondary);">Feedback Type</label>
-                        <select id="feedback-type" style="padding: 10px; border-radius: 8px; border: 1px solid var(--color-bg-secondary); background: var(--color-bg-card); font-family: inherit; font-size: 13px; color: var(--color-text-primary); outline: none;">
-                            <option value="suggestion">💡 Suggestion</option>
-                            <option value="bug">🐛 Bug Report</option>
-                            <option value="compliment">🌸 Compliment</option>
-                            <option value="other">💬 Other</option>
-                        </select>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label class="text-sm" style="font-weight: 600; color: var(--color-text-secondary);">Your thoughts</label>
-                        <textarea id="feedback-text" placeholder="Share your experience or report an issue..." required style="padding: 12px; border-radius: 8px; border: 1px solid var(--color-bg-secondary); min-height: 100px; resize: vertical; font-family: inherit; font-size: 13px; outline: none; line-height: 1.5; color: var(--color-text-primary); background: var(--color-bg-card);"></textarea>
-                    </div>
-                    <button type="submit" class="btn" style="background: var(--color-accent); color: #fff; border: none; font-size: 13px; font-weight: 600; padding: 10px 16px; align-self: flex-end; border-radius: 20px;">
-                        Submit Feedback
-                    </button>
-                </form>
-                <div id="feedback-success-msg" class="hidden" style="text-align: center; padding: 16px 0; animation: fadeIn 0.3s ease;">
-                    <span class="material-symbols-rounded" style="font-size: 48px; color: var(--color-accent); margin-bottom: 8px; display: block;">check_circle</span>
-                    <h4 style="font-size: 15px; margin-bottom: 4px; font-family: var(--font-heading);">Thank you!</h4>
-                    <p class="text-sm" style="color: var(--color-text-secondary);">Your feedback helps us shape the journey of Siddha.</p>
+        <!-- Share & Community Card -->
+        <div class="card" style="margin-bottom: 24px; padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+                <span class="material-symbols-rounded" style="color: var(--color-accent); font-size: 24px;">share</span>
+                <div>
+                    <h3 style="font-size: 15px; margin: 0; font-family: var(--font-heading); color: var(--color-text-primary);">Share & Community</h3>
+                    <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin: 2px 0 0;">Connect with our mindfulness journey</p>
                 </div>
             </div>
+
+            <!-- Share Button -->
+            <button id="profile-share-btn" class="btn" style="width: 100%; padding: 12px; font-size: 13px; background: var(--color-accent); color: #ffffff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); margin-bottom: 12px;">
+                <span class="material-symbols-rounded" style="font-size: 18px;">share</span>
+                Share Siddha App 🧘
+            </button>
+
+            <!-- Social Links Row -->
+            <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                <!-- Instagram Link -->
+                <a id="profile-instagram-link" href="https://instagram.com/siddhamind" target="_blank" rel="noopener noreferrer" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color: #ffffff; text-decoration: none; border-radius: 10px; font-size: 11.5px; font-weight: 700; box-shadow: 0 2px 8px rgba(131, 58, 180, 0.2);">
+                    <span class="material-symbols-rounded" style="font-size: 15px;">photo_camera</span>
+                    @siddhamind
+                </a>
+
+                <!-- Website Link -->
+                <a id="profile-website-link" href="https://siddha.app" target="_blank" rel="noopener noreferrer" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; background: var(--color-bg-secondary); color: var(--color-text-primary); text-decoration: none; border-radius: 10px; font-size: 11.5px; font-weight: 700; border: 1px solid rgba(0,0,0,0.08);">
+                    <span class="material-symbols-rounded" style="font-size: 15px; color: var(--color-accent);">language</span>
+                    siddha.app
+                </a>
+            </div>
+
+            <!-- Email Feedback & Bug Report Direct Pill -->
+            <a id="profile-email-btn" href="mailto:siddhameditation@gmail.com?subject=Siddha%20App%20Feedback%20%26%20Bug%20Report&body=Hi%20Siddha%20Team%2C%0A%0AHere%20is%20my%20feedback%20or%20bug%20report%3A%0A%0A" style="width: 100%; padding: 11px 12px; font-size: 12px; background: var(--color-bg-secondary); color: var(--color-text-primary); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;">
+                <span class="material-symbols-rounded" style="font-size: 17px; color: var(--color-accent);">rate_review</span>
+                Give Feedback or Report a Bug 💬
+            </a>
         </div>
 
         <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
@@ -1190,39 +971,48 @@ export function renderProfile() {
         const notifPlugin = window.Capacitor?.Plugins?.LocalNotifications;
         if (!notifPlugin) return;
 
-        // Cancel all pending notifications to prevent ghost notifications
-        notifPlugin.getPending().then((pending) => {
-            const idsToCancel = (pending && pending.notifications) ? pending.notifications.map(n => ({ id: n.id })) : [];
-            const fallbackIds = Array.from({ length: 20 }, (_, i) => ({ id: 101 + i }));
-            const allCancel = [...idsToCancel, ...fallbackIds, { id: 99 }];
-
-            notifPlugin.cancel({ notifications: allCancel }).then(() => {
-                const enabledReminders = (remindersList || []).filter(r => r.enabled);
-                if (enabledReminders.length === 0) return;
-
-                const notificationsToSchedule = enabledReminders.map((r, index) => {
-                    const [hrs, mins] = (r.time || '08:00').split(':').map(Number);
-
-                    return {
-                        title: "Time for Mindfulness 🧘",
-                        body: "Take a few moments to sit and find your center.",
-                        id: 101 + index,
-                        schedule: {
-                            on: { hour: hrs, minute: mins },
-                            repeats: true,
-                            allowWhileIdle: true
-                        }
-                    };
+        notifPlugin.checkPermissions().then((perm) => {
+            if (perm.display === 'granted') {
+                proceedWithSync();
+            } else if (perm.display === 'prompt' || perm.display === 'prompt-with-rationale') {
+                notifPlugin.requestPermissions().then((newPerm) => {
+                    if (newPerm.display === 'granted') proceedWithSync();
                 });
-
-                notifPlugin.schedule({
-                    notifications: notificationsToSchedule
-                }).catch(err => console.log("[Profile] LocalNotifications schedule error:", err));
-            }).catch(err => console.log("[Profile] LocalNotifications cancel error:", err));
-        }).catch(() => {
-            // Fallback cancel
-            notifPlugin.cancel({ notifications: Array.from({ length: 20 }, (_, i) => ({ id: 101 + i })) });
+            }
         });
+
+        function proceedWithSync() {
+            notifPlugin.getPending().then((pending) => {
+                const idsToCancel = (pending && pending.notifications) ? pending.notifications.map(n => ({ id: n.id })) : [];
+                const fallbackIds = Array.from({ length: 20 }, (_, i) => ({ id: 101 + i }));
+                const allCancel = [...idsToCancel, ...fallbackIds, { id: 99 }];
+
+                const enabledReminders = (remindersList || []).filter(r => r.enabled);
+
+                notifPlugin.cancel({ notifications: allCancel }).then(() => {
+                    if (enabledReminders.length === 0) return;
+
+                    const notificationsToSchedule = enabledReminders.map((r, index) => {
+                        const [hrs, mins] = (r.time || '08:00').split(':').map(Number);
+
+                        return {
+                            title: "Time for Mindfulness 🧘",
+                            body: "Take a few moments to sit and find your center.",
+                            id: 101 + index,
+                            schedule: {
+                                on: { hour: hrs, minute: mins },
+                                repeats: true,
+                                allowWhileIdle: true
+                            }
+                        };
+                    });
+
+                    notifPlugin.schedule({
+                        notifications: notificationsToSchedule
+                    }).catch(err => console.warn("[Profile] LocalNotifications schedule error:", err));
+                });
+            });
+        }
     };
 
     container.renderRemindersUI = () => {
@@ -1489,7 +1279,7 @@ export function renderProfile() {
                         issue_type: type,
                         description: desc,
                         user_email: email || 'Not provided',
-                        app_version: "1.4.5 (Build 12)",
+                        app_version: "1.6.1 (Build 21)",
                         device_platform: navigator.platform || 'Unknown',
                         submitted_at: new Date().toLocaleString()
                     })
@@ -1584,6 +1374,16 @@ export function renderProfile() {
     }
 
     // 6. Collapsible Cards
+    const sitRemindersCard = container.querySelector('#sit-reminders-card');
+    if (sitRemindersCard) {
+        const header = sitRemindersCard.querySelector('.collapsible-header');
+        if (header) {
+            header.addEventListener('click', () => {
+                sitRemindersCard.classList.toggle('collapsed');
+            });
+        }
+    }
+
     const lifetimeCard = container.querySelector('#lifetime-stats-card');
     if (lifetimeCard) {
         const header = lifetimeCard.querySelector('.collapsible-header');
@@ -1658,6 +1458,13 @@ export function renderProfile() {
     if (donateBtn) {
         donateBtn.addEventListener('click', () => {
             window.open('https://ko-fi.com/siddha', '_blank');
+        });
+    }
+
+    const openSettingsBtn = container.querySelector('#open-settings-screen-btn');
+    if (openSettingsBtn && onOpenSettings) {
+        openSettingsBtn.addEventListener('click', () => {
+            onOpenSettings();
         });
     }
 

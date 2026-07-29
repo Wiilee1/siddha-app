@@ -67,9 +67,6 @@ export function renderNewReflection(onComplete) {
             <!-- Dual Polarity Spectrum Sliders -->
             <div class="nr-section">
                 <h3 class="nr-section-title" style="margin-bottom:6px;">Mind State Spectrums</h3>
-                <p style="font-size:11px; color:var(--color-text-secondary); margin:0 0 12px 0; line-height:1.4;">
-                    Rate the internal quality of your attention during this sit along 3 core dimensions. These reflect awareness quality rather than performance.
-                </p>
 
                 <!-- Slider 1: Focus Polarity -->
                 <div style="margin-bottom: 16px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
@@ -161,7 +158,7 @@ export function renderNewReflection(onComplete) {
     style.textContent = `
         .new-reflection-screen {
             background: var(--color-bg-primary);
-            padding: 14px 20px 0;
+            padding: calc(32px + env(safe-area-inset-top, 0px)) 20px 0;
         }
 
         /* Header */

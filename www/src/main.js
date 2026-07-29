@@ -4,6 +4,7 @@ import { renderBreathe } from './screens/breathe.js';
 import { renderReflect } from './screens/reflect.js';
 import { renderLogin } from './screens/login.js';
 import { renderProfile } from './screens/profile.js';
+import { renderSettings } from './screens/settings.js';
 import { renderNewReflection } from './screens/new_reflection.js';
 import { renderWisdom } from './screens/wisdom.js';
 import { DB } from './services/db.js';
@@ -37,7 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
             reflScreen.sessionData = null;
             navigateTo('new_reflection');
         }),
-        profile: renderProfile(),
+        profile: renderProfile(() => navigateTo('settings')),
+        settings: renderSettings(() => navigateTo('profile')),
         new_reflection: renderNewReflection(() => {
             // After saving reflection → go to reflect tab
             navigateTo('reflect');
@@ -52,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Navigation
     function navigateTo(targetId) {
-        const noNav = ['login', 'breathe', 'new_reflection', 'wisdom'];
+        const noNav = ['login', 'breathe', 'new_reflection', 'wisdom', 'settings'];
         bottomNav.style.display = noNav.includes(targetId) ? 'none' : 'flex';
 
         currentActiveScreen = targetId;
@@ -61,7 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetId === 'breathe') {
             MenuMusic.fadeOut(800);
             NatureMusic.fadeOut(800);
-        } else if (['home', 'journey', 'reflect', 'profile', 'wisdom'].includes(targetId)) {
+            // Ensure notification permissions are requested when entering meditation
+            if (window.Capacitor?.Plugins?.LocalNotifications) {
+                window.Capacitor.Plugins.LocalNotifications.requestPermissions().catch(() => {});
+            }
+        } else if (['home', 'journey', 'reflect', 'profile', 'wisdom', 'settings'].includes(targetId)) {
             MenuMusic.start();
             NatureMusic.start();
         }
@@ -152,20 +158,96 @@ document.addEventListener('DOMContentLoaded', () => {
                 resumeAppAudioIfAppropriate();
             }
         });
-    }
 
-    // Cancel any stale sit interval notifications on app startup
-    if (window.Capacitor?.Plugins?.LocalNotifications) {
-        window.Capacitor.Plugins.LocalNotifications.getPending().then(pending => {
-            if (pending && pending.notifications && pending.notifications.length > 0) {
-                // Cancel any non-reminder notifications (IDs 99, 201+)
-                const sitNotifs = pending.notifications.filter(n => n.id === 99 || n.id >= 201);
-                if (sitNotifs.length > 0) {
-                    window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: sitNotifs }).catch(() => {});
+        // Handle System Back Gesture (Swipe / Back Button)
+        let lastBackPressTime = 0;
+        window.Capacitor.Plugins.App.addListener('backButton', () => {
+            // 1. Check for open modals/overlays first
+            const wisdomReader = document.getElementById('wd-reader-modal');
+            const journeyModal = document.getElementById('mission-modal');
+            const intentionModal = document.getElementById('intention-modal-overlay');
+
+            if (wisdomReader && wisdomReader.classList.contains('active')) {
+                wisdomReader.querySelector('#wd-reader-close')?.click();
+                return;
+            }
+            if (journeyModal && journeyModal.classList.contains('active')) {
+                journeyModal.querySelector('#modal-close')?.click();
+                return;
+            }
+            if (intentionModal && intentionModal.style.display === 'flex') {
+                intentionModal.querySelector('#close-intention-modal-btn')?.click();
+                return;
+            }
+
+            // 2. If on a sub-screen or tab that isn't Home, go to Home
+            if (currentActiveScreen !== 'home' && currentActiveScreen !== 'login') {
+                // If in a meditation session, we use the close button to ensure cleanup
+                if (currentActiveScreen === 'breathe') {
+                    document.getElementById('breathe-close-btn')?.click();
+                } else if (currentActiveScreen === 'new_reflection') {
+                    document.getElementById('nr-back-btn')?.click();
+                } else {
+                    document.querySelector('.bottom-nav [data-target="home"]')?.click();
+                }
+            } else {
+                // 3. If already on Home or Login, require double press to exit
+                const now = Date.now();
+                if (now - lastBackPressTime < 2000) {
+                    window.Capacitor.Plugins.App.exitApp();
+                } else {
+                    lastBackPressTime = now;
+                    // Show a quick inline toast
+                    const toast = document.createElement('div');
+                    toast.textContent = "Press back again to exit";
+                    toast.style.position = 'fixed';
+                    toast.style.bottom = '80px';
+                    toast.style.left = '50%';
+                    toast.style.transform = 'translateX(-50%)';
+                    toast.style.backgroundColor = 'rgba(0,0,0,0.85)';
+                    toast.style.border = '1px solid rgba(255,255,255,0.15)';
+                    toast.style.color = 'white';
+                    toast.style.padding = '10px 20px';
+                    toast.style.borderRadius = '20px';
+                    toast.style.fontSize = '13px';
+                    toast.style.fontWeight = '500';
+                    toast.style.zIndex = '9999';
+                    toast.style.transition = 'opacity 0.3s ease';
+                    toast.style.pointerEvents = 'none';
+                    document.body.appendChild(toast);
+                    
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 1700);
                 }
             }
-        }).catch(() => {});
+        });
     }
+
+    // Request notification permissions & clean up stale sit notifications on startup
+    const requestNotifPermissions = async () => {
+        try {
+            const LocalNotifications = window.Capacitor?.Plugins?.LocalNotifications;
+            if (!LocalNotifications) return;
+
+            const check = await LocalNotifications.checkPermissions();
+            if (check.display !== 'granted') {
+                await LocalNotifications.requestPermissions();
+            }
+
+            const pending = await LocalNotifications.getPending();
+            if (pending && pending.notifications && pending.notifications.length > 0) {
+                const sitNotifs = pending.notifications.filter(n => n.id === 99 || n.id >= 201);
+                if (sitNotifs.length > 0) {
+                    await LocalNotifications.cancel({ notifications: sitNotifs });
+                }
+            }
+        } catch (err) {
+            console.warn('[Main] Notification setup fallback:', err);
+        }
+    };
+    requestNotifPermissions();
 
     // Start
     handleAuthChange();

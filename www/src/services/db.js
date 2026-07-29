@@ -272,18 +272,24 @@ export const DB = {
         let streak = 0;
         if (history.length > 0) {
             const dates = [...new Set(history.map(item => toDateStr(item.date)))]
-                .sort((a, b) => new Date(b) - new Date(a));
+                .filter(Boolean)
+                .sort((a, b) => b.localeCompare(a));
 
             const todayStr = toDateStr(new Date());
             const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
             const yesterdayStr = toDateStr(yesterday);
 
-            if (dates[0] === todayStr || dates[0] === yesterdayStr) {
-                let checkDate = new Date(dates[0]);
-                for (const date of dates) {
-                    const expected = toDateStr(checkDate);
-                    if (date === expected) { streak++; checkDate.setDate(checkDate.getDate() - 1); }
-                    else break;
+            // Streak resets to 0 if the latest session is older than yesterday
+            if (dates.length > 0 && (dates[0] === todayStr || dates[0] === yesterdayStr)) {
+                let checkDate = dates[0] === yesterdayStr ? new Date(yesterday) : new Date();
+                while (true) {
+                    const expectedStr = toDateStr(checkDate);
+                    if (dates.includes(expectedStr)) {
+                        streak++;
+                        checkDate.setDate(checkDate.getDate() - 1);
+                    } else {
+                        break;
+                    }
                 }
             }
         }
