@@ -1,12 +1,12 @@
-# Walkthrough: Version 1.6.5 Release Build
+# Walkthrough: Version 1.6.7 Release Build
 
-I have iterated the app version to 1.6.5 (v25) and generated a fresh Release Bundle.
+I have iterated the app version to 1.6.7 (v27) and generated a fresh Release Bundle.
 
 ## Changes Made
 
 ### Versioning & Build
 - **[build.gradle](file:///Users/kami/Documents/Siddha Meditation App/siddha-app/android/app/build.gradle)** & **[package.json](file:///Users/kami/Documents/Siddha Meditation App/siddha-app/package.json)**:
-    - Incremented version to **1.6.5 (v25)**.
+    - Incremented version to **1.6.7 (v27)**.
 - Generated a fresh **Release Bundle** (`.aab`).
 
 ## Verification Results

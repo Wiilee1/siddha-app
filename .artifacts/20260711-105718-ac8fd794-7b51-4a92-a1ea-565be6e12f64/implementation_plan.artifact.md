@@ -1,35 +1,33 @@
-# Implementation Plan: System Back Gesture & Reflection UI Fix
+# Implementation Plan: App Size Optimization & Version Update
 
-This plan handles the **system back gesture** (swipe from the side on Android/iOS) to ensure it navigates to the Home screen before exiting. It also lowers the header on the **Reflection** screen so it doesn't overlap with the status bar.
+This plan aims to reduce the app's installation size and iterate to a new version for release.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **System Back Gesture (Swipe):** I will link into the system-level "Back" event. When you swipe back or press the Android back key:
->   1. It will first **close any open overlays** (like the Wisdom Reader or Journey Mission list).
->   2. If you are on a tab like **Journey** or **Wisdom**, it will take you to **Home** instead of closing the app.
->   3. Swiping back while on the **Home** screen will exit the app as normal.
-> - **Lower Reflection Screen:** I will increase the top padding *only* on the Reflection screen to push the "Back" and "Skip" buttons down safely below the status bar.
+> - **Asset Cleanup:** I will optimize the build process to ensure no duplicate assets are being bundled.
+> - **Resource Shrinking:** I will enable Android's resource shrinking to automatically remove unused icons and layout files from the final bundle.
+> - **Version Bump:** The app will be updated to **1.6.6 (v26)**.
 
 ## Proposed Changes
 
-### 1. [MODIFY] [main.js](file:///Users/kami/Documents/Siddha Meditation App/siddha-app/src/main.js)
-- Add a Capacitor `backButton` listener to capture system gestures.
-- Implement logic to:
-    - Close the **Wisdom Reader** if open.
-    - Close the **Journey Mission Modal** if open.
-    - Close the **Intention Picker** if open.
-    - Navigate to **Home** if on any other sub-screen.
+### 1. [MODIFY] [build.gradle](file:///Users/kami/Documents/Siddha Meditation App/siddha-app/android/app/build.gradle)
+- Enable `shrinkResources true` in the release build block.
+- Update `versionCode` to **26**.
+- Update `versionName` to **"1.6.6"**.
 
-### 2. [MODIFY] [new_reflection.js](file:///Users/kami/Documents/Siddha Meditation App/siddha-app/src/screens/new_reflection.js)
-- Increase top padding in `.new-reflection-screen` to `calc(32px + env(safe-area-inset-top, 0px))`.
-- This ensures the "Back" and "Skip" buttons are clearly visible and reachable.
+### 2. [MODIFY] [package.json](file:///Users/kami/Documents/Siddha Meditation App/siddha-app/package.json)
+- Update `version` to **"1.6.6"**.
+
+### 3. Build & Clean
+- Run `./gradlew clean` to remove bulky temporary build files (currently taking up ~1GB of disk space).
+- Run the web build and sync to ensure the Android `assets/public` folder is clean and optimized.
+- Generate a new **Release Bundle (.aab)**.
 
 ## Verification Plan
 
+### Automated Tests
+- Compare the size of the new `app-release.aab` with the previous version (~144MB).
+
 ### Manual Verification
-1. **Swipe Gesture:**
-   - Open **Wisdom** -> Swipe back from the edge of your screen -> Verify it goes to **Home**.
-   - Open **Journey** -> Tap a mission to open the list -> Swipe back -> Verify only the list closes.
-2. **Reflection Padding:**
-   - Open **Reflection**. Confirm the header is lowered and looks correct compared to the other screens.
+- Verify that the app still launches correctly and all audio/images are present.
