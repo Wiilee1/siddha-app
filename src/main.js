@@ -9,7 +9,6 @@ import { renderNewReflection } from './screens/new_reflection.js';
 import { renderWisdom } from './screens/wisdom.js';
 import { DB } from './services/db.js';
 import { MenuMusic, NatureMusic } from './services/synth.js';
-import { App } from '@capacitor/app';
 import './components/levelup_celebration.js';
 import './components/achievement_celebration.js';
 
@@ -212,7 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 4. If already on Home or Login, require double press within 2 seconds to exit
                 const now = Date.now();
                 if (now - lastBackPressTime < 2000) {
-                    App.exitApp();
+                    if (window.Capacitor?.Plugins?.App) {
+                        window.Capacitor.Plugins.App.exitApp();
+                    }
                 } else {
                     lastBackPressTime = now;
                     const toast = document.createElement('div');
@@ -242,7 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            App.addListener('backButton', handleBack);
+            if (window.Capacitor?.Plugins?.App) {
+                window.Capacitor.Plugins.App.addListener('backButton', handleBack);
+            }
         } catch(e) {
             console.warn('[Main] App backButton listener error:', e);
         }
