@@ -562,10 +562,10 @@ export function renderNewReflection(onComplete) {
 
         DB.saveReflection({
             mood: selectedMood,
-            focusDepth: selectedFocusDepth,
-            focusScore: currentFocusScore,
-            stabilityScore: currentStabilityScore,
-            equanimityScore: currentEquanimityScore,
+            focusDepth: isStandalone ? null : selectedFocusDepth,
+            focusScore: isStandalone ? null : currentFocusScore,
+            stabilityScore: isStandalone ? null : currentStabilityScore,
+            equanimityScore: isStandalone ? null : currentEquanimityScore,
             hindrances: Array.from(selectedHindrances),
             text: text,
             intention: container.sessionData?.intention || null,
@@ -612,16 +612,15 @@ export function renderNewReflection(onComplete) {
             if (intentBanner) intentBanner.style.display = 'none';
         }
 
-        // Always ensure meditation state spectrums & orb are visible
-        if (spectsEl) spectsEl.style.display = 'block';
-
         if (isStandalone) {
-            // Hide XP celebration for quick standalone reflection
+            // Hide XP celebration & Mind Spectrum sliders for quick standalone reflection
             xpZone.classList.add('hidden');
+            if (spectsEl) spectsEl.style.display = 'none';
             titleEl.textContent = 'Quick Reflection';
             subtitleEl.textContent = 'Capture your thoughts & mood';
         } else {
             xpZone.classList.remove('hidden');
+            if (spectsEl) spectsEl.style.display = 'block';
             const data = container.sessionData;
             const durationXP = (data.duration || 10) * 5;
             earnedXP = durationXP;
