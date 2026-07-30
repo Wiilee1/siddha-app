@@ -623,14 +623,23 @@ export function renderNewReflection(onComplete) {
             if (data.mission) {
                 earnedXP += 20;
             }
+            if (data.intention) {
+                earnedXP += 10;
+            }
 
             container.querySelector('#nr-earned-xp').textContent = earnedXP;
 
             const chip = container.querySelector('#nr-mission-chip');
 
-            if (data.mission) {
+            if (data.mission && data.intention) {
+                chip.style.display = 'inline-block';
+                chip.innerHTML = `🏆 Mission: <strong>${data.mission.label}</strong> (+20 XP) &nbsp;•&nbsp; 🎯 Intention (+10 XP)`;
+            } else if (data.mission) {
                 chip.style.display = 'inline-block';
                 chip.innerHTML = `🏆 Mission: <strong>${data.mission.label}</strong> (+20 XP)`;
+            } else if (data.intention) {
+                chip.style.display = 'inline-block';
+                chip.innerHTML = `🎯 Intention: <em>"${data.intention}"</em> (+10 XP)`;
             } else {
                 chip.style.display = 'inline-block';
                 chip.innerHTML = `✨ Completed <strong>${data.duration || 10}-min</strong> meditation session`;

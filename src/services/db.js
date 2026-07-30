@@ -382,7 +382,7 @@ export const DB = {
     },
 
     // Meditations
-    completeMeditation: (durationMins, queue = false) => {
+    completeMeditation: (durationMins, queue = false, intention = null) => {
         const state = getState();
         const oldLevel = state.level;
         const activePath = state.activePathId || 'tmi';
@@ -391,10 +391,14 @@ export const DB = {
             date: new Date().toISOString(),
             duration: durationMins,
             type: 'meditation',
-            path: activePath
+            path: activePath,
+            intention: intention || null
         });
         
-        const xpEarned = durationMins * 5;
+        let xpEarned = durationMins * 5;
+        if (intention) {
+            xpEarned += 10; // Intention bonus
+        }
         state.xp += xpEarned;
         const newLevel = xpToLevel(state.xp);
         const leveledUp = newLevel > oldLevel;

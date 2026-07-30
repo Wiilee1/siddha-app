@@ -906,7 +906,7 @@ export function renderBreathe(onComplete) {
             stopTimer(isNaturalFinish);
             setRunningUI(false);
             const actualMins = minutesOverride != null ? minutesOverride : START_MINUTES;
-            DB.completeMeditation(actualMins, true);
+            DB.completeMeditation(actualMins, true, currentIntention);
 
             const activeMission = container.activeMission;
             if (activeMission) {
