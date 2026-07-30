@@ -22,7 +22,7 @@ export const HapticService = {
         if (nativeHaptics) {
             try {
                 if (style === 'completion' || style === 'success') {
-                    // Trigger 3 distinct gentle pulses synchronized with the 3 final end bell chimes (at 0s, 5s, 10s)
+                    // Trigger 3 distinct gentle pulses synchronized with the 3 final end bell chimes (at 0.5s, 10s, 17s)
                     const triggerPulse = async () => {
                         try {
                             if (typeof nativeHaptics.impact === 'function') {
@@ -33,9 +33,9 @@ export const HapticService = {
                         } catch (e) {}
                     };
 
-                    await triggerPulse();
-                    setTimeout(() => triggerPulse(), 5000);
-                    setTimeout(() => triggerPulse(), 10000);
+                    setTimeout(() => triggerPulse(), 500);   // Chime 1 at 0.5s
+                    setTimeout(() => triggerPulse(), 10000); // Chime 2 at 10.0s
+                    setTimeout(() => triggerPulse(), 17000); // Chime 3 at 17.0s
                     return;
                 } else if (style === 'bell') {
                     if (typeof nativeHaptics.impact === 'function') {
