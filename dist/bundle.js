@@ -93,35 +93,55 @@
         0,
         // level 0 (unused)
         0,
-        // level 1: starts here
+        // level 1: Novice
         100,
-        // level 2
-        250,
-        // level 3
-        450,
-        // level 4
-        700,
-        // level 5
-        1e3,
-        // level 6
-        1400,
-        // level 7
+        // level 2: Initiate (20 min)
+        300,
+        // level 3: Seeker (60 min / 1 hr)
+        650,
+        // level 4: Wanderer (130 min)
+        1200,
+        // level 5: Practitioner (240 min / 4 hrs)
         1900,
-        // level 8
-        2500,
-        // level 9
-        3200,
-        // level 10
-        4e3,
-        // level 11
-        5e3,
-        // level 12
+        // level 6: Disciple (380 min / 6.3 hrs)
+        2650,
+        // level 7: Student of Breath (530 min / 8.8 hrs)
+        3600,
+        // level 8: Devotee (12 hrs)
+        4800,
+        // level 9: Guide of Stillness (16 hrs)
         6200,
-        // level 13
-        7600,
-        // level 14
-        9200
-        // level 15
+        // level 10: Contemplative (20.6 hrs)
+        7800,
+        // level 11: Mindful Observer (26 hrs)
+        9600,
+        // level 12: Serene Practitioner (32 hrs)
+        11600,
+        // level 13: Anchor of Attention (38.6 hrs)
+        13800,
+        // level 14: Awareness Seeker (46 hrs)
+        16200,
+        // level 15: Sage in Training (54 hrs)
+        18900,
+        // level 16: Tranquil Spirit (63 hrs)
+        21900,
+        // level 17: Steady Mind (73 hrs)
+        25200,
+        // level 18: Vivid Presence (84 hrs)
+        28800,
+        // level 19: Master of Attention (96 hrs)
+        32700,
+        // level 20: Quiet Watcher (109 hrs)
+        35500,
+        // level 21: Inner Sanctuary (118 hrs)
+        38e3,
+        // level 22: Radiant Clarity (126.6 hrs)
+        40500,
+        // level 23: Unshaken Anchor (135 hrs)
+        42800,
+        // level 24: Boundless Presence (142.6 hrs)
+        45e3
+        // level 25: Ascendant Watcher (150 hrs - Ascension 1 Complete!)
       ];
       defaultState = {
         user: null,
@@ -330,7 +350,7 @@
             daysSinceLastSession
           };
         },
-        addXP: (amount) => {
+        addXP: (amount, queue = false) => {
           const state = getState();
           const oldLevel = state.level;
           state.xp += amount;
@@ -338,18 +358,23 @@
           const leveledUp = newLevel > oldLevel;
           state.level = newLevel;
           checkAndApplyLevelUpRewards(state, oldLevel, newLevel);
-          saveState(state);
           if (leveledUp) {
-            setTimeout(() => {
-              window.dispatchEvent(new CustomEvent("siddha-levelup", {
-                detail: { oldLevel, newLevel, xp: state.xp }
-              }));
-            }, 100);
+            if (queue) {
+              if (!state.pendingCelebrations) state.pendingCelebrations = [];
+              state.pendingCelebrations.push({ type: "levelup", data: { oldLevel, newLevel, xp: state.xp } });
+            } else {
+              setTimeout(() => {
+                window.dispatchEvent(new CustomEvent("siddha-levelup", {
+                  detail: { oldLevel, newLevel, xp: state.xp }
+                }));
+              }, 100);
+            }
           }
+          saveState(state);
           return { xp: state.xp, level: state.level, leveledUp };
         },
         // Meditations
-        completeMeditation: (durationMins) => {
+        completeMeditation: (durationMins, queue = false, intention = null) => {
           const state = getState();
           const oldLevel = state.level;
           const activePath = state.activePathId || "tmi";
@@ -357,9 +382,13 @@
             date: (/* @__PURE__ */ new Date()).toISOString(),
             duration: durationMins,
             type: "meditation",
-            path: activePath
+            path: activePath,
+            intention: intention || null
           });
-          const xpEarned = durationMins * 5;
+          let xpEarned = durationMins * 5;
+          if (intention) {
+            xpEarned += 10;
+          }
           state.xp += xpEarned;
           const newLevel = xpToLevel(state.xp);
           const leveledUp = newLevel > oldLevel;
@@ -386,18 +415,23 @@
           }
           comp.lastUpdated = (/* @__PURE__ */ new Date()).toISOString();
           checkAndApplyLevelUpRewards(state, oldLevel, newLevel);
-          saveState(state);
           if (leveledUp) {
-            setTimeout(() => {
-              window.dispatchEvent(new CustomEvent("siddha-levelup", {
-                detail: { oldLevel, newLevel, xp: state.xp }
-              }));
-            }, 100);
+            if (queue) {
+              if (!state.pendingCelebrations) state.pendingCelebrations = [];
+              state.pendingCelebrations.push({ type: "levelup", data: { oldLevel, newLevel, xp: state.xp } });
+            } else {
+              setTimeout(() => {
+                window.dispatchEvent(new CustomEvent("siddha-levelup", {
+                  detail: { oldLevel, newLevel, xp: state.xp }
+                }));
+              }, 100);
+            }
           }
+          saveState(state);
           return xpEarned;
         },
         // Missions — keyed by `${pathId}_${nodeId}`
-        completeMission: (nodeId, missionIndex, pathId = "tmi") => {
+        completeMission: (nodeId, missionIndex, pathId = "tmi", queue = false) => {
           const state = getState();
           if (!state.missionProgress) state.missionProgress = {};
           const key = `${pathId}_${nodeId}`;
@@ -410,14 +444,19 @@
             const leveledUp = newLevel > oldLevel;
             state.level = newLevel;
             checkAndApplyLevelUpRewards(state, oldLevel, newLevel);
-            saveState(state);
             if (leveledUp) {
-              setTimeout(() => {
-                window.dispatchEvent(new CustomEvent("siddha-levelup", {
-                  detail: { oldLevel, newLevel, xp: state.xp }
-                }));
-              }, 100);
+              if (queue) {
+                if (!state.pendingCelebrations) state.pendingCelebrations = [];
+                state.pendingCelebrations.push({ type: "levelup", data: { oldLevel, newLevel, xp: state.xp } });
+              } else {
+                setTimeout(() => {
+                  window.dispatchEvent(new CustomEvent("siddha-levelup", {
+                    detail: { oldLevel, newLevel, xp: state.xp }
+                  }));
+                }, 100);
+              }
             }
+            saveState(state);
             return { xpEarned: 20, leveledUp };
           }
           return { xpEarned: 0, leveledUp: false };
@@ -729,9 +768,10 @@
           return xpEarned;
         },
         // ── Achievements & Milestones ──────────────────────────────────────────────
-        checkAndTriggerAchievements: (silent = false) => {
+        checkAndTriggerAchievements: (silent = false, queue = false) => {
           const state = getState();
           if (!state.unlockedAchievements) state.unlockedAchievements = {};
+          if (!state.pendingCelebrations) state.pendingCelebrations = [];
           const newlyUnlocked = [];
           ACHIEVEMENTS.forEach((ach) => {
             if (ach.tiers) {
@@ -755,9 +795,13 @@
                     chakra
                   });
                   if (newLevel > oldLevel && !silent) {
-                    setTimeout(() => {
-                      window.dispatchEvent(new CustomEvent("siddha-levelup", { detail: { oldLevel, newLevel } }));
-                    }, 2500);
+                    if (queue) {
+                      state.pendingCelebrations.push({ type: "levelup", data: { oldLevel, newLevel, xp: state.xp } });
+                    } else {
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent("siddha-levelup", { detail: { oldLevel, newLevel, xp: state.xp } }));
+                      }, 2500);
+                    }
                   }
                 }
               });
@@ -777,22 +821,50 @@
                   xp: ach.xp
                 });
                 if (newLevel > oldLevel && !silent) {
-                  setTimeout(() => {
-                    window.dispatchEvent(new CustomEvent("siddha-levelup", { detail: { oldLevel, newLevel } }));
-                  }, 2500);
+                  if (queue) {
+                    state.pendingCelebrations.push({ type: "levelup", data: { oldLevel, newLevel, xp: state.xp } });
+                  } else {
+                    setTimeout(() => {
+                      window.dispatchEvent(new CustomEvent("siddha-levelup", { detail: { oldLevel, newLevel, xp: state.xp } }));
+                    }, 2500);
+                  }
                 }
               }
             }
           });
           if (newlyUnlocked.length > 0) {
-            saveState(state);
             if (!silent) {
-              newlyUnlocked.forEach((ach, index) => {
-                setTimeout(() => {
-                  window.dispatchEvent(new CustomEvent("siddha-achievement", { detail: ach }));
-                }, index * 500);
-              });
+              if (queue) {
+                newlyUnlocked.forEach((ach) => {
+                  state.pendingCelebrations.push({ type: "achievement", data: ach });
+                });
+              } else {
+                newlyUnlocked.forEach((ach, index) => {
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent("siddha-achievement", { detail: ach }));
+                  }, index * 500);
+                });
+              }
             }
+            saveState(state);
+          }
+        },
+        flushCelebrations: () => {
+          const state = getState();
+          if (state.pendingCelebrations && state.pendingCelebrations.length > 0) {
+            let delay = 500;
+            state.pendingCelebrations.forEach((c) => {
+              setTimeout(() => {
+                if (c.type === "levelup") {
+                  window.dispatchEvent(new CustomEvent("siddha-levelup", { detail: c.data }));
+                } else if (c.type === "achievement") {
+                  window.dispatchEvent(new CustomEvent("siddha-achievement", { detail: c.data }));
+                }
+              }, delay);
+              delay += c.type === "levelup" ? 4e3 : 2500;
+            });
+            state.pendingCelebrations = [];
+            saveState(state);
           }
         },
         getAchievementsState: () => {
@@ -1037,7 +1109,9 @@
       } catch (e) {
       }
     }
-    if ("mediaSession" in navigator) {
+    const endAudio = BELL_AUDIO["end"];
+    const isEndPlaying = endAudio && !endAudio.paused && endAudio.currentTime > 0 && !endAudio.ended;
+    if ("mediaSession" in navigator && !isEndPlaying) {
       try {
         navigator.mediaSession.playbackState = "paused";
       } catch (e) {
@@ -1270,12 +1344,25 @@
         playEndBell: () => {
           MenuMusic.pause();
           NatureMusic.pause();
+          if ("mediaSession" in navigator) {
+            try {
+              navigator.mediaSession.playbackState = "playing";
+            } catch (e) {
+            }
+          }
           playBellAudioWithFade("end", 0, 0);
           const endAudio = BELL_AUDIO["end"];
           if (endAudio) {
             endAudio.onended = () => {
+              stopSilentKeepAlive();
+              if ("mediaSession" in navigator) {
+                try {
+                  navigator.mediaSession.playbackState = "paused";
+                } catch (e) {
+                }
+              }
               const currentScreen = document.querySelector(".screen.active")?.id;
-              if (currentScreen && currentScreen !== "breathe") {
+              if (currentScreen && currentScreen !== "breathe" && currentScreen !== "new_reflection") {
                 MenuMusic.start();
                 NatureMusic.start();
               }
@@ -1736,567 +1823,6 @@
         }
       };
       Synth.SitAudioKeepAlive = SitAudioKeepAlive;
-    }
-  });
-
-  // node_modules/@capacitor/core/dist/index.js
-  var ExceptionCode, CapacitorException, getPlatformId, createCapacitor, initCapacitorGlobal, Capacitor, registerPlugin, WebPlugin, encode, decode, CapacitorCookiesPluginWeb, CapacitorCookies, readBlobAsBase64, normalizeHttpHeaders, buildUrlParams, buildRequestInit, CapacitorHttpPluginWeb, CapacitorHttp, SystemBarsStyle, SystemBarType, SystemBarsPluginWeb, SystemBars;
-  var init_dist = __esm({
-    "node_modules/@capacitor/core/dist/index.js"() {
-      (function(ExceptionCode2) {
-        ExceptionCode2["Unimplemented"] = "UNIMPLEMENTED";
-        ExceptionCode2["Unavailable"] = "UNAVAILABLE";
-      })(ExceptionCode || (ExceptionCode = {}));
-      CapacitorException = class extends Error {
-        constructor(message, code, data) {
-          super(message);
-          this.message = message;
-          this.code = code;
-          this.data = data;
-        }
-      };
-      getPlatformId = (win) => {
-        var _a, _b;
-        if (win === null || win === void 0 ? void 0 : win.androidBridge) {
-          return "android";
-        } else if ((_b = (_a = win === null || win === void 0 ? void 0 : win.webkit) === null || _a === void 0 ? void 0 : _a.messageHandlers) === null || _b === void 0 ? void 0 : _b.bridge) {
-          return "ios";
-        } else {
-          return "web";
-        }
-      };
-      createCapacitor = (win) => {
-        const capCustomPlatform = win.CapacitorCustomPlatform || null;
-        const cap = win.Capacitor || {};
-        const Plugins = cap.Plugins = cap.Plugins || {};
-        const getPlatform = () => {
-          return capCustomPlatform !== null ? capCustomPlatform.name : getPlatformId(win);
-        };
-        const isNativePlatform = () => getPlatform() !== "web";
-        const isPluginAvailable = (pluginName) => {
-          const plugin = registeredPlugins.get(pluginName);
-          if (plugin === null || plugin === void 0 ? void 0 : plugin.platforms.has(getPlatform())) {
-            return true;
-          }
-          if (getPluginHeader(pluginName)) {
-            return true;
-          }
-          return false;
-        };
-        const getPluginHeader = (pluginName) => {
-          var _a;
-          return (_a = cap.PluginHeaders) === null || _a === void 0 ? void 0 : _a.find((h) => h.name === pluginName);
-        };
-        const handleError = (err) => win.console.error(err);
-        const registeredPlugins = /* @__PURE__ */ new Map();
-        const registerPlugin2 = (pluginName, jsImplementations = {}) => {
-          const registeredPlugin = registeredPlugins.get(pluginName);
-          if (registeredPlugin) {
-            console.warn(`Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`);
-            return registeredPlugin.proxy;
-          }
-          const platform = getPlatform();
-          const pluginHeader = getPluginHeader(pluginName);
-          let jsImplementation;
-          const loadPluginImplementation = async () => {
-            if (!jsImplementation && platform in jsImplementations) {
-              jsImplementation = typeof jsImplementations[platform] === "function" ? jsImplementation = await jsImplementations[platform]() : jsImplementation = jsImplementations[platform];
-            } else if (capCustomPlatform !== null && !jsImplementation && "web" in jsImplementations) {
-              jsImplementation = typeof jsImplementations["web"] === "function" ? jsImplementation = await jsImplementations["web"]() : jsImplementation = jsImplementations["web"];
-            }
-            return jsImplementation;
-          };
-          const createPluginMethod = (impl, prop) => {
-            var _a, _b;
-            if (pluginHeader) {
-              const methodHeader = pluginHeader === null || pluginHeader === void 0 ? void 0 : pluginHeader.methods.find((m) => prop === m.name);
-              if (methodHeader) {
-                if (methodHeader.rtype === "promise") {
-                  return (options) => cap.nativePromise(pluginName, prop.toString(), options);
-                } else {
-                  return (options, callback) => cap.nativeCallback(pluginName, prop.toString(), options, callback);
-                }
-              } else if (impl) {
-                return (_a = impl[prop]) === null || _a === void 0 ? void 0 : _a.bind(impl);
-              }
-            } else if (impl) {
-              return (_b = impl[prop]) === null || _b === void 0 ? void 0 : _b.bind(impl);
-            } else {
-              throw new CapacitorException(`"${pluginName}" plugin is not implemented on ${platform}`, ExceptionCode.Unimplemented);
-            }
-          };
-          const createPluginMethodWrapper = (prop) => {
-            let remove;
-            const wrapper = (...args) => {
-              const p = loadPluginImplementation().then((impl) => {
-                const fn = createPluginMethod(impl, prop);
-                if (fn) {
-                  const p2 = fn(...args);
-                  remove = p2 === null || p2 === void 0 ? void 0 : p2.remove;
-                  return p2;
-                } else {
-                  throw new CapacitorException(`"${pluginName}.${prop}()" is not implemented on ${platform}`, ExceptionCode.Unimplemented);
-                }
-              });
-              if (prop === "addListener") {
-                p.remove = async () => remove();
-              }
-              return p;
-            };
-            wrapper.toString = () => `${prop.toString()}() { [capacitor code] }`;
-            Object.defineProperty(wrapper, "name", {
-              value: prop,
-              writable: false,
-              configurable: false
-            });
-            return wrapper;
-          };
-          const addListener = createPluginMethodWrapper("addListener");
-          const removeListener = createPluginMethodWrapper("removeListener");
-          const addListenerNative = (eventName, callback) => {
-            const call = addListener({ eventName }, callback);
-            const remove = async () => {
-              const callbackId = await call;
-              removeListener({
-                eventName,
-                callbackId
-              }, callback);
-            };
-            const p = new Promise((resolve) => call.then(() => resolve({ remove })));
-            p.remove = async () => {
-              console.warn(`Using addListener() without 'await' is deprecated.`);
-              await remove();
-            };
-            return p;
-          };
-          const proxy = new Proxy({}, {
-            get(_, prop) {
-              switch (prop) {
-                // https://github.com/facebook/react/issues/20030
-                case "$$typeof":
-                  return void 0;
-                case "toJSON":
-                  return () => ({});
-                case "addListener":
-                  return pluginHeader ? addListenerNative : addListener;
-                case "removeListener":
-                  return removeListener;
-                default:
-                  return createPluginMethodWrapper(prop);
-              }
-            }
-          });
-          Plugins[pluginName] = proxy;
-          registeredPlugins.set(pluginName, {
-            name: pluginName,
-            proxy,
-            platforms: /* @__PURE__ */ new Set([...Object.keys(jsImplementations), ...pluginHeader ? [platform] : []])
-          });
-          return proxy;
-        };
-        if (!cap.convertFileSrc) {
-          cap.convertFileSrc = (filePath) => filePath;
-        }
-        cap.getPlatform = getPlatform;
-        cap.handleError = handleError;
-        cap.isNativePlatform = isNativePlatform;
-        cap.isPluginAvailable = isPluginAvailable;
-        cap.registerPlugin = registerPlugin2;
-        cap.Exception = CapacitorException;
-        cap.DEBUG = !!cap.DEBUG;
-        cap.isLoggingEnabled = !!cap.isLoggingEnabled;
-        return cap;
-      };
-      initCapacitorGlobal = (win) => win.Capacitor = createCapacitor(win);
-      Capacitor = /* @__PURE__ */ initCapacitorGlobal(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {});
-      registerPlugin = Capacitor.registerPlugin;
-      WebPlugin = class {
-        constructor() {
-          this.listeners = {};
-          this.retainedEventArguments = {};
-          this.windowListeners = {};
-        }
-        addListener(eventName, listenerFunc) {
-          let firstListener = false;
-          const listeners = this.listeners[eventName];
-          if (!listeners) {
-            this.listeners[eventName] = [];
-            firstListener = true;
-          }
-          this.listeners[eventName].push(listenerFunc);
-          const windowListener = this.windowListeners[eventName];
-          if (windowListener && !windowListener.registered) {
-            this.addWindowListener(windowListener);
-          }
-          if (firstListener) {
-            this.sendRetainedArgumentsForEvent(eventName);
-          }
-          const remove = async () => this.removeListener(eventName, listenerFunc);
-          const p = Promise.resolve({ remove });
-          return p;
-        }
-        async removeAllListeners() {
-          this.listeners = {};
-          for (const listener in this.windowListeners) {
-            this.removeWindowListener(this.windowListeners[listener]);
-          }
-          this.windowListeners = {};
-        }
-        notifyListeners(eventName, data, retainUntilConsumed) {
-          const listeners = this.listeners[eventName];
-          if (!listeners) {
-            if (retainUntilConsumed) {
-              let args = this.retainedEventArguments[eventName];
-              if (!args) {
-                args = [];
-              }
-              args.push(data);
-              this.retainedEventArguments[eventName] = args;
-            }
-            return;
-          }
-          listeners.forEach((listener) => listener(data));
-        }
-        hasListeners(eventName) {
-          var _a;
-          return !!((_a = this.listeners[eventName]) === null || _a === void 0 ? void 0 : _a.length);
-        }
-        registerWindowListener(windowEventName, pluginEventName) {
-          this.windowListeners[pluginEventName] = {
-            registered: false,
-            windowEventName,
-            pluginEventName,
-            handler: (event) => {
-              this.notifyListeners(pluginEventName, event);
-            }
-          };
-        }
-        unimplemented(msg = "not implemented") {
-          return new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
-        }
-        unavailable(msg = "not available") {
-          return new Capacitor.Exception(msg, ExceptionCode.Unavailable);
-        }
-        async removeListener(eventName, listenerFunc) {
-          const listeners = this.listeners[eventName];
-          if (!listeners) {
-            return;
-          }
-          const index = listeners.indexOf(listenerFunc);
-          this.listeners[eventName].splice(index, 1);
-          if (!this.listeners[eventName].length) {
-            this.removeWindowListener(this.windowListeners[eventName]);
-          }
-        }
-        addWindowListener(handle) {
-          window.addEventListener(handle.windowEventName, handle.handler);
-          handle.registered = true;
-        }
-        removeWindowListener(handle) {
-          if (!handle) {
-            return;
-          }
-          window.removeEventListener(handle.windowEventName, handle.handler);
-          handle.registered = false;
-        }
-        sendRetainedArgumentsForEvent(eventName) {
-          const args = this.retainedEventArguments[eventName];
-          if (!args) {
-            return;
-          }
-          delete this.retainedEventArguments[eventName];
-          args.forEach((arg) => {
-            this.notifyListeners(eventName, arg);
-          });
-        }
-      };
-      encode = (str) => encodeURIComponent(str).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent).replace(/[()]/g, escape);
-      decode = (str) => str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
-      CapacitorCookiesPluginWeb = class extends WebPlugin {
-        async getCookies() {
-          const cookies = document.cookie;
-          const cookieMap = {};
-          cookies.split(";").forEach((cookie) => {
-            if (cookie.length <= 0)
-              return;
-            let [key, value] = cookie.replace(/=/, "CAP_COOKIE").split("CAP_COOKIE");
-            key = decode(key).trim();
-            value = decode(value).trim();
-            cookieMap[key] = value;
-          });
-          return cookieMap;
-        }
-        async setCookie(options) {
-          try {
-            const encodedKey = encode(options.key);
-            const encodedValue = encode(options.value);
-            const expires = options.expires ? `; expires=${options.expires.replace("expires=", "")}` : "";
-            const path = (options.path || "/").replace("path=", "");
-            const domain = options.url != null && options.url.length > 0 ? `domain=${options.url}` : "";
-            document.cookie = `${encodedKey}=${encodedValue || ""}${expires}; path=${path}; ${domain};`;
-          } catch (error) {
-            return Promise.reject(error);
-          }
-        }
-        async deleteCookie(options) {
-          try {
-            document.cookie = `${options.key}=; Max-Age=0`;
-          } catch (error) {
-            return Promise.reject(error);
-          }
-        }
-        async clearCookies() {
-          try {
-            const cookies = document.cookie.split(";") || [];
-            for (const cookie of cookies) {
-              document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, `=;expires=${(/* @__PURE__ */ new Date()).toUTCString()};path=/`);
-            }
-          } catch (error) {
-            return Promise.reject(error);
-          }
-        }
-        async clearAllCookies() {
-          try {
-            await this.clearCookies();
-          } catch (error) {
-            return Promise.reject(error);
-          }
-        }
-      };
-      CapacitorCookies = registerPlugin("CapacitorCookies", {
-        web: () => new CapacitorCookiesPluginWeb()
-      });
-      readBlobAsBase64 = async (blob) => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64String = reader.result;
-          resolve(base64String.indexOf(",") >= 0 ? base64String.split(",")[1] : base64String);
-        };
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(blob);
-      });
-      normalizeHttpHeaders = (headers = {}) => {
-        const originalKeys = Object.keys(headers);
-        const loweredKeys = Object.keys(headers).map((k) => k.toLocaleLowerCase());
-        const normalized = loweredKeys.reduce((acc, key, index) => {
-          acc[key] = headers[originalKeys[index]];
-          return acc;
-        }, {});
-        return normalized;
-      };
-      buildUrlParams = (params, shouldEncode = true) => {
-        if (!params)
-          return null;
-        const output = Object.entries(params).reduce((accumulator, entry) => {
-          const [key, value] = entry;
-          let encodedValue;
-          let item;
-          if (Array.isArray(value)) {
-            item = "";
-            value.forEach((str) => {
-              encodedValue = shouldEncode ? encodeURIComponent(str) : str;
-              item += `${key}=${encodedValue}&`;
-            });
-            item.slice(0, -1);
-          } else {
-            encodedValue = shouldEncode ? encodeURIComponent(value) : value;
-            item = `${key}=${encodedValue}`;
-          }
-          return `${accumulator}&${item}`;
-        }, "");
-        return output.substr(1);
-      };
-      buildRequestInit = (options, extra = {}) => {
-        const output = Object.assign({ method: options.method || "GET", headers: options.headers }, extra);
-        const headers = normalizeHttpHeaders(options.headers);
-        const type = headers["content-type"] || "";
-        if (typeof options.data === "string") {
-          output.body = options.data;
-        } else if (type.includes("application/x-www-form-urlencoded")) {
-          const params = new URLSearchParams();
-          for (const [key, value] of Object.entries(options.data || {})) {
-            params.set(key, value);
-          }
-          output.body = params.toString();
-        } else if (type.includes("multipart/form-data") || options.data instanceof FormData) {
-          const form = new FormData();
-          if (options.data instanceof FormData) {
-            options.data.forEach((value, key) => {
-              form.append(key, value);
-            });
-          } else {
-            for (const key of Object.keys(options.data)) {
-              form.append(key, options.data[key]);
-            }
-          }
-          output.body = form;
-          const headers2 = new Headers(output.headers);
-          headers2.delete("content-type");
-          output.headers = headers2;
-        } else if (type.includes("application/json") || typeof options.data === "object") {
-          output.body = JSON.stringify(options.data);
-        }
-        return output;
-      };
-      CapacitorHttpPluginWeb = class extends WebPlugin {
-        /**
-         * Perform an Http request given a set of options
-         * @param options Options to build the HTTP request
-         */
-        async request(options) {
-          const requestInit = buildRequestInit(options, options.webFetchExtra);
-          const urlParams = buildUrlParams(options.params, options.shouldEncodeUrlParams);
-          const url = urlParams ? `${options.url}?${urlParams}` : options.url;
-          const response = await fetch(url, requestInit);
-          const contentType = response.headers.get("content-type") || "";
-          let { responseType = "text" } = response.ok ? options : {};
-          if (contentType.includes("application/json")) {
-            responseType = "json";
-          }
-          let data;
-          let blob;
-          switch (responseType) {
-            case "arraybuffer":
-            case "blob":
-              blob = await response.blob();
-              data = await readBlobAsBase64(blob);
-              break;
-            case "json":
-              data = await response.json();
-              break;
-            case "document":
-            case "text":
-            default:
-              data = await response.text();
-          }
-          const headers = {};
-          response.headers.forEach((value, key) => {
-            headers[key] = value;
-          });
-          return {
-            data,
-            headers,
-            status: response.status,
-            url: response.url
-          };
-        }
-        /**
-         * Perform an Http GET request given a set of options
-         * @param options Options to build the HTTP request
-         */
-        async get(options) {
-          return this.request(Object.assign(Object.assign({}, options), { method: "GET" }));
-        }
-        /**
-         * Perform an Http POST request given a set of options
-         * @param options Options to build the HTTP request
-         */
-        async post(options) {
-          return this.request(Object.assign(Object.assign({}, options), { method: "POST" }));
-        }
-        /**
-         * Perform an Http PUT request given a set of options
-         * @param options Options to build the HTTP request
-         */
-        async put(options) {
-          return this.request(Object.assign(Object.assign({}, options), { method: "PUT" }));
-        }
-        /**
-         * Perform an Http PATCH request given a set of options
-         * @param options Options to build the HTTP request
-         */
-        async patch(options) {
-          return this.request(Object.assign(Object.assign({}, options), { method: "PATCH" }));
-        }
-        /**
-         * Perform an Http DELETE request given a set of options
-         * @param options Options to build the HTTP request
-         */
-        async delete(options) {
-          return this.request(Object.assign(Object.assign({}, options), { method: "DELETE" }));
-        }
-      };
-      CapacitorHttp = registerPlugin("CapacitorHttp", {
-        web: () => new CapacitorHttpPluginWeb()
-      });
-      (function(SystemBarsStyle2) {
-        SystemBarsStyle2["Dark"] = "DARK";
-        SystemBarsStyle2["Light"] = "LIGHT";
-        SystemBarsStyle2["Default"] = "DEFAULT";
-      })(SystemBarsStyle || (SystemBarsStyle = {}));
-      (function(SystemBarType2) {
-        SystemBarType2["StatusBar"] = "StatusBar";
-        SystemBarType2["NavigationBar"] = "NavigationBar";
-      })(SystemBarType || (SystemBarType = {}));
-      SystemBarsPluginWeb = class extends WebPlugin {
-        async setStyle() {
-          this.unavailable("not available for web");
-        }
-        async setAnimation() {
-          this.unavailable("not available for web");
-        }
-        async show() {
-          this.unavailable("not available for web");
-        }
-        async hide() {
-          this.unavailable("not available for web");
-        }
-      };
-      SystemBars = registerPlugin("SystemBars", {
-        web: () => new SystemBarsPluginWeb()
-      });
-    }
-  });
-
-  // node_modules/@capacitor/app/dist/esm/web.js
-  var web_exports = {};
-  __export(web_exports, {
-    AppWeb: () => AppWeb
-  });
-  var AppWeb;
-  var init_web = __esm({
-    "node_modules/@capacitor/app/dist/esm/web.js"() {
-      init_dist();
-      AppWeb = class extends WebPlugin {
-        constructor() {
-          super();
-          this.handleVisibilityChange = () => {
-            const data = {
-              isActive: document.hidden !== true
-            };
-            this.notifyListeners("appStateChange", data);
-            if (document.hidden) {
-              this.notifyListeners("pause", null);
-            } else {
-              this.notifyListeners("resume", null);
-            }
-          };
-          document.addEventListener("visibilitychange", this.handleVisibilityChange, false);
-        }
-        exitApp() {
-          throw this.unimplemented("Not implemented on web.");
-        }
-        async getInfo() {
-          throw this.unimplemented("Not implemented on web.");
-        }
-        async getLaunchUrl() {
-          return { url: "" };
-        }
-        async getState() {
-          return { isActive: document.hidden !== true };
-        }
-        async minimizeApp() {
-          throw this.unimplemented("Not implemented on web.");
-        }
-        async toggleBackButtonHandler() {
-          throw this.unimplemented("Not implemented on web.");
-        }
-        async getAppLanguage() {
-          return {
-            value: navigator.language.split("-")[0].toLowerCase()
-          };
-        }
-      };
     }
   });
 
@@ -3049,15 +2575,15 @@
     container.innerHTML = `
         <div class="home-top-section">
             <!-- Header Box Card -->
-            <div class="home-header home-header-box">
-                <div style="display:flex; align-items:center; gap:8px;">
+            <div class="home-header home-header-box" style="position: relative; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display:flex; align-items:center; gap:8px; flex-shrink: 0;">
                     <img src="./src/assets/logo.png" class="home-logo-img" alt="Siddha Logo">
                     <span style="font-weight:700; font-size:16px; font-family:var(--font-heading); color:#2c3e38;">Siddha</span>
                     <button id="dev-add-xp" class="dev-only" style="font-size:9px; padding:2px 5px; background:transparent; border:1px solid #dcdcdc; border-radius:4px; cursor:pointer; color:#777;">+500 XP</button>
                 </div>
-                <!-- Inline greeting at top -->
-                <div class="home-header-greeting" style="font-size: 12px; color: var(--color-text-secondary); font-weight: 500; font-family: var(--font-body); display: flex; align-items: center; gap: 4px;">
-                    Good day, <strong id="home-name">Alex</strong> \u{1F44B}
+                <!-- Perfectly centered greeting -->
+                <div class="home-header-greeting" style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--color-text-secondary); font-weight: 500; font-family: var(--font-body); display: flex; align-items: center; gap: 3px; white-space: nowrap; pointer-events: none;">
+                    <span id="home-greeting-prefix">Good day,</span> <strong id="home-name">Alex</strong> <span id="home-greeting-emoji">\u{1F44B}</span>
                 </div>
                 <!-- Profile Avatar at top right -->
                 <button id="home-profile-btn" aria-label="Profile" style="padding:0; background:none; border:none; cursor:pointer; flex-shrink:0;">
@@ -3779,11 +3305,28 @@
         startCanvasParticles(canvas, "sakura");
       }
     }
+    const MINDFUL_GREETINGS = [
+      { prefix: "Good day,", emoji: "\u{1F44B}" },
+      { prefix: "Namaste,", emoji: "\u{1F64F}" },
+      { prefix: "Peace be with you,", emoji: "\u{1FAB7}" },
+      { prefix: "Welcome,", emoji: "\u{1F33F}" },
+      { prefix: "Mindful day,", emoji: "\u{1F338}" },
+      { prefix: "Breathe gently,", emoji: "\u{1F343}" },
+      { prefix: "Peaceful day,", emoji: "\u{1F54A}\uFE0F" },
+      { prefix: "May you be well,", emoji: "\u2728" },
+      { prefix: "Quiet mind,", emoji: "\u{1F38B}" },
+      { prefix: "Welcome back,", emoji: "\u2638\uFE0F" }
+    ];
     container.updateData = () => {
       const user = DB.getUser();
       let dailyGoal = 20;
       if (user) {
         container.querySelector("#home-name").textContent = user.name?.split(" ")[0] || "Alex";
+        const greeting = MINDFUL_GREETINGS[Math.floor(Math.random() * MINDFUL_GREETINGS.length)];
+        const greetingPrefixEl = container.querySelector("#home-greeting-prefix");
+        const greetingEmojiEl = container.querySelector("#home-greeting-emoji");
+        if (greetingPrefixEl) greetingPrefixEl.textContent = greeting.prefix;
+        if (greetingEmojiEl) greetingEmojiEl.textContent = greeting.emoji;
         if (user.dailyCommitment) {
           dailyGoal = user.dailyCommitment;
         }
@@ -3797,14 +3340,29 @@
       const levelNames = [
         "Novice",
         "Initiate",
-        "Adept",
         "Seeker",
         "Wanderer",
         "Practitioner",
         "Disciple",
-        "Guide",
-        "Sage",
-        "Master"
+        "Student of Breath",
+        "Devotee",
+        "Guide of Stillness",
+        "Contemplative",
+        "Mindful Observer",
+        "Serene Practitioner",
+        "Anchor of Attention",
+        "Awareness Seeker",
+        "Sage in Training",
+        "Tranquil Spirit",
+        "Steady Mind",
+        "Vivid Presence",
+        "Master of Attention",
+        "Quiet Watcher",
+        "Inner Sanctuary",
+        "Radiant Clarity",
+        "Unshaken Anchor",
+        "Boundless Presence",
+        "Ascendant Watcher"
       ];
       const lName = levelNames[Math.min(stats.level - 1, levelNames.length - 1)] || "Novice";
       container.querySelector("#home-streak").textContent = stats.streak;
@@ -3995,15 +3553,15 @@
                   nativeHaptics.impact({ style: "HEAVY" }).catch(() => {
                   });
                 } else if (typeof nativeHaptics.vibrate === "function") {
-                  nativeHaptics.vibrate({ duration: 250 }).catch(() => {
+                  nativeHaptics.vibrate({ duration: 300 }).catch(() => {
                   });
                 }
               } catch (e) {
               }
             };
-            setTimeout(() => triggerPulse(), 500);
-            setTimeout(() => triggerPulse(), 1e4);
-            setTimeout(() => triggerPulse(), 17e3);
+            setTimeout(() => triggerPulse(), 2e3);
+            setTimeout(() => triggerPulse(), 11500);
+            setTimeout(() => triggerPulse(), 18500);
             return;
           } else if (style === "bell") {
             if (typeof nativeHaptics.impact === "function") {
@@ -5153,7 +4711,7 @@
             <button class="bh-btn" id="breathe-close-btn" aria-label="Close">
                 <span class="material-symbols-rounded">arrow_back</span>
             </button>
-            <div style="text-align:center; flex:1;">
+            <div style="text-align:center; flex:1; padding:0 4px;">
                 <h2 id="breathe-screen-title" class="bh-title">Meditation</h2>
                 <p id="breathe-screen-desc" class="bh-desc">Find your center</p>
             </div>
@@ -5161,6 +4719,7 @@
             <button class="bh-btn bh-skip dev-only" id="dev-skip-btn" aria-label="Skip (dev)">
                 <span class="material-symbols-rounded">fast_forward</span>
             </button>
+            <div class="bh-header-spacer" style="width:40px; height:40px; flex-shrink:0;"></div>
         </div>
 
         <!-- Mission info banner -->
@@ -5201,14 +4760,20 @@
                 </button>
             </div>
 
-            <!-- Interval Bell Input + Mute Toggle -->
-            <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); transition: opacity 0.3s;">
-                <span class="material-symbols-rounded" style="font-size:18px;">notifications_active</span>
-                <label for="bell-interval-input">Bell every:</label>
-                <input type="number" id="bell-interval-input" min="0" placeholder="5" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 4px; font-size: 12px; width: 48px; text-align: center; outline: none;" value="5">
-                <span>min</span>
-                <button id="sound-mute-btn" title="Toggle sound" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: rgba(255,255,255,0.85); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s;">
-                    <span class="material-symbols-rounded" id="mute-icon" style="font-size: 18px;">volume_up</span>
+            <!-- Interval Bell Input + Master Session Audio Toggle -->
+            <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.85); transition: opacity 0.3s; flex-wrap: wrap;">
+                <!-- Interval Bell Pill -->
+                <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 4px 10px; height: 32px; box-sizing: border-box;">
+                    <span class="material-symbols-rounded" style="font-size:16px; color: rgba(255,255,255,0.85);">notifications_active</span>
+                    <label for="bell-interval-input" style="font-size: 12px; font-weight: 500;">Interval:</label>
+                    <input type="number" id="bell-interval-input" min="0" placeholder="5" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; padding: 2px 4px; font-size: 12px; width: 38px; text-align: center; outline: none;" value="5">
+                    <span style="font-size: 12px; opacity: 0.85;">min</span>
+                </div>
+
+                <!-- Meditation Bells Toggle Button -->
+                <button id="sound-mute-btn" title="Toggle meditation bells" style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: rgba(255,255,255,0.9); padding: 4px 12px; height: 32px; font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0; transition: all 0.2s; box-sizing: border-box;">
+                    <span class="material-symbols-rounded" id="mute-icon" style="font-size: 16px;">volume_up</span>
+                    <span id="mute-label">Bells On</span>
                 </button>
             </div>
 
@@ -5811,10 +5376,13 @@
         });
       }
       let isMuted = localStorage.getItem("siddha_sound_meditation_muted") === "true" || localStorage.getItem("siddha_sound_muted") === "true";
+      const muteLabel = container.querySelector("#mute-label");
       function applyMuteState() {
         muteIcon.textContent = isMuted ? "volume_off" : "volume_up";
-        muteBtn.style.background = isMuted ? "rgba(255,80,80,0.25)" : "rgba(255,255,255,0.1)";
-        muteBtn.style.borderColor = isMuted ? "rgba(255,80,80,0.4)" : "rgba(255,255,255,0.2)";
+        if (muteLabel) muteLabel.textContent = isMuted ? "Bells Off" : "Bells On";
+        muteBtn.style.background = isMuted ? "rgba(255,80,80,0.25)" : "rgba(255,255,255,0.08)";
+        muteBtn.style.borderColor = isMuted ? "rgba(255,80,80,0.4)" : "rgba(255,255,255,0.15)";
+        muteBtn.style.color = isMuted ? "#ffaaaa" : "rgba(255,255,255,0.9)";
       }
       applyMuteState();
       muteBtn.addEventListener("click", () => {
@@ -5949,16 +5517,20 @@
         }
       }
       let wakeLockSentinel = null;
-      function stopTimer() {
+      function stopTimer(isNaturalFinish = false) {
         clearInterval(timerInterval);
         timerInterval = null;
         isPaused = true;
         Synth.stop();
-        Synth.stopKeepAlive();
-        if (Synth.SitAudioKeepAlive) Synth.SitAudioKeepAlive.stop();
+        if (!isNaturalFinish) {
+          Synth.stopKeepAlive();
+          if (Synth.SitAudioKeepAlive) Synth.SitAudioKeepAlive.stop();
+        }
         if (window.Capacitor?.getPlatform() === "android" && window.Capacitor?.Plugins?.MeditationNative) {
-          window.Capacitor.Plugins.MeditationNative.stopService().catch(() => {
-          });
+          if (!isNaturalFinish) {
+            window.Capacitor.Plugins.MeditationNative.stopService().catch(() => {
+            });
+          }
         }
         if (wakeLockSentinel) {
           try {
@@ -5967,10 +5539,12 @@
           }
           wakeLockSentinel = null;
         }
-        if ("mediaSession" in navigator) {
-          try {
-            navigator.mediaSession.playbackState = "paused";
-          } catch (e) {
+        if (!isNaturalFinish) {
+          if ("mediaSession" in navigator) {
+            try {
+              navigator.mediaSession.playbackState = "paused";
+            } catch (e) {
+            }
           }
         }
         if (window.Capacitor?.Plugins?.LocalNotifications) {
@@ -5992,20 +5566,21 @@
       }
       function finishSession(minutesOverride) {
         const isNaturalFinish = timeLeft <= 0;
-        stopTimer();
+        stopTimer(isNaturalFinish);
         setRunningUI(false);
         const actualMins = minutesOverride != null ? minutesOverride : START_MINUTES;
-        DB.completeMeditation(actualMins);
+        DB.completeMeditation(actualMins, true, currentIntention);
         const activeMission = container.activeMission;
         if (activeMission) {
           DB.completeMission(
             activeMission.nodeId,
             activeMission.missionIndex,
-            activeMission.pathId || "tmi"
+            activeMission.pathId || "tmi",
+            true
           );
           container.activeMission = null;
         }
-        DB.checkAndTriggerAchievements(false);
+        DB.checkAndTriggerAchievements(false, true);
         const pathId = activeMission ? activeMission.pathId || "tmi" : DB.getActivePath() || "tmi";
         const itemMap = {
           tmi: "acorns",
@@ -6019,13 +5594,13 @@
         sessionElapsed = 0;
         updateDisplay();
         if (isNaturalFinish) {
-          if (!isMuted) {
-            const isAndroidNative = window.Capacitor?.getPlatform() === "android" && window.Capacitor?.Plugins?.MeditationNative;
-            if (!isAndroidNative) {
+          const isAndroidNative = window.Capacitor?.getPlatform() === "android" && window.Capacitor?.Plugins?.MeditationNative;
+          if (!isAndroidNative) {
+            if (!isMuted) {
               Synth.playEndBell();
             }
+            HapticService2.vibrate("completion");
           }
-          HapticService2.vibrate("completion");
         }
         if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped, intention: currentIntention });
       }
@@ -9464,8 +9039,8 @@ ${formatted}`);
             </div>
         </div>
 
-        <!-- Mental Hindrances -->
-        <div class="nr-section">
+        <!-- Mental Hindrances (hidden for quick reflection) -->
+        <div class="nr-section" id="nr-hindrances-section">
             <h3 class="nr-section-title">Mental Obstacles <span class="nr-section-tag">(optional)</span></h3>
             <div class="nr-chips-row" id="hindrances-selector">
                 <div class="nr-chip nr-chip-multi" data-hindrance="dullness">\u{1F4A4} Sleepiness</div>
@@ -9482,12 +9057,8 @@ ${formatted}`);
                 <h3 class="nr-section-title" style="margin:0;">Notes & Insights</h3>
                 <span style="font-size:10px; color:var(--color-text-muted);">Tap prompt to insert</span>
             </div>
-            <!-- Interactive Guided Prompt Chips -->
+            <!-- Dynamic Guided Prompt Chips -->
             <div class="nr-chips-row" id="guided-prompts-row" style="margin-bottom:10px;">
-                <button class="nr-chip prompt-chip" data-prompt="What arose during the sit: ">\u{1F4A1} What arose?</button>
-                <button class="nr-chip prompt-chip" data-prompt="Where was breath felt most clearly: ">\u{1F32C}\uFE0F Breath anchor?</button>
-                <button class="nr-chip prompt-chip" data-prompt="Tension softened in: ">\u{1F33F} Tension release?</button>
-                <button class="nr-chip prompt-chip" data-prompt="Insight gained today: ">\u2728 Today's insight?</button>
             </div>
             <textarea id="reflection-text" class="nr-textarea"
                 placeholder="Write down your insights, thoughts, or feelings..."></textarea>
@@ -9881,10 +9452,10 @@ ${promptText}`;
       const isStandalone = !container.sessionData;
       DB.saveReflection({
         mood: selectedMood,
-        focusDepth: selectedFocusDepth,
-        focusScore: currentFocusScore,
-        stabilityScore: currentStabilityScore,
-        equanimityScore: currentEquanimityScore,
+        focusDepth: isStandalone ? null : selectedFocusDepth,
+        focusScore: isStandalone ? null : currentFocusScore,
+        stabilityScore: isStandalone ? null : currentStabilityScore,
+        equanimityScore: isStandalone ? null : currentEquanimityScore,
         hindrances: Array.from(selectedHindrances),
         text,
         intention: container.sessionData?.intention || null,
@@ -9892,7 +9463,7 @@ ${promptText}`;
         duration: isStandalone ? null : container.sessionData?.duration || null,
         standalone: isStandalone
       });
-      DB.checkAndTriggerAchievements(false);
+      DB.checkAndTriggerAchievements(false, true);
       if (onComplete) onComplete();
     });
     container.updateData = () => {
@@ -9901,54 +9472,78 @@ ${promptText}`;
       const titleEl = container.querySelector("#nr-title");
       const subtitleEl = container.querySelector("#nr-subtitle");
       const spectsEl = container.querySelector("#nr-meditation-spectrums");
-      if (container.sessionData?.intention) {
-        let intentBanner = container.querySelector("#nr-intention-banner");
-        if (!intentBanner) {
-          intentBanner = document.createElement("div");
-          intentBanner.id = "nr-intention-banner";
-          intentBanner.className = "nr-section";
-          intentBanner.style.cssText = "background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:14px; padding:12px 14px; margin-bottom:16px;";
-          if (xpZone && xpZone.nextSibling) {
-            xpZone.parentNode.insertBefore(intentBanner, xpZone.nextSibling);
-          }
-        }
-        intentBanner.innerHTML = `
-                <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--color-accent); margin-bottom:4px; display:flex; align-items:center; gap:4px;">
-                    <span class="material-symbols-rounded" style="font-size:14px; color:#ffd166;">psychology_alt</span> Intention set for this sit
-                </div>
-                <div style="font-size:13.5px; font-weight:600; color:var(--color-text-primary); font-style:italic; line-height:1.4;">
-                    "${container.sessionData.intention}"
-                </div>
-            `;
-        intentBanner.style.display = "block";
-      } else {
-        const intentBanner = container.querySelector("#nr-intention-banner");
-        if (intentBanner) intentBanner.style.display = "none";
-      }
-      if (spectsEl) spectsEl.style.display = "block";
+      const hindrancesEl = container.querySelector("#nr-hindrances-section");
+      const promptsRow = container.querySelector("#guided-prompts-row");
       if (isStandalone) {
         xpZone.classList.add("hidden");
+        if (spectsEl) spectsEl.style.display = "none";
+        if (hindrancesEl) hindrancesEl.style.display = "none";
         titleEl.textContent = "Quick Reflection";
         subtitleEl.textContent = "Capture your thoughts & mood";
+        if (promptsRow) {
+          promptsRow.innerHTML = `
+                    <button class="nr-chip prompt-chip" data-prompt="Mindful check-in: ">\u{1F4A1} Check-in</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Grateful for: ">\u{1F64F} Gratitude</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Letting go of: ">\u{1F343} Release</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Brought me peace: ">\u{1F31F} Peace</button>
+                    <button class="nr-chip prompt-chip" data-prompt="My intention: ">\u{1F6E1}\uFE0F Intention</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Meeting challenge: ">\u{1F30A} Challenge</button>
+                `;
+        }
       } else {
         xpZone.classList.remove("hidden");
+        if (spectsEl) spectsEl.style.display = "block";
+        if (hindrancesEl) hindrancesEl.style.display = "block";
+        titleEl.textContent = "Reflection";
+        subtitleEl.textContent = "Nice work! Session complete.";
+        if (promptsRow) {
+          promptsRow.innerHTML = `
+                    <button class="nr-chip prompt-chip" data-prompt="What arose during the sit: ">\u{1F4A1} What arose?</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Where was breath felt most clearly: ">\u{1F32C}\uFE0F Breath anchor?</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Tension softened in: ">\u{1F33F} Tension release?</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Insight gained today: ">\u2728 Today's insight?</button>
+                `;
+        }
         const data = container.sessionData;
         const durationXP = (data.duration || 10) * 5;
         earnedXP = durationXP;
         if (data.mission) {
           earnedXP += 20;
         }
+        if (data.intention) {
+          earnedXP += 10;
+        }
         container.querySelector("#nr-earned-xp").textContent = earnedXP;
-        titleEl.textContent = "Reflection";
-        subtitleEl.textContent = "Nice work! Session complete.";
         const chip = container.querySelector("#nr-mission-chip");
-        if (data.mission) {
+        if (data.mission && data.intention) {
+          chip.style.display = "inline-block";
+          chip.innerHTML = `\u{1F3C6} Mission: <strong>${data.mission.label}</strong> (+20 XP) &nbsp;\u2022&nbsp; \u{1F3AF} Intention (+10 XP)`;
+        } else if (data.mission) {
           chip.style.display = "inline-block";
           chip.innerHTML = `\u{1F3C6} Mission: <strong>${data.mission.label}</strong> (+20 XP)`;
+        } else if (data.intention) {
+          chip.style.display = "inline-block";
+          chip.innerHTML = `\u{1F3AF} Intention: <em>"${data.intention}"</em> (+10 XP)`;
         } else {
           chip.style.display = "inline-block";
           chip.innerHTML = `\u2728 Completed <strong>${data.duration || 10}-min</strong> meditation session`;
         }
+      }
+      if (promptsRow) {
+        promptsRow.querySelectorAll(".prompt-chip").forEach((chip) => {
+          chip.onclick = () => {
+            const promptText = chip.getAttribute("data-prompt");
+            const textArea = container.querySelector("#reflection-text");
+            if (textArea && promptText) {
+              if (textArea.value.trim() !== "") {
+                textArea.value += "\n" + promptText;
+              } else {
+                textArea.value = promptText;
+              }
+              textArea.focus();
+            }
+          };
+        });
       }
       container.querySelector("#reflection-text").value = "";
       moodBtns.forEach((b) => b.classList.remove("active"));
@@ -11123,12 +10718,6 @@ ${promptText}`;
   init_db();
   init_synth();
 
-  // node_modules/@capacitor/app/dist/esm/index.js
-  init_dist();
-  var App = registerPlugin("App", {
-    web: () => Promise.resolve().then(() => (init_web(), web_exports)).then((m) => new m.AppWeb())
-  });
-
   // src/components/levelup_celebration.js
   init_synth();
   var LEVEL_NAMES = [
@@ -12036,6 +11625,13 @@ ${promptText}`;
     const screenContainer = document.getElementById("screen-container");
     const navItems = document.querySelectorAll(".nav-item");
     const bottomNav = document.querySelector(".bottom-nav");
+    try {
+      if (window.screen?.orientation?.lock) {
+        window.screen.orientation.lock("portrait").catch(() => {
+        });
+      }
+    } catch (e) {
+    }
     if (localStorage.getItem("siddha_dev_mode") === "true") {
       document.body.classList.add("dev-mode-active");
     } else {
@@ -12078,9 +11674,15 @@ ${promptText}`;
           window.Capacitor.Plugins.LocalNotifications.requestPermissions().catch(() => {
           });
         }
+      } else if (targetId === "new_reflection") {
+        MenuMusic.pause();
+        NatureMusic.pause();
       } else if (["home", "journey", "reflect", "profile", "wisdom", "settings"].includes(targetId)) {
         MenuMusic.start();
         NatureMusic.start();
+        setTimeout(() => {
+          DB.flushCelebrations();
+        }, 300);
       }
       navItems.forEach((item) => {
         item.classList.toggle("active", item.dataset.target === targetId);
@@ -12133,7 +11735,7 @@ ${promptText}`;
       NatureMusic.pause();
     }
     function resumeAppAudioIfAppropriate() {
-      if (currentActiveScreen !== "breathe") {
+      if (currentActiveScreen !== "breathe" && currentActiveScreen !== "new_reflection") {
         MenuMusic.start();
         NatureMusic.start();
       }
@@ -12185,18 +11787,22 @@ ${promptText}`;
           navigateTo("profile");
           return;
         }
+        if (currentActiveScreen === "new_reflection") {
+          navigateTo("reflect");
+          return;
+        }
         if (currentActiveScreen !== "home" && currentActiveScreen !== "login") {
           if (currentActiveScreen === "breathe") {
             document.getElementById("breathe-close-btn")?.click() || navigateTo("home");
-          } else if (currentActiveScreen === "new_reflection") {
-            document.getElementById("nr-back-btn")?.click() || navigateTo("home");
           } else {
             navigateTo("home");
           }
         } else {
           const now = Date.now();
           if (now - lastBackPressTime < 2e3) {
-            App.exitApp();
+            if (window.Capacitor?.Plugins?.App) {
+              window.Capacitor.Plugins.App.exitApp();
+            }
           } else {
             lastBackPressTime = now;
             const toast = document.createElement("div");
@@ -12224,7 +11830,9 @@ ${promptText}`;
         }
       };
       try {
-        App.addListener("backButton", handleBack);
+        if (window.Capacitor?.Plugins?.App) {
+          window.Capacitor.Plugins.App.addListener("backButton", handleBack);
+        }
       } catch (e) {
         console.warn("[Main] App backButton listener error:", e);
       }
@@ -12252,8 +11860,3 @@ ${promptText}`;
     handleAuthChange();
   });
 })();
-/*! Bundled license information:
-
-@capacitor/core/dist/index.js:
-  (*! Capacitor: https://capacitorjs.com/ - MIT License *)
-*/

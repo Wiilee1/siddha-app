@@ -323,6 +323,7 @@ export const Synth = {
         MenuMusic.pause();
         NatureMusic.pause();
 
+        // Mark media session as playing so Android keeps audio focus during the bell
         if ('mediaSession' in navigator) {
             try {
                 navigator.mediaSession.playbackState = 'playing';
@@ -334,6 +335,9 @@ export const Synth = {
         const endAudio = BELL_AUDIO['end'];
         if (endAudio) {
             endAudio.onended = () => {
+                // Now it's safe to stop the keep-alive — the bell has fully played
+                stopSilentKeepAlive();
+
                 if ('mediaSession' in navigator) {
                     try {
                         navigator.mediaSession.playbackState = 'paused';

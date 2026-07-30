@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "uhnin.png",
+      "filename" : "Instagram Profile.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "splash-2732x2732-1.png",
+      "filename" : "Instagram Profile 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "splash-2732x2732.png",
+      "filename" : "Instagram Profile 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

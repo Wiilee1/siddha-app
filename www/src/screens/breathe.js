@@ -867,8 +867,13 @@ export function renderBreathe(onComplete) {
             timerInterval = null;
             isPaused = true;
             Synth.stop();
-            Synth.stopKeepAlive();
-            if (Synth.SitAudioKeepAlive) Synth.SitAudioKeepAlive.stop();
+
+            // On natural finish, keep the silent audio alive so Android keeps audio focus
+            // during the end bell playback. playEndBell's onended callback will stop it.
+            if (!isNaturalFinish) {
+                Synth.stopKeepAlive();
+                if (Synth.SitAudioKeepAlive) Synth.SitAudioKeepAlive.stop();
+            }
 
             // Stop Native Foreground Service (Android only)
             if (window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative) {
@@ -882,8 +887,11 @@ export function renderBreathe(onComplete) {
                 wakeLockSentinel = null;
             }
 
-            if ('mediaSession' in navigator && (!window.Synth || !window.Synth.isEndBellPlaying || !window.Synth.isEndBellPlaying())) {
-                try { navigator.mediaSession.playbackState = 'paused'; } catch(e) {}
+            // Only release mediaSession immediately on non-natural stops (user cancelled)
+            if (!isNaturalFinish) {
+                if ('mediaSession' in navigator) {
+                    try { navigator.mediaSession.playbackState = 'paused'; } catch(e) {}
+                }
             }
 
             if (window.Capacitor?.Plugins?.LocalNotifications) {

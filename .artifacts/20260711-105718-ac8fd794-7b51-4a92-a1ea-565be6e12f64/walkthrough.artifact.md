@@ -1,12 +1,12 @@
-# Walkthrough: Version 1.7.2 Release Build
+# Walkthrough: Version 1.7.4 Release Build
 
-I have iterated the app version to 1.7.2 (v32) and generated a fresh Release Bundle.
+I have iterated the app version to 1.7.4 (v34) and generated a fresh Release Bundle.
 
 ## Changes Made
 
 ### Versioning & Build
 - **[build.gradle](file:///Users/kami/Documents/Siddha Meditation App/siddha-app/android/app/build.gradle)** & **[package.json](file:///Users/kami/Documents/Siddha Meditation App/siddha-app/package.json)**:
-    - Incremented version to **1.7.2 (v32)**.
+    - Incremented version to **1.7.4 (v34)**.
 - Generated a fresh **Release Bundle** (`.aab`).
 
 ## Verification Results
@@ -15,4 +15,4 @@ I have iterated the app version to 1.7.2 (v32) and generated a fresh Release Bun
 - [x] **Success**: Release Bundle build finished successfully.
 
 > [!TIP]
-> The new bundle (v32) is available at `android/app/build/outputs/bundle/release/app-release.aab`.
+> The new bundle (v34) is available at `android/app/build/outputs/bundle/release/app-release.aab`.
