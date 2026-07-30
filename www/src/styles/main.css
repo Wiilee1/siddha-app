@@ -22,6 +22,12 @@ body {
 body:not(.dev-mode-active) .dev-only {
     display: none !important;
 }
+body:not(.dev-mode-active) .bh-header-spacer {
+    display: block !important;
+}
+body.dev-mode-active .bh-header-spacer {
+    display: none !important;
+}
 
 /* App Container */
 .app-container {

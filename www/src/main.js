@@ -74,6 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.Capacitor?.Plugins?.LocalNotifications) {
                 window.Capacitor.Plugins.LocalNotifications.requestPermissions().catch(() => {});
             }
+        } else if (targetId === 'new_reflection') {
+            const isPostMeditation = !!screens.new_reflection?.sessionData;
+            if (isPostMeditation) {
+                MenuMusic.pause();
+                NatureMusic.pause();
+            } else {
+                MenuMusic.start();
+                NatureMusic.start();
+            }
         } else if (['home', 'journey', 'reflect', 'profile', 'wisdom', 'settings'].includes(targetId)) {
             MenuMusic.start();
             NatureMusic.start();

@@ -20,7 +20,7 @@ export function renderBreathe(onComplete) {
             <button class="bh-btn" id="breathe-close-btn" aria-label="Close">
                 <span class="material-symbols-rounded">arrow_back</span>
             </button>
-            <div style="text-align:center; flex:1;">
+            <div style="text-align:center; flex:1; padding:0 4px;">
                 <h2 id="breathe-screen-title" class="bh-title">Meditation</h2>
                 <p id="breathe-screen-desc" class="bh-desc">Find your center</p>
             </div>
@@ -28,6 +28,7 @@ export function renderBreathe(onComplete) {
             <button class="bh-btn bh-skip dev-only" id="dev-skip-btn" aria-label="Skip (dev)">
                 <span class="material-symbols-rounded">fast_forward</span>
             </button>
+            <div class="bh-header-spacer" style="width:40px; height:40px; flex-shrink:0;"></div>
         </div>
 
         <!-- Mission info banner -->
