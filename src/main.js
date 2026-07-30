@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('.nav-item');
     const bottomNav = document.querySelector('.bottom-nav');
 
+    // Lock screen orientation to portrait
+    try {
+        if (window.screen?.orientation?.lock) {
+            window.screen.orientation.lock('portrait').catch(() => {});
+        }
+    } catch(e) {}
+
     // Initialize Developer Mode state
     if (localStorage.getItem('siddha_dev_mode') === 'true') {
         document.body.classList.add('dev-mode-active');
