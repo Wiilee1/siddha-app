@@ -310,9 +310,29 @@ export const Synth = {
         playBellAudioWithFade('interval', 0, 0); // Plays full 5s awareness bell naturally
     },
 
+    isEndBellPlaying: () => {
+        const audio = BELL_AUDIO['end'];
+        if (!audio) return false;
+        return !audio.paused && audio.currentTime > 0 && !audio.ended;
+    },
+
     playEndBell: () => {
-        // End bell: Plays all 3 full built-in chimes naturally across 30 seconds
+        // Pause any background menu/nature music immediately while end bell rings
+        MenuMusic.pause();
+        NatureMusic.pause();
+
         playBellAudioWithFade('end', 0, 0);
+
+        const endAudio = BELL_AUDIO['end'];
+        if (endAudio) {
+            endAudio.onended = () => {
+                const currentScreen = document.querySelector('.screen.active')?.id;
+                if (currentScreen && currentScreen !== 'breathe') {
+                    MenuMusic.start();
+                    NatureMusic.start();
+                }
+            };
+        }
     },
 
     primeBells: () => {
@@ -624,6 +644,7 @@ export const MenuMusic = {
 
     start: () => {
         if (!MenuMusic.isEnabled()) return;
+        if (Synth.isEndBellPlaying()) return;
         if (!bgAudioEl) MenuMusic.init();
 
         const trackPref = MenuMusic.getSelectedTrackId();
@@ -770,6 +791,7 @@ export const NatureMusic = {
 
     start: () => {
         if (!NatureMusic.isEnabled()) return;
+        if (Synth.isEndBellPlaying()) return;
         if (!natureAudioEl) NatureMusic.init();
 
         const trackPref = NatureMusic.getSelectedTrackId();
