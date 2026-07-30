@@ -882,7 +882,7 @@ export function renderBreathe(onComplete) {
                 wakeLockSentinel = null;
             }
 
-            if ('mediaSession' in navigator) {
+            if ('mediaSession' in navigator && (!window.Synth || !window.Synth.isEndBellPlaying || !window.Synth.isEndBellPlaying())) {
                 try { navigator.mediaSession.playbackState = 'paused'; } catch(e) {}
             }
 
