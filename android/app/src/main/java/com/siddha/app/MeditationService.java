@@ -19,6 +19,8 @@ import android.os.PowerManager;
 import android.content.pm.ServiceInfo;
 import android.os.SystemClock;
 import androidx.core.app.NotificationCompat;
+import android.os.Vibrator;
+import android.os.VibrationEffect;
 
 public class MeditationService extends Service {
     private static final String CHANNEL_ID = "meditation_service_channel";
@@ -30,6 +32,19 @@ public class MeditationService extends Service {
     private int totalSeconds = 0;
     private long startTimeMillis = 0;
     private int lastIntervalPlayed = 0;
+
+    private void triggerHapticPulse() {
+        try {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(250, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    vibrator.vibrate(250);
+                }
+            }
+        } catch (Exception e) {}
+    }
 
     private final Runnable timerRunnable = new Runnable() {
         @Override
@@ -49,6 +64,12 @@ public class MeditationService extends Service {
             // Check completion
             if (actualElapsedSeconds >= totalSeconds) {
                 playBell(R.raw.end_bell, false);
+                
+                // Synchronize haptics with the 3 chimes in the audio file
+                timerHandler.postDelayed(() -> triggerHapticPulse(), 500);
+                timerHandler.postDelayed(() -> triggerHapticPulse(), 10000);
+                timerHandler.postDelayed(() -> triggerHapticPulse(), 17000);
+
                 // Stop service after 25s delay to allow all 3 chimes to complete
                 timerHandler.postDelayed(() -> stopSelf(), 25000);
             } else {

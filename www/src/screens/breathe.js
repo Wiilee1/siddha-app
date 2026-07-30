@@ -935,13 +935,14 @@ export function renderBreathe(onComplete) {
 
             // Play end of meditation bell & vibration pulses ONLY on natural finish (when timer reaches 0)
             if (isNaturalFinish) {
-                if (!isMuted) {
-                    const isAndroidNative = window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative;
-                    if (!isAndroidNative) {
+                const isAndroidNative = window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative;
+                
+                if (!isAndroidNative) {
+                    if (!isMuted) {
                         Synth.playEndBell();
                     }
+                    HapticService.vibrate('completion');
                 }
-                HapticService.vibrate('completion');
             }
 
             if (onComplete) onComplete({ duration: actualMins, mission: activeMission, itemDropped, intention: currentIntention });

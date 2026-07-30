@@ -31,15 +31,15 @@ export function renderHome() {
     container.innerHTML = `
         <div class="home-top-section">
             <!-- Header Box Card -->
-            <div class="home-header home-header-box">
-                <div style="display:flex; align-items:center; gap:8px;">
+            <div class="home-header home-header-box" style="position: relative; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display:flex; align-items:center; gap:8px; flex-shrink: 0;">
                     <img src="./src/assets/logo.png" class="home-logo-img" alt="Siddha Logo">
                     <span style="font-weight:700; font-size:16px; font-family:var(--font-heading); color:#2c3e38;">Siddha</span>
                     <button id="dev-add-xp" class="dev-only" style="font-size:9px; padding:2px 5px; background:transparent; border:1px solid #dcdcdc; border-radius:4px; cursor:pointer; color:#777;">+500 XP</button>
                 </div>
-                <!-- Inline greeting at top -->
-                <div class="home-header-greeting" style="font-size: 12px; color: var(--color-text-secondary); font-weight: 500; font-family: var(--font-body); display: flex; align-items: center; gap: 4px;">
-                    Good day, <strong id="home-name">Alex</strong> 👋
+                <!-- Perfectly centered greeting -->
+                <div class="home-header-greeting" style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--color-text-secondary); font-weight: 500; font-family: var(--font-body); display: flex; align-items: center; gap: 3px; white-space: nowrap; pointer-events: none;">
+                    <span id="home-greeting-prefix">Good day,</span> <strong id="home-name">Alex</strong> <span id="home-greeting-emoji">👋</span>
                 </div>
                 <!-- Profile Avatar at top right -->
                 <button id="home-profile-btn" aria-label="Profile" style="padding:0; background:none; border:none; cursor:pointer; flex-shrink:0;">
@@ -811,11 +811,32 @@ export function renderHome() {
         }
     }
 
+const MINDFUL_GREETINGS = [
+    { prefix: "Good day,", emoji: "👋" },
+    { prefix: "Namaste,", emoji: "🙏" },
+    { prefix: "Peace be with you,", emoji: "🪷" },
+    { prefix: "Welcome,", emoji: "🌿" },
+    { prefix: "Mindful day,", emoji: "🌸" },
+    { prefix: "Breathe gently,", emoji: "🍃" },
+    { prefix: "Peaceful day,", emoji: "🕊️" },
+    { prefix: "May you be well,", emoji: "✨" },
+    { prefix: "Quiet mind,", emoji: "🎋" },
+    { prefix: "Welcome back,", emoji: "☸️" }
+];
+
     container.updateData = () => {
         const user = DB.getUser();
         let dailyGoal = 20;
         if (user) {
             container.querySelector('#home-name').textContent = user.name?.split(' ')[0] || 'Alex';
+            
+            // Randomly select a serene greeting on screen visit
+            const greeting = MINDFUL_GREETINGS[Math.floor(Math.random() * MINDFUL_GREETINGS.length)];
+            const greetingPrefixEl = container.querySelector('#home-greeting-prefix');
+            const greetingEmojiEl = container.querySelector('#home-greeting-emoji');
+            if (greetingPrefixEl) greetingPrefixEl.textContent = greeting.prefix;
+            if (greetingEmojiEl) greetingEmojiEl.textContent = greeting.emoji;
+
             if (user.dailyCommitment) {
                 dailyGoal = user.dailyCommitment;
             }
