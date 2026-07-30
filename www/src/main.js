@@ -199,9 +199,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 2. Handle sub-screen navigation (e.g., Settings -> Profile)
+            // 2. Handle sub-screen navigation (e.g., Settings -> Profile, New Reflection -> Reflect)
             if (currentActiveScreen === 'settings') {
                 navigateTo('profile');
+                return;
+            }
+            if (currentActiveScreen === 'new_reflection') {
+                navigateTo('reflect');
                 return;
             }
 
@@ -209,8 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentActiveScreen !== 'home' && currentActiveScreen !== 'login') {
                 if (currentActiveScreen === 'breathe') {
                     document.getElementById('breathe-close-btn')?.click() || navigateTo('home');
-                } else if (currentActiveScreen === 'new_reflection') {
-                    document.getElementById('nr-back-btn')?.click() || navigateTo('home');
                 } else {
                     navigateTo('home');
                 }
