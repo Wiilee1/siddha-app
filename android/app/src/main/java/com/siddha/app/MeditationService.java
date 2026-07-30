@@ -37,10 +37,12 @@ public class MeditationService extends Service {
         try {
             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null && vibrator.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(250, VibrationEffect.DEFAULT_AMPLITUDE));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK));
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(350, 255));
                 } else {
-                    vibrator.vibrate(250);
+                    vibrator.vibrate(350);
                 }
             }
         } catch (Exception e) {}
@@ -63,12 +65,15 @@ public class MeditationService extends Service {
 
             // Check completion
             if (actualElapsedSeconds >= totalSeconds) {
+                // Unregister timerRunnable so it doesn't re-trigger playBell every second
+                timerHandler.removeCallbacks(this);
+
                 playBell(R.raw.end_bell, false);
                 
-                // Synchronize haptics with the 3 chimes in the audio file
-                timerHandler.postDelayed(() -> triggerHapticPulse(), 500);
-                timerHandler.postDelayed(() -> triggerHapticPulse(), 10000);
-                timerHandler.postDelayed(() -> triggerHapticPulse(), 17000);
+                // Synchronize haptics precisely with the 3 chimes in end_bell.mp3 (at 2.0s, 11.5s, 18.5s)
+                timerHandler.postDelayed(() -> triggerHapticPulse(), 2000);
+                timerHandler.postDelayed(() -> triggerHapticPulse(), 11500);
+                timerHandler.postDelayed(() -> triggerHapticPulse(), 18500);
 
                 // Stop service after 25s delay to allow all 3 chimes to complete
                 timerHandler.postDelayed(() -> stopSelf(), 25000);
