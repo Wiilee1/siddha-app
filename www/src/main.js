@@ -77,6 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (['home', 'journey', 'reflect', 'profile', 'wisdom', 'settings'].includes(targetId)) {
             MenuMusic.start();
             NatureMusic.start();
+            // Flush any pending level up or achievement celebrations when arriving at main views
+            setTimeout(() => {
+                DB.flushCelebrations();
+            }, 300);
         }
 
         navItems.forEach(item => {

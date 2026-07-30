@@ -574,7 +574,7 @@ export function renderNewReflection(onComplete) {
             standalone: isStandalone
         });
 
-        DB.checkAndTriggerAchievements(false);
+        DB.checkAndTriggerAchievements(false, true);
 
         if (onComplete) onComplete();
     });

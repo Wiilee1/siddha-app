@@ -346,7 +346,7 @@ export const DB = {
         };
     },
 
-    addXP: (amount) => {
+    addXP: (amount, queue = false) => {
         const state = getState();
         const oldLevel = state.level;
         state.xp += amount;
@@ -354,19 +354,25 @@ export const DB = {
         const leveledUp = newLevel > oldLevel;
         state.level = newLevel;
         checkAndApplyLevelUpRewards(state, oldLevel, newLevel);
-        saveState(state);
+        
         if (leveledUp) {
-            setTimeout(() => {
-                window.dispatchEvent(new CustomEvent('siddha-levelup', {
-                    detail: { oldLevel, newLevel, xp: state.xp }
-                }));
-            }, 100);
+            if (queue) {
+                if (!state.pendingCelebrations) state.pendingCelebrations = [];
+                state.pendingCelebrations.push({ type: 'levelup', data: { oldLevel, newLevel, xp: state.xp } });
+            } else {
+                setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('siddha-levelup', {
+                        detail: { oldLevel, newLevel, xp: state.xp }
+                    }));
+                }, 100);
+            }
         }
+        saveState(state);
         return { xp: state.xp, level: state.level, leveledUp };
     },
 
     // Meditations
-    completeMeditation: (durationMins) => {
+    completeMeditation: (durationMins, queue = false) => {
         const state = getState();
         const oldLevel = state.level;
         const activePath = state.activePathId || 'tmi';
@@ -410,19 +416,25 @@ export const DB = {
         comp.lastUpdated = new Date().toISOString();
 
         checkAndApplyLevelUpRewards(state, oldLevel, newLevel);
-        saveState(state);
+        
         if (leveledUp) {
-            setTimeout(() => {
-                window.dispatchEvent(new CustomEvent('siddha-levelup', {
-                    detail: { oldLevel, newLevel, xp: state.xp }
-                }));
-            }, 100);
+            if (queue) {
+                if (!state.pendingCelebrations) state.pendingCelebrations = [];
+                state.pendingCelebrations.push({ type: 'levelup', data: { oldLevel, newLevel, xp: state.xp } });
+            } else {
+                setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent('siddha-levelup', {
+                        detail: { oldLevel, newLevel, xp: state.xp }
+                    }));
+                }, 100);
+            }
         }
+        saveState(state);
         return xpEarned;
     },
 
     // Missions — keyed by `${pathId}_${nodeId}`
-    completeMission: (nodeId, missionIndex, pathId = 'tmi') => {
+    completeMission: (nodeId, missionIndex, pathId = 'tmi', queue = false) => {
         const state = getState();
         if (!state.missionProgress) state.missionProgress = {};
         const key = `${pathId}_${nodeId}`;
@@ -436,14 +448,20 @@ export const DB = {
             const leveledUp = newLevel > oldLevel;
             state.level = newLevel;
             checkAndApplyLevelUpRewards(state, oldLevel, newLevel);
-            saveState(state);
+            
             if (leveledUp) {
-                setTimeout(() => {
-                    window.dispatchEvent(new CustomEvent('siddha-levelup', {
-                        detail: { oldLevel, newLevel, xp: state.xp }
-                    }));
-                }, 100);
+                if (queue) {
+                    if (!state.pendingCelebrations) state.pendingCelebrations = [];
+                    state.pendingCelebrations.push({ type: 'levelup', data: { oldLevel, newLevel, xp: state.xp } });
+                } else {
+                    setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent('siddha-levelup', {
+                            detail: { oldLevel, newLevel, xp: state.xp }
+                        }));
+                    }, 100);
+                }
             }
+            saveState(state);
             return { xpEarned: 20, leveledUp };
         }
         return { xpEarned: 0, leveledUp: false };
@@ -802,9 +820,10 @@ export const DB = {
 
 
     // ── Achievements & Milestones ──────────────────────────────────────────────
-    checkAndTriggerAchievements: (silent = false) => {
+    checkAndTriggerAchievements: (silent = false, queue = false) => {
         const state = getState();
         if (!state.unlockedAchievements) state.unlockedAchievements = {};
+        if (!state.pendingCelebrations) state.pendingCelebrations = [];
         const newlyUnlocked = [];
 
         ACHIEVEMENTS.forEach(ach => {
@@ -831,9 +850,13 @@ export const DB = {
                         });
 
                         if (newLevel > oldLevel && !silent) {
-                            setTimeout(() => {
-                                window.dispatchEvent(new CustomEvent('siddha-levelup', { detail: { oldLevel, newLevel } }));
-                            }, 2500);
+                            if (queue) {
+                                state.pendingCelebrations.push({ type: 'levelup', data: { oldLevel, newLevel, xp: state.xp } });
+                            } else {
+                                setTimeout(() => {
+                                    window.dispatchEvent(new CustomEvent('siddha-levelup', { detail: { oldLevel, newLevel, xp: state.xp } }));
+                                }, 2500);
+                            }
                         }
                     }
                 });
@@ -855,23 +878,52 @@ export const DB = {
                     });
 
                     if (newLevel > oldLevel && !silent) {
-                        setTimeout(() => {
-                            window.dispatchEvent(new CustomEvent('siddha-levelup', { detail: { oldLevel, newLevel } }));
-                        }, 2500);
+                        if (queue) {
+                            state.pendingCelebrations.push({ type: 'levelup', data: { oldLevel, newLevel, xp: state.xp } });
+                        } else {
+                            setTimeout(() => {
+                                window.dispatchEvent(new CustomEvent('siddha-levelup', { detail: { oldLevel, newLevel, xp: state.xp } }));
+                            }, 2500);
+                        }
                     }
                 }
             }
         });
 
         if (newlyUnlocked.length > 0) {
-            saveState(state);
             if (!silent) {
-                newlyUnlocked.forEach((ach, index) => {
-                    setTimeout(() => {
-                        window.dispatchEvent(new CustomEvent('siddha-achievement', { detail: ach }));
-                    }, index * 500);
-                });
+                if (queue) {
+                    newlyUnlocked.forEach((ach) => {
+                        state.pendingCelebrations.push({ type: 'achievement', data: ach });
+                    });
+                } else {
+                    newlyUnlocked.forEach((ach, index) => {
+                        setTimeout(() => {
+                            window.dispatchEvent(new CustomEvent('siddha-achievement', { detail: ach }));
+                        }, index * 500);
+                    });
+                }
             }
+            saveState(state);
+        }
+    },
+
+    flushCelebrations: () => {
+        const state = getState();
+        if (state.pendingCelebrations && state.pendingCelebrations.length > 0) {
+            let delay = 500;
+            state.pendingCelebrations.forEach(c => {
+                setTimeout(() => {
+                    if (c.type === 'levelup') {
+                        window.dispatchEvent(new CustomEvent('siddha-levelup', { detail: c.data }));
+                    } else if (c.type === 'achievement') {
+                        window.dispatchEvent(new CustomEvent('siddha-achievement', { detail: c.data }));
+                    }
+                }, delay);
+                delay += (c.type === 'levelup' ? 4000 : 2500);
+            });
+            state.pendingCelebrations = [];
+            saveState(state);
         }
     },
 

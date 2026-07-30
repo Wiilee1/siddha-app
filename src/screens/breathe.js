@@ -78,10 +78,10 @@ export function renderBreathe(onComplete) {
                     <span style="font-size: 12px; opacity: 0.85;">min</span>
                 </div>
 
-                <!-- Master Session Audio Toggle Button -->
-                <button id="sound-mute-btn" title="Toggle all session audio" style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: rgba(255,255,255,0.9); padding: 4px 12px; height: 32px; font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0; transition: all 0.2s; box-sizing: border-box;">
+                <!-- Meditation Bells Toggle Button -->
+                <button id="sound-mute-btn" title="Toggle meditation bells" style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: rgba(255,255,255,0.9); padding: 4px 12px; height: 32px; font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0; transition: all 0.2s; box-sizing: border-box;">
                     <span class="material-symbols-rounded" id="mute-icon" style="font-size: 16px;">volume_up</span>
-                    <span id="mute-label">All Audio On</span>
+                    <span id="mute-label">Bells On</span>
                 </button>
             </div>
 
@@ -704,7 +704,7 @@ export function renderBreathe(onComplete) {
         const muteLabel = container.querySelector('#mute-label');
         function applyMuteState() {
             muteIcon.textContent = isMuted ? 'volume_off' : 'volume_up';
-            if (muteLabel) muteLabel.textContent = isMuted ? 'Audio Muted' : 'All Audio On';
+            if (muteLabel) muteLabel.textContent = isMuted ? 'Bells Off' : 'Bells On';
             muteBtn.style.background = isMuted ? 'rgba(255,80,80,0.25)' : 'rgba(255,255,255,0.08)';
             muteBtn.style.borderColor = isMuted ? 'rgba(255,80,80,0.4)' : 'rgba(255,255,255,0.15)';
             muteBtn.style.color = isMuted ? '#ffaaaa' : 'rgba(255,255,255,0.9)';
@@ -903,19 +903,20 @@ export function renderBreathe(onComplete) {
             stopTimer();
             setRunningUI(false);
             const actualMins = minutesOverride != null ? minutesOverride : START_MINUTES;
-            DB.completeMeditation(actualMins);
+            DB.completeMeditation(actualMins, true);
 
             const activeMission = container.activeMission;
             if (activeMission) {
                 DB.completeMission(
                     activeMission.nodeId,
                     activeMission.missionIndex,
-                    activeMission.pathId || 'tmi'
+                    activeMission.pathId || 'tmi',
+                    true
                 );
                 container.activeMission = null;
             }
 
-            DB.checkAndTriggerAchievements(false);
+            DB.checkAndTriggerAchievements(false, true);
 
             const pathId = activeMission ? (activeMission.pathId || 'tmi') : (DB.getActivePath() || 'tmi');
             const itemMap = { 
