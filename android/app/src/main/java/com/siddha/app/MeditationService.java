@@ -47,8 +47,8 @@ public class MeditationService extends Service {
             // Check completion
             if (actualElapsedSeconds >= totalSeconds) {
                 playBell(R.raw.end_bell, false);
-                // Stop service after a small delay to allow bell to start
-                timerHandler.postDelayed(() -> stopSelf(), 5000);
+                // Stop service after 25s delay to allow all 3 chimes to complete
+                timerHandler.postDelayed(() -> stopSelf(), 25000);
             } else {
                 timerHandler.postDelayed(this, 1000);
             }
