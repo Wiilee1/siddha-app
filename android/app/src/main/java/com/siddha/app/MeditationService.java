@@ -39,7 +39,7 @@ public class MeditationService extends Service {
                 int intervalSeconds = intervalMinutes * 60;
                 int currentIntervalBoundary = actualElapsedSeconds / intervalSeconds;
                 if (currentIntervalBoundary > lastIntervalPlayed && actualElapsedSeconds < totalSeconds && actualElapsedSeconds > 0) {
-                    playBell(R.raw.interval_bell, false);
+                    playBell(R.raw.interval_bell, true);
                     lastIntervalPlayed = currentIntervalBoundary;
                 }
             }
@@ -147,15 +147,16 @@ public class MeditationService extends Service {
             bell.start();
 
             if (fadeOut) {
-                final long fadeDurationMs = 10000; // 10 seconds
+                final long fadeStartDelayMs = 7000;
+                final long fadeDurationMs = 3000;
                 final long startTime = System.currentTimeMillis();
                 final Handler fadeHandler = new Handler(Looper.getMainLooper());
-                fadeHandler.post(new Runnable() {
+                fadeHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            long elapsed = System.currentTimeMillis() - startTime;
-                            float volume = 1.0f - ((float) elapsed / fadeDurationMs);
+                            long elapsed = System.currentTimeMillis() - (startTime + fadeStartDelayMs);
+                            float volume = Math.max(0f, 1.0f - ((float) elapsed / fadeDurationMs));
                             if (volume > 0) {
                                 if (bell.isPlaying()) {
                                     bell.setVolume(volume, volume);
@@ -171,7 +172,7 @@ public class MeditationService extends Service {
                             try { bell.release(); } catch (Exception ignored) {}
                         }
                     }
-                });
+                }, fadeStartDelayMs);
             } else {
                 bell.setOnCompletionListener(MediaPlayer::release);
             }

@@ -729,7 +729,6 @@ export function renderBreathe(onComplete) {
                             if (!(window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative)) {
                                 Synth.playIntervalBell();
                             }
-                            HapticService.vibrate('bell');
                         }
                     }
 
@@ -1043,7 +1042,6 @@ export function renderBreathe(onComplete) {
                                 if (!(window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative)) {
                                     Synth.playIntervalBell();
                                 }
-                                HapticService.vibrate('bell');
                             }
                         }
 
