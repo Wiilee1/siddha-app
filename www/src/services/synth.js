@@ -643,7 +643,10 @@ export const MenuMusic = {
     },
 
     start: () => {
-        if (!MenuMusic.isEnabled()) return;
+        if (!MenuMusic.isEnabled()) {
+            if (bgAudioEl) bgAudioEl.pause();
+            return;
+        }
         if (Synth.isEndBellPlaying()) return;
         if (!bgAudioEl) MenuMusic.init();
 
@@ -665,6 +668,18 @@ export const MenuMusic = {
         if (bgAudioEl) {
             bgAudioEl.pause();
         }
+    },
+
+    stop: () => {
+        MenuMusic.pause();
+    },
+
+    playCurrentTrack: () => {
+        MenuMusic.start();
+    },
+
+    setTrack: (trackId) => {
+        MenuMusic.setSelectedTrackId(trackId);
     },
 
     fadeOut: (durationMs = 800) => {
@@ -790,7 +805,10 @@ export const NatureMusic = {
     },
 
     start: () => {
-        if (!NatureMusic.isEnabled()) return;
+        if (!NatureMusic.isEnabled()) {
+            if (natureAudioEl) natureAudioEl.pause();
+            return;
+        }
         if (Synth.isEndBellPlaying()) return;
         if (!natureAudioEl) NatureMusic.init();
 
@@ -812,6 +830,18 @@ export const NatureMusic = {
         if (natureAudioEl) {
             natureAudioEl.pause();
         }
+    },
+
+    stop: () => {
+        NatureMusic.pause();
+    },
+
+    playCurrentTrack: () => {
+        NatureMusic.start();
+    },
+
+    setTrack: (trackId) => {
+        NatureMusic.setSelectedTrackId(trackId);
     },
 
     fadeOut: (durationMs = 800) => {

@@ -68,14 +68,20 @@ export function renderBreathe(onComplete) {
                 </button>
             </div>
 
-            <!-- Interval Bell Input + Mute Toggle -->
-            <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); transition: opacity 0.3s;">
-                <span class="material-symbols-rounded" style="font-size:18px;">notifications_active</span>
-                <label for="bell-interval-input">Bell every:</label>
-                <input type="number" id="bell-interval-input" min="0" placeholder="5" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 4px; font-size: 12px; width: 48px; text-align: center; outline: none;" value="5">
-                <span>min</span>
-                <button id="sound-mute-btn" title="Toggle sound" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: rgba(255,255,255,0.85); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s;">
-                    <span class="material-symbols-rounded" id="mute-icon" style="font-size: 18px;">volume_up</span>
+            <!-- Interval Bell Input + Master Session Audio Toggle -->
+            <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.85); transition: opacity 0.3s; flex-wrap: wrap;">
+                <!-- Interval Bell Pill -->
+                <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 4px 10px; height: 32px; box-sizing: border-box;">
+                    <span class="material-symbols-rounded" style="font-size:16px; color: rgba(255,255,255,0.85);">notifications_active</span>
+                    <label for="bell-interval-input" style="font-size: 12px; font-weight: 500;">Interval:</label>
+                    <input type="number" id="bell-interval-input" min="0" placeholder="5" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; padding: 2px 4px; font-size: 12px; width: 38px; text-align: center; outline: none;" value="5">
+                    <span style="font-size: 12px; opacity: 0.85;">min</span>
+                </div>
+
+                <!-- Master Session Audio Toggle Button -->
+                <button id="sound-mute-btn" title="Toggle all session audio" style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: rgba(255,255,255,0.9); padding: 4px 12px; height: 32px; font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0; transition: all 0.2s; box-sizing: border-box;">
+                    <span class="material-symbols-rounded" id="mute-icon" style="font-size: 16px;">volume_up</span>
+                    <span id="mute-label">All Audio On</span>
                 </button>
             </div>
 
@@ -695,10 +701,13 @@ export function renderBreathe(onComplete) {
 
         // Persist mute state across sessions
         let isMuted = localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true';
+        const muteLabel = container.querySelector('#mute-label');
         function applyMuteState() {
             muteIcon.textContent = isMuted ? 'volume_off' : 'volume_up';
-            muteBtn.style.background = isMuted ? 'rgba(255,80,80,0.25)' : 'rgba(255,255,255,0.1)';
-            muteBtn.style.borderColor = isMuted ? 'rgba(255,80,80,0.4)' : 'rgba(255,255,255,0.2)';
+            if (muteLabel) muteLabel.textContent = isMuted ? 'Audio Muted' : 'All Audio On';
+            muteBtn.style.background = isMuted ? 'rgba(255,80,80,0.25)' : 'rgba(255,255,255,0.08)';
+            muteBtn.style.borderColor = isMuted ? 'rgba(255,80,80,0.4)' : 'rgba(255,255,255,0.15)';
+            muteBtn.style.color = isMuted ? '#ffaaaa' : 'rgba(255,255,255,0.9)';
         }
         applyMuteState();
 

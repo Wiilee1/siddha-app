@@ -507,13 +507,14 @@ export const DB = {
         return [...(state.reflectionHistory || [])].reverse();
     },
 
-    saveFeedback: (item) => {
+    saveFeedback: (item, maybeText) => {
         const state = getState();
         if (!state.feedbackHistory) state.feedbackHistory = [];
+        const payload = (typeof item === 'object' && item !== null) ? item : { type: item, text: maybeText };
         const entry = {
             id: 'fb_' + Date.now(),
             date: new Date().toISOString(),
-            ...item
+            ...payload
         };
         state.feedbackHistory.push(entry);
         saveState(state);
@@ -705,26 +706,6 @@ export const DB = {
             comp.inventory.acorns = 1;
         }
         saveState(state);
-    },
-
-    saveFeedback: (type, text) => {
-        const state = getState();
-        if (!state.feedbackHistory) state.feedbackHistory = [];
-        const newFeedback = {
-            id: 'fb_' + Math.round(Math.random() * 1000000),
-            type,
-            text,
-            timestamp: new Date().toISOString()
-        };
-        state.feedbackHistory.push(newFeedback);
-        saveState(state);
-        console.log('[DB] Feedback saved:', newFeedback);
-        return newFeedback;
-    },
-
-    getFeedbackHistory: () => {
-        const state = getState();
-        return state.feedbackHistory || [];
     },
 
     // ── Daily Quest ────────────────────────────────────────────────────────────

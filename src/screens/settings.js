@@ -205,14 +205,13 @@ export function renderSettings(onBack) {
         const toggleMenuSound = container.querySelector('#toggle-menu-sound');
 
         if (toggleBgMusic) {
-            toggleBgMusic.checked = notifSettings.bgMusicEnabled !== false;
+            toggleBgMusic.checked = MenuMusic.isEnabled();
             bgMusicWrap.style.display = toggleBgMusic.checked ? 'flex' : 'none';
             toggleBgMusic.addEventListener('change', (e) => {
                 const val = e.target.checked;
                 bgMusicWrap.style.display = val ? 'flex' : 'none';
                 DB.setNotificationSettings({ bgMusicEnabled: val });
-                if (val) MenuMusic.playCurrentTrack();
-                else MenuMusic.stop();
+                MenuMusic.setEnabled(val);
             });
         }
 
@@ -240,14 +239,13 @@ export function renderSettings(onBack) {
         }
 
         if (toggleNature) {
-            toggleNature.checked = notifSettings.natureSoundEnabled === true;
+            toggleNature.checked = NatureMusic.isEnabled();
             natureWrap.style.display = toggleNature.checked ? 'flex' : 'none';
             toggleNature.addEventListener('change', (e) => {
                 const val = e.target.checked;
                 natureWrap.style.display = val ? 'flex' : 'none';
                 DB.setNotificationSettings({ natureSoundEnabled: val });
-                if (val) NatureMusic.playCurrentTrack();
-                else NatureMusic.stop();
+                NatureMusic.setEnabled(val);
             });
         }
 
