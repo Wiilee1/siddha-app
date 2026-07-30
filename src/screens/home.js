@@ -35,7 +35,7 @@ export function renderHome() {
                 <div style="display:flex; align-items:center; gap:8px;">
                     <img src="./src/assets/logo.png" class="home-logo-img" alt="Siddha Logo">
                     <span style="font-weight:700; font-size:16px; font-family:var(--font-heading); color:#2c3e38;">Siddha</span>
-                    <button id="dev-add-xp" style="font-size:9px; padding:2px 5px; background:transparent; border:1px solid #dcdcdc; border-radius:4px; cursor:pointer; color:#777;">+500 XP</button>
+                    <button id="dev-add-xp" class="dev-only" style="font-size:9px; padding:2px 5px; background:transparent; border:1px solid #dcdcdc; border-radius:4px; cursor:pointer; color:#777;">+500 XP</button>
                 </div>
                 <!-- Inline greeting at top -->
                 <div class="home-header-greeting" style="font-size: 12px; color: var(--color-text-secondary); font-weight: 500; font-family: var(--font-body); display: flex; align-items: center; gap: 4px;">

@@ -249,7 +249,8 @@ export function renderProfile(onOpenSettings) {
             </a>
         </div>
 
-        <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <!-- Developer Controls (Hidden by default, unlocked by 5 taps on App Version below) -->
+        <div id="dev-controls-wrapper" class="dev-only" style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
             <div style="display: flex; gap: 8px;">
                 <button id="dev-skip-3-btn" class="btn" style="background: transparent; color: #f39c12; border: 1px solid #f39c12; font-size: 12px; padding: 6px 12px;">
                     Skip 3 Days (No Med)
@@ -265,6 +266,9 @@ export function renderProfile(onOpenSettings) {
                 View Saved Feedback (Dev)
             </button>
         </div>
+
+        <!-- App Version Secret Trigger (Tap 5 times to toggle Developer Mode) -->
+        <p id="app-version-trigger" style="font-size: 11px; color: var(--color-text-muted); text-align: center; margin-top: 20px; margin-bottom: 24px; cursor: pointer; user-select: none;">Siddha v1.6.8</p>
 
         <!-- Avatar Selection Modal Overlay -->
         <div id="avatar-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); z-index:999; display:none; justify-content:center; align-items:center; padding:20px;">
@@ -1520,6 +1524,34 @@ export function renderProfile(onOpenSettings) {
         skip7Btn.addEventListener('click', () => {
             DB.devSimulateTimePassing(7);
             container.updateData();
+        });
+    }
+
+    // Secret 5-Tap Gesture on App Version to toggle Developer Mode
+    let tapCount = 0;
+    let tapTimer = null;
+    const versionTrigger = container.querySelector('#app-version-trigger');
+    if (versionTrigger) {
+        versionTrigger.addEventListener('click', () => {
+            tapCount++;
+            if (tapTimer) clearTimeout(tapTimer);
+            tapTimer = setTimeout(() => { tapCount = 0; }, 3000);
+
+            if (tapCount >= 5) {
+                tapCount = 0;
+                clearTimeout(tapTimer);
+                const isDev = localStorage.getItem('siddha_dev_mode') !== 'true';
+                localStorage.setItem('siddha_dev_mode', isDev ? 'true' : 'false');
+
+                if (isDev) {
+                    document.body.classList.add('dev-mode-active');
+                } else {
+                    document.body.classList.remove('dev-mode-active');
+                }
+
+                HapticService.vibrate('completion');
+                alert(isDev ? '🛠️ Developer Mode Unlocked!' : '🔒 Developer Mode Hidden!');
+            }
         });
     }
 

@@ -18,6 +18,11 @@ body {
     overflow: hidden; 
 }
 
+/* Developer Mode Utility - Hidden by default unless dev-mode-active is on body */
+body:not(.dev-mode-active) .dev-only {
+    display: none !important;
+}
+
 /* App Container */
 .app-container {
     display: flex;

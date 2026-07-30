@@ -10,7 +10,7 @@ export function renderHome() {
             <div style="display:flex; align-items:center; gap:8px;">
                 <img src="./src/assets/logo.png" class="home-logo-avatar" alt="Siddha">
                 <span style="font-weight:700; font-size:18px; font-family:var(--font-heading); color:#2c3e38;">Siddha</span>
-                <button id="dev-add-xp" style="font-size:10px; padding:2px 6px; background:var(--color-bg-secondary); border-radius:4px; border:none; cursor:pointer; color:var(--color-text-muted);">+500 XP</button>
+                <button id="dev-add-xp" class="dev-only" style="font-size:10px; padding:2px 6px; background:var(--color-bg-secondary); border-radius:4px; border:none; cursor:pointer; color:var(--color-text-muted);">+500 XP</button>
             </div>
             <button id="home-profile-btn" class="home-icon-btn" aria-label="Profile">
                 <span class="material-symbols-rounded" style="color:#7a8a81; font-weight:300;">account_circle</span>

@@ -24,8 +24,8 @@ export function renderBreathe(onComplete) {
                 <h2 id="breathe-screen-title" class="bh-title">Meditation</h2>
                 <p id="breathe-screen-desc" class="bh-desc">Find your center</p>
             </div>
-            <!-- Dev skip — always visible for now -->
-            <button class="bh-btn bh-skip" id="dev-skip-btn" aria-label="Skip (dev)">
+            <!-- Dev skip — hidden unless developer mode is unlocked -->
+            <button class="bh-btn bh-skip dev-only" id="dev-skip-btn" aria-label="Skip (dev)">
                 <span class="material-symbols-rounded">fast_forward</span>
             </button>
         </div>

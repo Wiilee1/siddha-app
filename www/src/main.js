@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('.nav-item');
     const bottomNav = document.querySelector('.bottom-nav');
 
+    // Initialize Developer Mode state
+    if (localStorage.getItem('siddha_dev_mode') === 'true') {
+        document.body.classList.add('dev-mode-active');
+    } else {
+        document.body.classList.remove('dev-mode-active');
+    }
+
     // Initialize Menu & Nature Music
     MenuMusic.init();
     NatureMusic.init();
