@@ -56,7 +56,9 @@ function stopSilentKeepAlive() {
             silentAudioEl.currentTime = 0;
         } catch(e) {}
     }
-    if ('mediaSession' in navigator) {
+    const endAudio = BELL_AUDIO['end'];
+    const isEndPlaying = endAudio && !endAudio.paused && endAudio.currentTime > 0 && !endAudio.ended;
+    if ('mediaSession' in navigator && !isEndPlaying) {
         try {
             navigator.mediaSession.playbackState = 'paused';
         } catch(e) {}
@@ -321,13 +323,24 @@ export const Synth = {
         MenuMusic.pause();
         NatureMusic.pause();
 
+        if ('mediaSession' in navigator) {
+            try {
+                navigator.mediaSession.playbackState = 'playing';
+            } catch(e) {}
+        }
+
         playBellAudioWithFade('end', 0, 0);
 
         const endAudio = BELL_AUDIO['end'];
         if (endAudio) {
             endAudio.onended = () => {
+                if ('mediaSession' in navigator) {
+                    try {
+                        navigator.mediaSession.playbackState = 'paused';
+                    } catch(e) {}
+                }
                 const currentScreen = document.querySelector('.screen.active')?.id;
-                if (currentScreen && currentScreen !== 'breathe') {
+                if (currentScreen && currentScreen !== 'breathe' && currentScreen !== 'new_reflection') {
                     MenuMusic.start();
                     NatureMusic.start();
                 }
