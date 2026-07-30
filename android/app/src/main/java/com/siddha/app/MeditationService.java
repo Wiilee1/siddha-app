@@ -14,39 +14,24 @@ import android.os.Handler;
 import android.os.IBinder;
 import java.util.ArrayList;
 import java.util.List;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.content.pm.ServiceInfo;
 import android.os.SystemClock;
 import androidx.core.app.NotificationCompat;
-import android.os.Vibrator;
-import android.os.VibrationEffect;
 
 public class MeditationService extends Service {
     private static final String CHANNEL_ID = "meditation_service_channel";
     private PowerManager.WakeLock wakeLock;
     private MediaPlayer keepAlivePlayer;
-    private final Handler timerHandler = new Handler(Looper.getMainLooper());
+    private HandlerThread handlerThread;
+    private Handler timerHandler;
     private int intervalSeconds = 0;
     private final List<MediaPlayer> activeBells = new ArrayList<>();
     private int totalSeconds = 0;
     private long startTimeMillis = 0;
     private int lastIntervalPlayed = 0;
-
-    private void triggerHapticPulse() {
-        try {
-            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            if (vibrator != null && vibrator.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK));
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(350, 255));
-                } else {
-                    vibrator.vibrate(350);
-                }
-            }
-        } catch (Exception e) {}
-    }
 
     private final Runnable timerRunnable = new Runnable() {
         @Override
@@ -69,14 +54,9 @@ public class MeditationService extends Service {
                 timerHandler.removeCallbacks(this);
 
                 playBell(R.raw.end_bell, false);
-                
-                // Synchronize haptics precisely with the 3 chimes in end_bell.mp3 (at 2.0s, 11.5s, 18.5s)
-                timerHandler.postDelayed(() -> triggerHapticPulse(), 2000);
-                timerHandler.postDelayed(() -> triggerHapticPulse(), 11500);
-                timerHandler.postDelayed(() -> triggerHapticPulse(), 18500);
 
-                // Stop service after 25s delay to allow all 3 chimes to complete
-                timerHandler.postDelayed(() -> stopSelf(), 25000);
+                // Stop service after 45s delay to allow all 3 chimes to complete fully and fade out naturally
+                timerHandler.postDelayed(() -> stopSelf(), 45000);
             } else {
                 timerHandler.postDelayed(this, 1000);
             }
@@ -86,6 +66,11 @@ public class MeditationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        
+        handlerThread = new HandlerThread("MeditationServiceBackground");
+        handlerThread.start();
+        timerHandler = new Handler(handlerThread.getLooper());
+
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Siddha::MeditationWakeLock");
         wakeLock.acquire(120 * 60 * 1000L); // 2 hour max
@@ -179,7 +164,7 @@ public class MeditationService extends Service {
                 final long fadeStartDelayMs = 7000;
                 final long fadeDurationMs = 3000;
                 final long startTime = System.currentTimeMillis();
-                final Handler fadeHandler = new Handler(Looper.getMainLooper());
+                final Handler fadeHandler = new Handler(handlerThread.getLooper());
                 fadeHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -220,7 +205,9 @@ public class MeditationService extends Service {
 
     @Override
     public void onDestroy() {
-        timerHandler.removeCallbacks(timerRunnable);
+        if (timerHandler != null) timerHandler.removeCallbacks(timerRunnable);
+        if (handlerThread != null) handlerThread.quit();
+        
         if (keepAlivePlayer != null) {
             keepAlivePlayer.stop();
             keepAlivePlayer.release();

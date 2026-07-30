@@ -118,8 +118,8 @@ export function renderNewReflection(onComplete) {
             </div>
         </div>
 
-        <!-- Mental Hindrances -->
-        <div class="nr-section">
+        <!-- Mental Hindrances (hidden for quick reflection) -->
+        <div class="nr-section" id="nr-hindrances-section">
             <h3 class="nr-section-title">Mental Obstacles <span class="nr-section-tag">(optional)</span></h3>
             <div class="nr-chips-row" id="hindrances-selector">
                 <div class="nr-chip nr-chip-multi" data-hindrance="dullness">💤 Sleepiness</div>
@@ -136,12 +136,8 @@ export function renderNewReflection(onComplete) {
                 <h3 class="nr-section-title" style="margin:0;">Notes & Insights</h3>
                 <span style="font-size:10px; color:var(--color-text-muted);">Tap prompt to insert</span>
             </div>
-            <!-- Interactive Guided Prompt Chips -->
+            <!-- Dynamic Guided Prompt Chips -->
             <div class="nr-chips-row" id="guided-prompts-row" style="margin-bottom:10px;">
-                <button class="nr-chip prompt-chip" data-prompt="What arose during the sit: ">💡 What arose?</button>
-                <button class="nr-chip prompt-chip" data-prompt="Where was breath felt most clearly: ">🌬️ Breath anchor?</button>
-                <button class="nr-chip prompt-chip" data-prompt="Tension softened in: ">🌿 Tension release?</button>
-                <button class="nr-chip prompt-chip" data-prompt="Insight gained today: ">✨ Today's insight?</button>
             </div>
             <textarea id="reflection-text" class="nr-textarea"
                 placeholder="Write down your insights, thoughts, or feelings..."></textarea>
@@ -585,42 +581,42 @@ export function renderNewReflection(onComplete) {
         const titleEl = container.querySelector('#nr-title');
         const subtitleEl = container.querySelector('#nr-subtitle');
         const spectsEl = container.querySelector('#nr-meditation-spectrums');
-
-        // Render intention banner if set for this sit
-        if (container.sessionData?.intention) {
-            let intentBanner = container.querySelector('#nr-intention-banner');
-            if (!intentBanner) {
-                intentBanner = document.createElement('div');
-                intentBanner.id = 'nr-intention-banner';
-                intentBanner.className = 'nr-section';
-                intentBanner.style.cssText = 'background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:14px; padding:12px 14px; margin-bottom:16px;';
-                if (xpZone && xpZone.nextSibling) {
-                    xpZone.parentNode.insertBefore(intentBanner, xpZone.nextSibling);
-                }
-            }
-            intentBanner.innerHTML = `
-                <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--color-accent); margin-bottom:4px; display:flex; align-items:center; gap:4px;">
-                    <span class="material-symbols-rounded" style="font-size:14px; color:#ffd166;">psychology_alt</span> Intention set for this sit
-                </div>
-                <div style="font-size:13.5px; font-weight:600; color:var(--color-text-primary); font-style:italic; line-height:1.4;">
-                    "${container.sessionData.intention}"
-                </div>
-            `;
-            intentBanner.style.display = 'block';
-        } else {
-            const intentBanner = container.querySelector('#nr-intention-banner');
-            if (intentBanner) intentBanner.style.display = 'none';
-        }
+        const hindrancesEl = container.querySelector('#nr-hindrances-section');
+        const promptsRow = container.querySelector('#guided-prompts-row');
 
         if (isStandalone) {
-            // Hide XP celebration & Mind Spectrum sliders for quick standalone reflection
+            // Hide XP celebration, Mind Spectrum sliders, and Hindrances for quick standalone reflection
             xpZone.classList.add('hidden');
             if (spectsEl) spectsEl.style.display = 'none';
+            if (hindrancesEl) hindrancesEl.style.display = 'none';
             titleEl.textContent = 'Quick Reflection';
             subtitleEl.textContent = 'Capture your thoughts & mood';
+
+            if (promptsRow) {
+                promptsRow.innerHTML = `
+                    <button class="nr-chip prompt-chip" data-prompt="Mindful check-in: ">💡 Check-in</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Grateful for: ">🙏 Gratitude</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Letting go of: ">🍃 Release</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Brought me peace: ">🌟 Peace</button>
+                    <button class="nr-chip prompt-chip" data-prompt="My intention: ">🛡️ Intention</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Meeting challenge: ">🌊 Challenge</button>
+                `;
+            }
         } else {
             xpZone.classList.remove('hidden');
             if (spectsEl) spectsEl.style.display = 'block';
+            if (hindrancesEl) hindrancesEl.style.display = 'block';
+            titleEl.textContent = 'Reflection';
+            subtitleEl.textContent = 'Nice work! Session complete.';
+
+            if (promptsRow) {
+                promptsRow.innerHTML = `
+                    <button class="nr-chip prompt-chip" data-prompt="What arose during the sit: ">💡 What arose?</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Where was breath felt most clearly: ">🌬️ Breath anchor?</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Tension softened in: ">🌿 Tension release?</button>
+                    <button class="nr-chip prompt-chip" data-prompt="Insight gained today: ">✨ Today's insight?</button>
+                `;
+            }
             const data = container.sessionData;
             const durationXP = (data.duration || 10) * 5;
             earnedXP = durationXP;
@@ -629,8 +625,6 @@ export function renderNewReflection(onComplete) {
             }
 
             container.querySelector('#nr-earned-xp').textContent = earnedXP;
-            titleEl.textContent = 'Reflection';
-            subtitleEl.textContent = 'Nice work! Session complete.';
 
             const chip = container.querySelector('#nr-mission-chip');
 
@@ -641,6 +635,24 @@ export function renderNewReflection(onComplete) {
                 chip.style.display = 'inline-block';
                 chip.innerHTML = `✨ Completed <strong>${data.duration || 10}-min</strong> meditation session`;
             }
+        }
+
+        // Attach prompt insertion listeners
+        if (promptsRow) {
+            promptsRow.querySelectorAll('.prompt-chip').forEach(chip => {
+                chip.onclick = () => {
+                    const promptText = chip.getAttribute('data-prompt');
+                    const textArea = container.querySelector('#reflection-text');
+                    if (textArea && promptText) {
+                        if (textArea.value.trim() !== '') {
+                            textArea.value += '\n' + promptText;
+                        } else {
+                            textArea.value = promptText;
+                        }
+                        textArea.focus();
+                    }
+                };
+            });
         }
 
         // Reset textarea, mood, spectrum sliders and hindrances

@@ -7,24 +7,34 @@
 const DB_KEY = 'siddha_db';
 
 // Total XP needed to REACH each level (index = level number, 0 = never used)
-// Early levels are quick to encourage new users; later levels scale steeply
+// Ascension 1: Stabilization of Attention (0 - 150 Hours / 0 - 45,000 XP)
 const LEVEL_THRESHOLDS = [
-    0,    // level 0 (unused)
-    0,    // level 1: starts here
-    100,  // level 2
-    250,  // level 3
-    450,  // level 4
-    700,  // level 5
-    1000, // level 6
-    1400, // level 7
-    1900, // level 8
-    2500, // level 9
-    3200, // level 10
-    4000, // level 11
-    5000, // level 12
-    6200, // level 13
-    7600, // level 14
-    9200, // level 15
+    0,     // level 0 (unused)
+    0,     // level 1: Novice
+    100,   // level 2: Initiate (20 min)
+    300,   // level 3: Seeker (60 min / 1 hr)
+    650,   // level 4: Wanderer (130 min)
+    1200,  // level 5: Practitioner (240 min / 4 hrs)
+    1900,  // level 6: Disciple (380 min / 6.3 hrs)
+    2650,  // level 7: Student of Breath (530 min / 8.8 hrs)
+    3600,  // level 8: Devotee (12 hrs)
+    4800,  // level 9: Guide of Stillness (16 hrs)
+    6200,  // level 10: Contemplative (20.6 hrs)
+    7800,  // level 11: Mindful Observer (26 hrs)
+    9600,  // level 12: Serene Practitioner (32 hrs)
+    11600, // level 13: Anchor of Attention (38.6 hrs)
+    13800, // level 14: Awareness Seeker (46 hrs)
+    16200, // level 15: Sage in Training (54 hrs)
+    18900, // level 16: Tranquil Spirit (63 hrs)
+    21900, // level 17: Steady Mind (73 hrs)
+    25200, // level 18: Vivid Presence (84 hrs)
+    28800, // level 19: Master of Attention (96 hrs)
+    32700, // level 20: Quiet Watcher (109 hrs)
+    35500, // level 21: Inner Sanctuary (118 hrs)
+    38000, // level 22: Radiant Clarity (126.6 hrs)
+    40500, // level 23: Unshaken Anchor (135 hrs)
+    42800, // level 24: Boundless Presence (142.6 hrs)
+    45000  // level 25: Ascendant Watcher (150 hrs - Ascension 1 Complete!)
 ];
 
 // Returns the level number for a given total XP amount

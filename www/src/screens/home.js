@@ -849,8 +849,11 @@ const MINDFUL_GREETINGS = [
 
         const stats = DB.getStats();
         const levelNames = [
-            "Novice", "Initiate", "Adept", "Seeker", "Wanderer",
-            "Practitioner", "Disciple", "Guide", "Sage", "Master"
+            "Novice", "Initiate", "Seeker", "Wanderer", "Practitioner",
+            "Disciple", "Student of Breath", "Devotee", "Guide of Stillness", "Contemplative",
+            "Mindful Observer", "Serene Practitioner", "Anchor of Attention", "Awareness Seeker", "Sage in Training",
+            "Tranquil Spirit", "Steady Mind", "Vivid Presence", "Master of Attention", "Quiet Watcher",
+            "Inner Sanctuary", "Radiant Clarity", "Unshaken Anchor", "Boundless Presence", "Ascendant Watcher"
         ];
         const lName = levelNames[Math.min(stats.level - 1, levelNames.length - 1)] || "Novice";
 

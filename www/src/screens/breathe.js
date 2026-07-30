@@ -862,7 +862,7 @@ export function renderBreathe(onComplete) {
 
         let wakeLockSentinel = null;
 
-        function stopTimer() {
+        function stopTimer(isNaturalFinish = false) {
             clearInterval(timerInterval);
             timerInterval = null;
             isPaused = true;
@@ -872,7 +872,9 @@ export function renderBreathe(onComplete) {
 
             // Stop Native Foreground Service (Android only)
             if (window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative) {
-                window.Capacitor.Plugins.MeditationNative.stopService().catch(() => {});
+                if (!isNaturalFinish) {
+                    window.Capacitor.Plugins.MeditationNative.stopService().catch(() => {});
+                }
             }
 
             if (wakeLockSentinel) {
@@ -901,7 +903,7 @@ export function renderBreathe(onComplete) {
 
         function finishSession(minutesOverride) {
             const isNaturalFinish = (timeLeft <= 0);
-            stopTimer();
+            stopTimer(isNaturalFinish);
             setRunningUI(false);
             const actualMins = minutesOverride != null ? minutesOverride : START_MINUTES;
             DB.completeMeditation(actualMins, true);

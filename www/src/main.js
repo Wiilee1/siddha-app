@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resumeAppAudioIfAppropriate() {
-        if (currentActiveScreen !== 'breathe') {
+        if (currentActiveScreen !== 'breathe' && currentActiveScreen !== 'new_reflection') {
             MenuMusic.start();
             NatureMusic.start();
         }
