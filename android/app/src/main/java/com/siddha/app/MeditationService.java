@@ -39,7 +39,7 @@ public class MeditationService extends Service {
                 int intervalSeconds = intervalMinutes * 60;
                 int currentIntervalBoundary = actualElapsedSeconds / intervalSeconds;
                 if (currentIntervalBoundary > lastIntervalPlayed && actualElapsedSeconds < totalSeconds && actualElapsedSeconds > 0) {
-                    playBell(R.raw.interval_bell, true);
+                    playBell(R.raw.interval_bell, false);
                     lastIntervalPlayed = currentIntervalBoundary;
                 }
             }

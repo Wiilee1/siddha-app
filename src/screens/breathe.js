@@ -72,8 +72,8 @@ export function renderBreathe(onComplete) {
             <div class="bh-soundscape-container" id="soundscape-container" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.7); transition: opacity 0.3s;">
                 <span class="material-symbols-rounded" style="font-size:18px;">notifications_active</span>
                 <label for="bell-interval-input">Bell every:</label>
-                <input type="number" id="bell-interval-input" min="0" placeholder="10" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 4px; font-size: 12px; width: 48px; text-align: center; outline: none;" value="10">
-                <span>sec</span>
+                <input type="number" id="bell-interval-input" min="0" placeholder="5" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; padding: 4px; font-size: 12px; width: 48px; text-align: center; outline: none;" value="5">
+                <span>min</span>
                 <button id="sound-mute-btn" title="Toggle sound" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: rgba(255,255,255,0.85); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s;">
                     <span class="material-symbols-rounded" id="mute-icon" style="font-size: 18px;">volume_up</span>
                 </button>
@@ -721,7 +721,7 @@ export function renderBreathe(onComplete) {
                     // Interval bell catch up check
                     const intervalVal = parseFloat(container.querySelector('#bell-interval-input').value);
                     if (intervalVal > 0 && !isMuted) {
-                        const intervalSeconds = intervalVal;
+                        const intervalSeconds = intervalVal * 60;
                         const prevElapsed = sessionElapsed - delta;
                         const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
                         const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
@@ -1032,10 +1032,10 @@ export function renderBreathe(onComplete) {
                         lastTickTime += delta * 1000;
                         updateDisplay();
 
-                        // Play interval bell every X seconds if set
+                        // Play interval bell every X minutes if set
                         const intervalVal = parseFloat(container.querySelector('#bell-interval-input').value);
                         if (intervalVal > 0 && !isMuted) {
-                            const intervalSeconds = intervalVal;
+                            const intervalSeconds = intervalVal * 60;
                             const prevElapsed = sessionElapsed - delta;
                             const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
                             const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);

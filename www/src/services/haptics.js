@@ -36,10 +36,9 @@ export const HapticService = {
                     return;
                 } else if (style === 'bell') {
                     if (typeof nativeHaptics.impact === 'function') {
-                        nativeHaptics.impact({ style: 'HEAVY' }).catch(() => {});
-                    }
-                    if (typeof nativeHaptics.vibrate === 'function') {
-                        await nativeHaptics.vibrate({ duration: 300 });
+                        await nativeHaptics.impact({ style: 'MEDIUM' }).catch(() => {});
+                    } else if (typeof nativeHaptics.vibrate === 'function') {
+                        await nativeHaptics.vibrate({ duration: 120 }).catch(() => {});
                     }
                     return;
                 } else if (style === 'light') {
