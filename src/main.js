@@ -9,6 +9,7 @@ import { renderNewReflection } from './screens/new_reflection.js';
 import { renderWisdom } from './screens/wisdom.js';
 import { DB } from './services/db.js';
 import { MenuMusic, NatureMusic } from './services/synth.js';
+import { App } from '@capacitor/app';
 import './components/levelup_celebration.js';
 import './components/achievement_celebration.js';
 
@@ -166,14 +167,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Handle System Back Gesture (Swipe / Back Button)
+        // Handle System Back Gesture (Swipe / Hardware Back Button)
         let lastBackPressTime = 0;
-        window.Capacitor.Plugins.App.addListener('backButton', () => {
+        const handleBack = () => {
             // 1. Check for open modals/overlays first
+            const avatarModal = document.getElementById('avatar-modal');
             const wisdomReader = document.getElementById('wd-reader-modal');
             const journeyModal = document.getElementById('mission-modal');
             const intentionModal = document.getElementById('intention-modal-overlay');
 
+            if (avatarModal && avatarModal.style.display === 'flex') {
+                avatarModal.style.display = 'none';
+                return;
+            }
             if (wisdomReader && wisdomReader.classList.contains('active')) {
                 wisdomReader.querySelector('#wd-reader-close')?.click();
                 return;
@@ -187,24 +193,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 2. If on a sub-screen or tab that isn't Home, go to Home
+            // 2. Handle sub-screen navigation (e.g., Settings -> Profile)
+            if (currentActiveScreen === 'settings') {
+                navigateTo('profile');
+                return;
+            }
+
+            // 3. Handle main sub-screens or tabs -> Navigate to Home
             if (currentActiveScreen !== 'home' && currentActiveScreen !== 'login') {
-                // If in a meditation session, we use the close button to ensure cleanup
                 if (currentActiveScreen === 'breathe') {
-                    document.getElementById('breathe-close-btn')?.click();
+                    document.getElementById('breathe-close-btn')?.click() || navigateTo('home');
                 } else if (currentActiveScreen === 'new_reflection') {
-                    document.getElementById('nr-back-btn')?.click();
+                    document.getElementById('nr-back-btn')?.click() || navigateTo('home');
                 } else {
-                    document.querySelector('.bottom-nav [data-target="home"]')?.click();
+                    navigateTo('home');
                 }
             } else {
-                // 3. If already on Home or Login, require double press to exit
+                // 4. If already on Home or Login, require double press within 2 seconds to exit
                 const now = Date.now();
                 if (now - lastBackPressTime < 2000) {
-                    window.Capacitor.Plugins.App.exitApp();
+                    App.exitApp();
                 } else {
                     lastBackPressTime = now;
-                    // Show a quick inline toast
                     const toast = document.createElement('div');
                     toast.textContent = "Press back again to exit";
                     toast.style.position = 'fixed';
@@ -229,7 +239,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 1700);
                 }
             }
-        });
+        };
+
+        try {
+            App.addListener('backButton', handleBack);
+        } catch(e) {
+            console.warn('[Main] App backButton listener error:', e);
+        }
     }
 
     // Request notification permissions & clean up stale sit notifications on startup

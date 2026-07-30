@@ -999,9 +999,9 @@ export function renderBreathe(onComplete) {
 
                 // Start Native Foreground Service (Android only)
                 if (window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative) {
-                    const intervalVal = parseInt(container.querySelector('#bell-interval-input').value) || 0;
+                    const intervalVal = parseFloat(container.querySelector('#bell-interval-input').value) || 0;
                     window.Capacitor.Plugins.MeditationNative.startService({
-                        intervalMinutes: isMuted ? 0 : intervalVal,
+                        intervalSeconds: isMuted ? 0 : Math.floor(intervalVal * 60),
                         totalSeconds: timeLeft
                     }).catch(e => console.error('[Breathe] Native service error:', e));
                 }

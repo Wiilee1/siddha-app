@@ -12,6 +12,8 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import java.util.ArrayList;
+import java.util.List;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.content.pm.ServiceInfo;
@@ -23,7 +25,8 @@ public class MeditationService extends Service {
     private PowerManager.WakeLock wakeLock;
     private MediaPlayer keepAlivePlayer;
     private final Handler timerHandler = new Handler(Looper.getMainLooper());
-    private int intervalMinutes = 0;
+    private int intervalSeconds = 0;
+    private final List<MediaPlayer> activeBells = new ArrayList<>();
     private int totalSeconds = 0;
     private long startTimeMillis = 0;
     private int lastIntervalPlayed = 0;
@@ -35,8 +38,7 @@ public class MeditationService extends Service {
             int actualElapsedSeconds = (int) ((now - startTimeMillis) / 1000);
             
             // Check interval bell
-            if (intervalMinutes > 0) {
-                int intervalSeconds = intervalMinutes * 60;
+            if (intervalSeconds > 0) {
                 int currentIntervalBoundary = actualElapsedSeconds / intervalSeconds;
                 if (currentIntervalBoundary > lastIntervalPlayed && actualElapsedSeconds < totalSeconds && actualElapsedSeconds > 0) {
                     playBell(R.raw.interval_bell, true);
@@ -68,7 +70,7 @@ public class MeditationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-            intervalMinutes = intent.getIntExtra("intervalMinutes", 0);
+            intervalSeconds = intent.getIntExtra("intervalSeconds", 0);
             totalSeconds = intent.getIntExtra("totalSeconds", 0);
         }
 
@@ -145,6 +147,7 @@ public class MeditationService extends Service {
             bell.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
             bell.prepare();
             bell.start();
+            activeBells.add(bell);
 
             if (fadeOut) {
                 final long fadeStartDelayMs = 7000;
@@ -162,19 +165,27 @@ public class MeditationService extends Service {
                                     bell.setVolume(volume, volume);
                                     fadeHandler.postDelayed(this, 100);
                                 } else {
+                                    activeBells.remove(bell);
                                     bell.release();
                                 }
                             } else {
                                 if (bell.isPlaying()) bell.stop();
+                                activeBells.remove(bell);
                                 bell.release();
                             }
                         } catch (Exception e) {
-                            try { bell.release(); } catch (Exception ignored) {}
+                            try { 
+                                activeBells.remove(bell);
+                                bell.release(); 
+                            } catch (Exception ignored) {}
                         }
                     }
                 }, fadeStartDelayMs);
             } else {
-                bell.setOnCompletionListener(MediaPlayer::release);
+                bell.setOnCompletionListener(mp -> {
+                    activeBells.remove(mp);
+                    mp.release();
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();
