@@ -4,6 +4,8 @@
  * Can be swapped out for Firebase Firestore later.
  */
 
+import { tr } from './i18n.js';
+
 const DB_KEY = 'siddha_db';
 
 // Total XP needed to REACH each level (index = level number, 0 = never used)
@@ -167,13 +169,13 @@ function checkAndApplyLevelUpRewards(state, oldLevel, newLevel) {
 export { xpToLevel, xpForNextLevel, xpInCurrentLevel, LEVEL_THRESHOLDS };
 
 export const CHAKRA_LEVELS = [
-    { level: 1, name: "Root Chakra", color: "#E53935", bg: "rgba(229, 57, 53, 0.12)", border: "#E53935", emoji: "🔴" },
-    { level: 2, name: "Sacral Chakra", color: "#F57C00", bg: "rgba(245, 124, 0, 0.12)", border: "#F57C00", emoji: "🟠" },
-    { level: 3, name: "Solar Plexus", color: "#FBC02D", bg: "rgba(251, 192, 45, 0.18)", border: "#FBC02D", emoji: "🟡" },
-    { level: 4, name: "Heart Chakra", color: "#43A047", bg: "rgba(67, 160, 71, 0.12)", border: "#43A047", emoji: "🟢" },
-    { level: 5, name: "Throat Chakra", color: "#1E88E5", bg: "rgba(30, 136, 229, 0.12)", border: "#1E88E5", emoji: "🔵" },
-    { level: 6, name: "Third Eye", color: "#3F51B5", bg: "rgba(63, 81, 181, 0.12)", border: "#3F51B5", emoji: "🟣" },
-    { level: 7, name: "Crown Chakra", color: "#8E24AA", bg: "linear-gradient(135deg, rgba(142,36,170,0.18), rgba(212,175,55,0.22))", border: "#D4AF37", emoji: "👑" }
+    { level: 1, get name() { return tr("Root Chakra", "Czakra Podstawy"); }, color: "#E53935", bg: "rgba(229, 57, 53, 0.12)", border: "#E53935", emoji: "🔴" },
+    { level: 2, get name() { return tr("Sacral Chakra", "Czakra Sakralna"); }, color: "#F57C00", bg: "rgba(245, 124, 0, 0.12)", border: "#F57C00", emoji: "🟠" },
+    { level: 3, get name() { return tr("Solar Plexus", "Splot Słoneczny"); }, color: "#FBC02D", bg: "rgba(251, 192, 45, 0.18)", border: "#FBC02D", emoji: "🟡" },
+    { level: 4, get name() { return tr("Heart Chakra", "Czakra Serca"); }, color: "#43A047", bg: "rgba(67, 160, 71, 0.12)", border: "#43A047", emoji: "🟢" },
+    { level: 5, get name() { return tr("Throat Chakra", "Czakra Gardła"); }, color: "#1E88E5", bg: "rgba(30, 136, 229, 0.12)", border: "#1E88E5", emoji: "🔵" },
+    { level: 6, get name() { return tr("Third Eye", "Trzecie Oko"); }, color: "#3F51B5", bg: "rgba(63, 81, 181, 0.12)", border: "#3F51B5", emoji: "🟣" },
+    { level: 7, get name() { return tr("Crown Chakra", "Czakra Korony"); }, color: "#8E24AA", bg: "linear-gradient(135deg, rgba(142,36,170,0.18), rgba(212,175,55,0.22))", border: "#D4AF37", emoji: "👑" }
 ];
 
 export const DB = {
@@ -747,13 +749,13 @@ export const DB = {
 
         // Quest pool — rotates by day of year
         const QUESTS = [
-            { type: 'meditate', emoji: '🧘', label: 'Complete a meditation session', xp: 30, target: 'breathe' },
-            { type: 'reflect',  emoji: '📝', label: 'Log a mood reflection',          xp: 20, target: 'reflect' },
-            { type: 'wisdom',   emoji: '📖', label: 'Read a Wisdom Library article',  xp: 25, target: 'wisdom' },
-            { type: 'journey',  emoji: '🗺️', label: 'Complete a Journey path sit',     xp: 35, target: 'journey' },
-            { type: 'meditate', emoji: '🌿', label: 'Meditate for 10+ minutes',       xp: 40, target: 'breathe' },
-            { type: 'reflect',  emoji: '💭', label: 'Write a reflection note',         xp: 20, target: 'reflect' },
-            { type: 'meditate', emoji: '🔥', label: 'Extend your daily streak',       xp: 35, target: 'breathe' },
+            { type: 'meditate', emoji: '🧘', label: tr('Complete a meditation session', 'Ukończ sesję medytacji'), xp: 30, target: 'breathe' },
+            { type: 'reflect',  emoji: '📝', label: tr('Log a mood reflection', 'Zapisz refleksję nastroju'),          xp: 20, target: 'reflect' },
+            { type: 'wisdom',   emoji: '📖', label: tr('Read a Wisdom Library article', 'Przeczytaj artykuł w Bibliotece Mądrości'),  xp: 25, target: 'wisdom' },
+            { type: 'journey',  emoji: '🗺️', label: tr('Complete a Journey path sit', 'Ukończ sesję ze Ścieżki Medytacji'),     xp: 35, target: 'journey' },
+            { type: 'meditate', emoji: '🌿', label: tr('Meditate for 10+ minutes', 'Medytuj przez 10+ minut'),       xp: 40, target: 'breathe' },
+            { type: 'reflect',  emoji: '💭', label: tr('Write a reflection note', 'Napisz notatkę refleksyjną'),         xp: 20, target: 'reflect' },
+            { type: 'meditate', emoji: '🔥', label: tr('Extend your daily streak', 'Przedłuż swoją codzienną serię'),       xp: 35, target: 'breathe' },
         ];
 
         // Rotate quest by calendar day
@@ -856,8 +858,8 @@ export const DB = {
                         const chakra = CHAKRA_LEVELS[Math.min(6, t.level - 1)];
                         newlyUnlocked.push({
                             id: key,
-                            title: `${ach.title} (Level ${t.level})`,
-                            desc: `${t.target} milestone reached in ${chakra.name}`,
+                            title: `${ach.title} (${tr('Level', 'Poziom')} ${t.level})`,
+                            desc: tr(`${t.target} milestone reached in ${chakra.name}`, `Osiągnięto kamień milowy (${t.target}) w: ${chakra.name}`),
                             emoji: ach.emoji,
                             xp: t.xp,
                             chakra
@@ -1049,8 +1051,8 @@ export const DB = {
 const ACHIEVEMENTS = [
     {
         id: 'sits_milestone',
-        title: 'Meditation Sits',
-        desc: 'Accumulate completed meditation sessions',
+        get title() { return tr('Meditation Sits', 'Sesje Medytacji'); },
+        get desc() { return tr('Accumulate completed meditation sessions', 'Gromadź ukończone sesje medytacyjne'); },
         emoji: '🧘',
         tiers: [
             { level: 1, target: 1, xp: 20 },
@@ -1065,8 +1067,8 @@ const ACHIEVEMENTS = [
     },
     {
         id: 'minutes_milestone',
-        title: 'Mindful Minutes',
-        desc: 'Accumulate total minutes spent in quiet sit',
+        get title() { return tr('Mindful Minutes', 'Uważne Minuty'); },
+        get desc() { return tr('Accumulate total minutes spent in quiet sit', 'Gromadź łączne minuty spędzone w ciszy'); },
         emoji: '⏱️',
         tiers: [
             { level: 1, target: 10, xp: 20 },
@@ -1081,8 +1083,8 @@ const ACHIEVEMENTS = [
     },
     {
         id: 'streak_milestone',
-        title: 'Streak Keeper',
-        desc: 'Maintain consecutive daily sit practice',
+        get title() { return tr('Streak Keeper', 'Strażnik Regularności'); },
+        get desc() { return tr('Maintain consecutive daily sit practice', 'Utrzymuj nieprzerwaną codzienną praktykę'); },
         emoji: '🔥',
         tiers: [
             { level: 1, target: 1, xp: 15 },
@@ -1097,8 +1099,8 @@ const ACHIEVEMENTS = [
     },
     {
         id: 'pathways_milestone',
-        title: 'Path Explorer',
-        desc: 'Practice across unlocked meditation lineages',
+        get title() { return tr('Path Explorer', 'Odkrywca Ścieżek'); },
+        get desc() { return tr('Practice across unlocked meditation lineages', 'Praktykuj w odblokowanych tradycjach medytacji'); },
         emoji: '🧭',
         tiers: [
             { level: 1, target: 1, xp: 20 },
@@ -1113,8 +1115,8 @@ const ACHIEVEMENTS = [
     },
     {
         id: 'reflections_milestone',
-        title: 'Reflective Soul',
-        desc: 'Log post-meditation mood & mind reflections',
+        get title() { return tr('Reflective Soul', 'Refleksyjna Dusza'); },
+        get desc() { return tr('Log post-meditation mood & mind reflections', 'Zapisuj refleksje nastroju i umysłu po medytacji'); },
         emoji: '📝',
         tiers: [
             { level: 1, target: 1, xp: 15 },
@@ -1129,8 +1131,8 @@ const ACHIEVEMENTS = [
     },
     {
         id: 'wisdom_seeker',
-        title: 'Wisdom Seeker',
-        desc: 'Read articles from the Wisdom Library',
+        get title() { return tr('Wisdom Seeker', 'Poszukiwacz Mądrości'); },
+        get desc() { return tr('Read articles from the Wisdom Library', 'Czytaj artykuły z Biblioteki Mądrości'); },
         emoji: '📖',
         tiers: [
             { level: 1, target: 1, xp: 15 },

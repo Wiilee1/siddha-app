@@ -1,4 +1,5 @@
 import { DB } from '../services/db.js';
+import { tr, getLocale } from '../services/i18n.js';
 
 export function renderReflect(onNewReflection) {
     const container = document.createElement('div');
@@ -8,19 +9,19 @@ export function renderReflect(onNewReflection) {
         <!-- Header -->
         <div class="rfl-header">
             <div>
-                <h1 class="rfl-title">Reflections</h1>
-                <p class="rfl-subtitle">Your mindfulness journey</p>
+                <h1 class="rfl-title">${tr('Reflections', 'Dziennik Refleksji')}</h1>
+                <p class="rfl-subtitle">${tr('Your mindfulness journey', 'Twoja podróż uważności')}</p>
             </div>
             <button class="rfl-new-btn" id="new-reflection-btn">
                 <span class="material-symbols-rounded" style="font-size:18px;">add</span>
-                Reflect
+                ${tr('Reflect', 'Dodaj wpis')}
             </button>
         </div>
 
         <!-- Quote Banner -->
         <div class="rfl-quote-card">
             <span class="material-symbols-rounded" style="font-size:24px; color:var(--color-accent); opacity:0.6; margin-bottom:8px;">format_quote</span>
-            <p class="rfl-quote-text">"You are the sky. Everything else – it’s just the weather."</p>
+            <p class="rfl-quote-text">${tr('"You are the sky. Everything else – it’s just the weather."', '„Jesteś niebem. Wszystko inne – to tylko pogoda.”')}</p>
             <p class="rfl-quote-author">— Pema Chödrön</p>
         </div>
 
@@ -29,7 +30,7 @@ export function renderReflect(onNewReflection) {
             <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
                 <h3 style="font-size: 14px; margin: 0; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px; color: var(--color-text-primary);">
                     <span class="material-symbols-rounded" style="color: var(--color-accent); font-size: 18px;">insights</span>
-                    Mind State Flow
+                    ${tr('Mind State Flow', 'Przepływ Stanu Umysłu')}
                 </h3>
                 <span class="material-symbols-rounded collapsible-toggle" style="transition: transform 0.2s;">expand_more</span>
             </div>
@@ -42,11 +43,11 @@ export function renderReflect(onNewReflection) {
 
         <!-- Past reflections -->
         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px;">
-            <h3 class="rfl-section-title" style="margin:0;">Recent Reflections</h3>
-            <button id="rfl-toggle-all-btn" class="rfl-toggle-btn">Show all</button>
+            <h3 class="rfl-section-title" style="margin:0;">${tr('Recent Reflections', 'Ostatnie Refleksje')}</h3>
+            <button id="rfl-toggle-all-btn" class="rfl-toggle-btn">${tr('Show all', 'Pokaż wszystkie')}</button>
         </div>
         <div id="reflection-list" class="rfl-list">
-            <p class="rfl-empty">No reflections yet. Tap Reflect above to add your first.</p>
+            <p class="rfl-empty">${tr('No reflections yet. Tap Reflect above to add your first.', 'Brak zapisanych refleksji. Dotknij „Dodaj wpis” powyżej, aby dodać pierwszą.')}</p>
         </div>
         <!-- bottom padding so last item isn't cut off by floating nav button -->
         <div style="height: 48px; flex-shrink: 0;"></div>
@@ -214,13 +215,13 @@ export function renderReflect(onNewReflection) {
 
     container.querySelector('#rfl-toggle-all-btn').addEventListener('click', () => {
         showAll = !showAll;
-        container.querySelector('#rfl-toggle-all-btn').textContent = showAll ? "Hide past" : "Show all";
+        container.querySelector('#rfl-toggle-all-btn').textContent = showAll ? tr("Hide past", "Ukryj starsze") : tr("Show all", "Pokaż wszystkie");
         container.updateData();
     });
 
     function formatDate(isoString) {
         const d = new Date(isoString);
-        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        return d.toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
     }
 
     container.updateData = () => {
@@ -232,7 +233,7 @@ export function renderReflect(onNewReflection) {
             if (reflections.length === 0) {
                 moodContainer.innerHTML = `
                     <div style="text-align: center; padding: 12px 0; color: var(--color-text-muted); font-size: 12px;">
-                        Complete a session or add a reflection to visualize your mind state trends.
+                        ${tr('Complete a session or add a reflection to visualize your mind state trends.', 'Ukończ sesję lub dodaj refleksję, aby zwizualizować trendy swojego stanu umysłu.')}
                     </div>
                 `;
             } else {
@@ -270,25 +271,25 @@ export function renderReflect(onNewReflection) {
                 const coherencePct = Math.max(0, Math.round(100 - spread));
 
                 function getMindStateTitle(focus, stability, equanimity) {
-                    if (equanimity >= 65 && focus >= 65 && stability >= 65) return { title: 'Open Samadhi', emoji: '🕊️', color: '#10b981' };
-                    if (focus >= 60 && stability < 35) return { title: 'Striving against Dullness', emoji: '😴', color: '#7c3aed' };
-                    if (focus < 35 && stability < 35 && equanimity < 35) return { title: 'Turbulent Mind', emoji: '🌪️', color: '#e11d48' };
-                    if (focus < 35 && stability < 35) return { title: 'Sleepy Drift', emoji: '💤', color: '#f59e0b' };
-                    if (focus >= 65 && stability >= 60) return { title: 'Laser Clarity', emoji: '🎯', color: '#6366f1' };
-                    if (focus >= 65 && equanimity < 35) return { title: 'Tense Striving', emoji: '⚡', color: '#f43f5e' };
-                    if (equanimity >= 65 && focus < 40) return { title: 'Equanimous Flow', emoji: '🌊', color: '#06b6d4' };
-                    if (stability >= 65 && equanimity >= 60) return { title: 'Tranquil Stillness', emoji: '🌌', color: '#3b82f6' };
-                    if (stability >= 45 && focus < 35 && equanimity >= 40) return { title: 'Gentle Anchoring', emoji: '🕯️', color: '#14b8a6' };
-                    if (focus >= 50 && stability >= 50) return { title: 'Focused Clarity', emoji: '🧘', color: '#8b5cf6' };
-                    return { title: 'Gentle Awareness', emoji: '🌱', color: '#a855f7' };
+                    if (equanimity >= 65 && focus >= 65 && stability >= 65) return { title: tr('Open Samadhi', 'Otwarte Samadhi'), emoji: '🕊️', color: '#10b981' };
+                    if (focus >= 60 && stability < 35) return { title: tr('Striving against Dullness', 'Zmaganie z Otępieniem'), emoji: '😴', color: '#7c3aed' };
+                    if (focus < 35 && stability < 35 && equanimity < 35) return { title: tr('Turbulent Mind', 'Wzburzony Umysł'), emoji: '🌪️', color: '#e11d48' };
+                    if (focus < 35 && stability < 35) return { title: tr('Sleepy Drift', 'Senny Dryf'), emoji: '💤', color: '#f59e0b' };
+                    if (focus >= 65 && stability >= 60) return { title: tr('Laser Clarity', 'Laserowa Klarowność'), emoji: '🎯', color: '#6366f1' };
+                    if (focus >= 65 && equanimity < 35) return { title: tr('Tense Striving', 'Napięty Wysiłek'), emoji: '⚡', color: '#f43f5e' };
+                    if (equanimity >= 65 && focus < 40) return { title: tr('Equanimous Flow', 'Zrównoważony Przepływ'), emoji: '🌊', color: '#06b6d4' };
+                    if (stability >= 65 && equanimity >= 60) return { title: tr('Tranquil Stillness', 'Spokojny Bezruch'), emoji: '🌌', color: '#3b82f6' };
+                    if (stability >= 45 && focus < 35 && equanimity >= 40) return { title: tr('Gentle Anchoring', 'Łagodne Zakotwiczenie'), emoji: '🕯️', color: '#14b8a6' };
+                    if (focus >= 50 && stability >= 50) return { title: tr('Focused Clarity', 'Skupiona Klarowność'), emoji: '🧘', color: '#8b5cf6' };
+                    return { title: tr('Gentle Awareness', 'Łagodna Świadomość'), emoji: '🌱', color: '#a855f7' };
                 }
 
                 function renderLotusBloomSVG(focus, stability, equanimity) {
                     // Title determination
-                    let title = "Gentle Bloom";
-                    if (focus >= 70 && stability >= 70 && equanimity >= 70) title = "Open Samadhi";
-                    else if (focus >= 60 && stability >= 60) title = "Quiet Presence";
-                    else if (focus < 40 && stability < 40) title = "Resting Bud";
+                    let title = tr("Gentle Bloom", "Łagodny Rozkwit");
+                    if (focus >= 70 && stability >= 70 && equanimity >= 70) title = tr("Open Samadhi", "Otwarte Samadhi");
+                    else if (focus >= 60 && stability >= 60) title = tr("Quiet Presence", "Cicha Obecność");
+                    else if (focus < 40 && stability < 40) title = tr("Resting Bud", "Spoczywający Pąk");
 
                     const scale = 0.55 + (focus / 100) * 0.45;
                     const petalSpread = Math.round(18 + (stability / 100) * 32);
@@ -313,7 +314,7 @@ export function renderReflect(onNewReflection) {
 
                     return `
                         <div style="text-align:center; padding:16px 14px; background:var(--color-bg-card); border-radius:18px; border:1px solid rgba(0,0,0,0.06); box-shadow:0 4px 16px rgba(0,0,0,0.03);">
-                            <div style="font-size:18px; font-weight:700; font-family:var(--font-heading); color:var(--color-text-primary); margin-bottom:2px;">🌸 Lotus Bloom</div>
+                            <div style="font-size:18px; font-weight:700; font-family:var(--font-heading); color:var(--color-text-primary); margin-bottom:2px;">🌸 ${tr('Lotus Bloom', 'Rozkwit Lotosu')}</div>
                             <div style="font-size:12px; font-weight:600; color:var(--color-accent); margin-bottom:14px;">"${title}"</div>
 
                             <div style="position:relative; width:180px; height:140px; margin:0 auto;">
@@ -361,9 +362,9 @@ export function renderReflect(onNewReflection) {
 
                             <!-- Values Breakdown matching Layout spec -->
                             <div style="display:flex; justify-content:center; gap:16px; margin-top:10px; font-size:11px; color:var(--color-text-secondary); font-weight:600;">
-                                <span>Focus <strong>${focus}%</strong></span>
-                                <span>Clarity <strong>${stability}%</strong></span>
-                                <span>Equanimity <strong>${equanimity}%</strong></span>
+                                <span>${tr('Focus', 'Skupienie')} <strong>${focus}%</strong></span>
+                                <span>${tr('Clarity', 'Jasność')} <strong>${stability}%</strong></span>
+                                <span>${tr('Equanimity', 'Równowaga')} <strong>${equanimity}%</strong></span>
                             </div>
                         </div>
                     `;
@@ -432,9 +433,9 @@ export function renderReflect(onNewReflection) {
 
                     return `
                         <div style="background:var(--color-bg-card); border-radius:18px; padding:18px 16px; border:1.5px solid ${isHarmonious ? 'var(--color-accent)' : 'rgba(0,0,0,0.06)'}; box-shadow:${isHarmonious ? '0 8px 24px rgba(16,185,129,0.15)' : '0 4px 16px rgba(0,0,0,0.03)'};">
-                            <div style="font-size:18px; font-weight:700; font-family:var(--font-heading); color:var(--color-text-primary); margin-bottom:2px; text-align:center;">🧭 Compass / Mandala</div>
+                            <div style="font-size:18px; font-weight:700; font-family:var(--font-heading); color:var(--color-text-primary); margin-bottom:2px; text-align:center;">🧭 ${tr('Compass / Mandala', 'Kompas / Mandala')}</div>
                             <div style="font-size:12px; font-weight:600; color:${isHarmonious ? 'var(--color-accent)' : 'var(--color-text-muted)'}; margin-bottom:14px; text-align:center;">
-                                ${isHarmonious ? '✨ Harmonious Sacred Geometry Active' : `Inner Balance Coherence: ${coherencePct}%`}
+                                ${isHarmonious ? tr('✨ Harmonious Sacred Geometry Active', '✨ Harmonijna Święta Geometria Aktywna') : `${tr('Inner Balance Coherence:', 'Spójność wewnętrznej równowagi:')} ${coherencePct}%`}
                             </div>
 
                             <div style="position:relative; width:100%; height:230px; background:${isHarmonious ? 'radial-gradient(circle at 50% 50%, rgba(52, 211, 153, 0.12), rgba(245, 158, 11, 0.08), var(--color-bg-secondary))' : 'var(--color-bg-secondary)'}; border-radius:16px; border:1.5px solid rgba(0,0,0,0.08); overflow:hidden; padding:8px; box-shadow:inset 0 2px 6px rgba(0,0,0,0.04);">
@@ -451,10 +452,10 @@ export function renderReflect(onNewReflection) {
                                 <div style="position:absolute; top:50%; left:0; right:0; height:1.5px; background:rgba(0,0,0,0.09); border-top:1px dashed rgba(0,0,0,0.15); pointer-events:none;"></div>
                                 
                                 <!-- Mandala Axes Labels -->
-                                <span style="position:absolute; top:8px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--color-text-muted); font-weight:700; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">Clarity ▲</span>
-                                <span style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--color-text-muted); font-weight:600; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">▼ Equanimity</span>
-                                <span style="position:absolute; top:50%; right:10px; transform:translateY(-50%); font-size:10px; color:var(--color-text-muted); font-weight:700; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">Absorption ►</span>
-                                <span style="position:absolute; top:50%; left:10px; transform:translateY(-50%); font-size:10px; color:var(--color-text-muted); font-weight:600; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">◄ Focus</span>
+                                <span style="position:absolute; top:8px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--color-text-muted); font-weight:700; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">${tr('Clarity ▲', 'Jasność ▲')}</span>
+                                <span style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--color-text-muted); font-weight:600; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">${tr('▼ Equanimity', '▼ Równowaga')}</span>
+                                <span style="position:absolute; top:50%; right:10px; transform:translateY(-50%); font-size:10px; color:var(--color-text-muted); font-weight:700; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">${tr('Absorption ►', 'Głębia ►')}</span>
+                                <span style="position:absolute; top:50%; left:10px; transform:translateY(-50%); font-size:10px; color:var(--color-text-muted); font-weight:600; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">${tr('◄ Focus', '◄ Skupienie')}</span>
 
                                 <!-- Plotted Sit Nodes Constellation -->
                                 ${matrixPts}
@@ -467,15 +468,15 @@ export function renderReflect(onNewReflection) {
                             <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-top:12px;">
                                 ${isBalancedMind ? `
                                     <span style="font-size:11.5px; padding:5px 16px; border-radius:14px; font-weight:700; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; box-shadow:0 3px 10px rgba(16,185,129,0.35);">
-                                        ✨ Balanced Mind (Centred)
+                                        ✨ ${tr('Balanced Mind (Centred)', 'Zrównoważony Umysł (W centrum)')}
                                     </span>
                                 ` : isHarmonious ? `
                                     <span style="font-size:11px; padding:4px 14px; border-radius:14px; font-weight:700; background:linear-gradient(135deg, #3b82f6, #8b5cf6); color:#ffffff; box-shadow:0 2px 8px rgba(59,130,246,0.3);">
-                                        ✺ Harmonious Flow (${coherencePct}%)
+                                        ✺ ${tr('Harmonious Flow', 'Harmonijny Przepływ')} (${coherencePct}%)
                                     </span>
                                 ` : `
                                     <span style="font-size:10.5px; font-weight:600; color:var(--color-text-muted);">
-                                        Current State: Focus ${f}% • Clarity ${s}% • Equanimity ${eq}%
+                                        ${tr('Current State:', 'Obecny stan:')} ${tr('Focus', 'Skupienie')} ${f}% • ${tr('Clarity', 'Jasność')} ${s}% • ${tr('Equanimity', 'Równowaga')} ${eq}%
                                     </span>
                                 `}
                             </div>
@@ -501,10 +502,10 @@ export function renderReflect(onNewReflection) {
                                 <div style="position:absolute; top:50%; left:0; right:0; height:1.5px; background:rgba(0,0,0,0.09); border-top:1px dashed rgba(0,0,0,0.15); pointer-events:none;"></div>
                                 
                                 <!-- Axes Labels -->
-                                <span style="position:absolute; top:8px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--color-text-muted); font-weight:700; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">High Stability ▲</span>
-                                <span style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--color-text-muted); font-weight:600; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">▼ Low Stability</span>
-                                <span style="position:absolute; top:50%; right:10px; transform:translateY(-50%); font-size:10px; color:var(--color-text-muted); font-weight:700; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">High Focus ►</span>
-                                <span style="position:absolute; top:50%; left:10px; transform:translateY(-50%); font-size:10px; color:var(--color-text-muted); font-weight:600; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">◄ Low Focus</span>
+                                <span style="position:absolute; top:8px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--color-text-muted); font-weight:700; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">${tr('High Stability ▲', 'Wysoka stabilność ▲')}</span>
+                                <span style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--color-text-muted); font-weight:600; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">${tr('▼ Low Stability', '▼ Niska stabilność')}</span>
+                                <span style="position:absolute; top:50%; right:10px; transform:translateY(-50%); font-size:10px; color:var(--color-text-muted); font-weight:700; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">${tr('High Focus ►', 'Wysokie skupienie ►')}</span>
+                                <span style="position:absolute; top:50%; left:10px; transform:translateY(-50%); font-size:10px; color:var(--color-text-muted); font-weight:600; background:rgba(255,255,255,0.75); padding:2px 8px; border-radius:6px; pointer-events:none;">${tr('◄ Low Focus', '◄ Niskie skupienie')}</span>
 
                                 <!-- Plotted Sit Nodes Constellation -->
                                 ${matrixPts}
@@ -517,11 +518,11 @@ export function renderReflect(onNewReflection) {
                             <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-top:12px;">
                                 ${isBalancedMind ? `
                                     <span style="font-size:11.5px; padding:5px 16px; border-radius:14px; font-weight:700; background:linear-gradient(135deg, #10b981, #059669); color:#ffffff; box-shadow:0 3px 10px rgba(16,185,129,0.35);">
-                                        ✨ Balanced Mind (Centred)
+                                        ✨ ${tr('Balanced Mind (Centred)', 'Zrównoważony Umysł (W centrum)')}
                                     </span>
                                 ` : `
                                     <span style="font-size:10.5px; font-weight:600; color:var(--color-text-muted);">
-                                        Current Point: Focus ${f}% • Stability ${s}% • Equanimity ${eq}%
+                                        ${tr('Current Point:', 'Obecny punkt:')} ${tr('Focus', 'Skupienie')} ${f}% • ${tr('Stability', 'Stabilność')} ${s}% • ${tr('Equanimity', 'Równowaga')} ${eq}%
                                     </span>
                                 `}
                             </div>
@@ -559,9 +560,9 @@ export function renderReflect(onNewReflection) {
 
                     <!-- Switchable Visualization Tabs -->
                     <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; margin-bottom:12px; scrollbar-width:none;" id="rfl-vis-tabs">
-                        <button class="rfl-vis-tab active" data-target="pane-map">📍 State Matrix Map</button>
-                        <button class="rfl-vis-tab" data-target="pane-mandala">🧭 Compass Mandala</button>
-                        <button class="rfl-vis-tab" data-target="pane-lotus">🌸 Lotus Bloom</button>
+                        <button class="rfl-vis-tab active" data-target="pane-map">📍 ${tr('State Matrix Map', 'Mapa Stanu Umysłu')}</button>
+                        <button class="rfl-vis-tab" data-target="pane-mandala">🧭 ${tr('Compass Mandala', 'Mandala Kompasu')}</button>
+                        <button class="rfl-vis-tab" data-target="pane-lotus">🌸 ${tr('Lotus Bloom', 'Rozkwit Lotosu')}</button>
                     </div>
 
                     <!-- Pane 1: 2D State Matrix Map -->
@@ -582,18 +583,21 @@ export function renderReflect(onNewReflection) {
                     <!-- Developer State Visualizer Sandbox Control Panel -->
                     <div style="margin-top:14px; background:var(--color-bg-secondary); border-radius:16px; border:1px solid rgba(139,92,246,0.2); overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.02);">
                         <button id="rfl-dev-toggle" style="width:100%; text-align:left; background:none; border:none; padding:12px 14px; font-size:12px; font-weight:700; color:var(--color-accent); cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
-                            <span>⚙️ Live Visualizer Sandbox (Dev Tool)</span>
+                            <span>⚙️ ${tr('Live Visualizer Sandbox (Dev Tool)', 'Podgląd Wizualizacji na Żywo (Sandbox)')}</span>
                             <span id="rfl-dev-chevron" style="font-size:11px; transition:transform 0.2s;">▼</span>
                         </button>
                         <div id="rfl-dev-body" style="display:none; padding:0 14px 14px; flex-direction:column; gap:12px;">
                             <div style="font-size:10.5px; color:var(--color-text-muted); font-style:italic; margin-bottom:2px;">
-                                Adjust sliders below to test how the Siddha visualizers react to different mind state combinations in real-time.
+                                ${tr(
+                                    'Adjust sliders below to test how the Siddha visualizers react to different mind state combinations in real-time.',
+                                    'Przesuwaj suwaki poniżej, aby przetestować na żywo, jak wizualizacje reagują na różne kombinacje stanu umysłu.'
+                                )}
                             </div>
                             
                             <!-- Focus Slider -->
                             <div>
                                 <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:var(--color-text-primary); margin-bottom:4px;">
-                                    <span>🧘 Focus & Concentration</span>
+                                    <span>🧘 ${tr('Focus & Concentration', 'Skupienie i Koncentracja')}</span>
                                     <span id="rfl-dev-val-focus" style="color:var(--color-accent); font-weight:700;">${avgFocus}%</span>
                                 </div>
                                 <input type="range" id="rfl-dev-slider-focus" min="0" max="100" value="${avgFocus}" style="width:100%; accent-color:var(--color-accent); cursor:pointer;" />
@@ -602,7 +606,7 @@ export function renderReflect(onNewReflection) {
                             <!-- Stability Slider -->
                             <div>
                                 <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:var(--color-text-primary); margin-bottom:4px;">
-                                    <span>☀️ Stability & Clarity</span>
+                                    <span>☀️ ${tr('Stability & Clarity', 'Stabilność i Jasność')}</span>
                                     <span id="rfl-dev-val-stability" style="color:#3b82f6; font-weight:700;">${avgStability}%</span>
                                 </div>
                                 <input type="range" id="rfl-dev-slider-stability" min="0" max="100" value="${avgStability}" style="width:100%; accent-color:#3b82f6; cursor:pointer;" />
@@ -611,7 +615,7 @@ export function renderReflect(onNewReflection) {
                             <!-- Equanimity Slider -->
                             <div>
                                 <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:var(--color-text-primary); margin-bottom:4px;">
-                                    <span>🕊️ Equanimity & Openness</span>
+                                    <span>🕊️ ${tr('Equanimity & Openness', 'Równowaga i Otwartość')}</span>
                                     <span id="rfl-dev-val-equanimity" style="color:#10b981; font-weight:700;">${avgEquanimity}%</span>
                                 </div>
                                 <input type="range" id="rfl-dev-slider-equanimity" min="0" max="100" value="${avgEquanimity}" style="width:100%; accent-color:#10b981; cursor:pointer;" />
@@ -693,24 +697,24 @@ export function renderReflect(onNewReflection) {
         list.innerHTML = '';
 
         if (reflections.length === 0) {
-            list.innerHTML = '<p class="rfl-empty">No reflections yet. Tap Reflect above to add your first.</p>';
+            list.innerHTML = `<p class="rfl-empty">${tr('No reflections yet. Tap Reflect above to add your first.', 'Brak zapisanych refleksji. Dotknij „Dodaj wpis” powyżej, aby dodać pierwszą.')}</p>`;
             return;
         }
 
         const MOOD_EMOJI = { calm: '😌', happy: '😊', tired: '😴', anxious: '😰', grateful: '🙏', neutral: '😐', clear: '✨', restless: '🌪️' };
         const FOCUS_LABELS = {
-            wandering: '🌀 Wandering',
-            unsteady: '🌊 Unsteady',
-            settling: '🍃 Settling',
-            focused: '🧘 Focused',
-            absorbed: '✨ Absorbed'
+            wandering: `🌀 ${tr('Wandering', 'Rozproszenie')}`,
+            unsteady: `🌊 ${tr('Unsteady', 'Niestabilność')}`,
+            settling: `🍃 ${tr('Settling', 'Wyciszanie')}`,
+            focused: `🧘 ${tr('Focused', 'Skupienie')}`,
+            absorbed: `✨ ${tr('Absorbed', 'Głębia')}`
         };
         const HINDRANCE_LABELS = {
-            dullness: '💤 Sleepiness',
-            restlessness: '🐝 Restlessness',
-            craving: '💭 Craving',
-            aversion: '⚡ Aversion',
-            doubt: '❓ Doubt'
+            dullness: `💤 ${tr('Sleepiness', 'Senność')}`,
+            restlessness: `🐝 ${tr('Restlessness', 'Niepokój')}`,
+            craving: `💭 ${tr('Craving', 'Pragnienie')}`,
+            aversion: `⚡ ${tr('Aversion', 'Niecierpliwość')}`,
+            doubt: `❓ ${tr('Doubt', 'Zwątpienie')}`
         };
 
         const itemsToShow = showAll ? reflections : reflections.slice(0, 3);
@@ -733,7 +737,7 @@ export function renderReflect(onNewReflection) {
 
             const intentionTag = ref.intention
                 ? `<div style="font-size:11px; font-weight:600; color:var(--color-accent-dark); background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.15); padding:3px 10px; border-radius:8px; display:inline-flex; align-items:center; gap:4px; margin-top:2px;">
-                    ✨ Intention: "${ref.intention}"
+                    ✨ ${tr('Intention:', 'Intencja:')} "${ref.intention}"
                    </div>`
                 : '';
 
@@ -742,8 +746,8 @@ export function renderReflect(onNewReflection) {
                     <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                         <span class="rfl-item-mood">${emoji}</span>
                         ${isStandalone
-                            ? '<span class="rfl-item-standalone">Standalone</span>'
-                            : `<span class="rfl-item-duration">${ref.duration}m sit</span>`
+                            ? `<span class="rfl-item-standalone">${tr('Standalone', 'Wpis własny')}</span>`
+                            : `<span class="rfl-item-duration">${ref.duration}m ${tr('sit', 'sesja')}</span>`
                         }
                         ${focusBadge}
                     </div>
@@ -759,7 +763,7 @@ export function renderReflect(onNewReflection) {
         if (!showAll && reflections.length > 3) {
             const hiddenMsg = document.createElement('p');
             hiddenMsg.className = 'rfl-empty';
-            hiddenMsg.textContent = `${reflections.length - 3} older reflections hidden.`;
+            hiddenMsg.textContent = tr(`${reflections.length - 3} older reflections hidden.`, `Ukryto starsze refleksje (${reflections.length - 3}).`);
             list.appendChild(hiddenMsg);
         }
     };

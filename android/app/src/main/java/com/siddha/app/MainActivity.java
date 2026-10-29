@@ -2,6 +2,7 @@ package com.siddha.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import androidx.core.splashscreen.SplashScreen;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Plugin;
@@ -12,35 +13,40 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 public class MainActivity extends BridgeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        registerPlugin(MeditationPlugin.class);
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
-        registerPlugin(MeditationPlugin.class);
     }
-}
 
-@CapacitorPlugin(name = "MeditationNative")
-class MeditationPlugin extends Plugin {
-    @PluginMethod
-    public void startService(PluginCall call) {
-        Integer interval = call.getInt("intervalSeconds");
-        Integer total = call.getInt("totalSeconds");
+    @CapacitorPlugin(name = "MeditationNative")
+    public static class MeditationPlugin extends Plugin {
+        @PluginMethod
+        public void startService(PluginCall call) {
+            Integer interval = call.getInt("intervalSeconds");
+            Integer total = call.getInt("totalSeconds");
+            Log.d("MeditationService", "=== NATIVE PLUGIN: startService called with interval=" + interval + ", total=" + total + " ===");
 
-        Intent intent = new Intent(getContext(), MeditationService.class);
-        intent.putExtra("intervalSeconds", interval != null ? interval : 0);
-        intent.putExtra("totalSeconds", total != null ? total : 0);
+            Intent intent = new Intent(getContext(), MeditationService.class);
+            intent.putExtra("intervalSeconds", interval != null ? interval : 0);
+            intent.putExtra("totalSeconds", total != null ? total : 0);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            getContext().startForegroundService(intent);
-        } else {
-            getContext().startService(intent);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                getContext().startForegroundService(intent);
+            } else {
+                getContext().startService(intent);
+            }
+            call.resolve();
         }
-        call.resolve();
-    }
 
-    @PluginMethod
-    public void stopService(PluginCall call) {
-        Intent intent = new Intent(getContext(), MeditationService.class);
-        getContext().stopService(intent);
-        call.resolve();
+        @PluginMethod
+        public void stopService(PluginCall call) {
+            Log.d("MeditationService", "=== NATIVE PLUGIN: stopService called ===");
+            try {
+                MeditationService.cancelAlarm(getContext());
+            } catch (Exception ignored) {}
+            Intent intent = new Intent(getContext(), MeditationService.class);
+            getContext().stopService(intent);
+            call.resolve();
+        }
     }
 }

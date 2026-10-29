@@ -1,7 +1,8 @@
 import { DB, xpInCurrentLevel } from '../services/db.js';
 import { Synth } from '../services/synth.js';
+import { tr } from '../services/i18n.js';
 
-const DIALOGUES = [
+const DIALOGUES_EN = [
     "Don't just do something, sit there!",
     "True stillness is not the absence of sound, but the presence of the one who listens.",
     "Silence is not empty. It is full of presence.",
@@ -24,6 +25,29 @@ const DIALOGUES = [
     "The breath is your anchor. Whenever the storm of thoughts arrives, return to the breath."
 ];
 
+const DIALOGUES_PL = [
+    "Nie rób po prostu czegoś – usiądź i bądź!",
+    "Prawdziwy bezruch to nie brak dźwięku, lecz obecność tego, który słucha.",
+    "Cisza nie jest pusta. Jest pełna obecności.",
+    "Gdy uświadamiasz sobie ciszę wokół siebie, natychmiast dotykasz spokoju wewnątrz.",
+    "W Tobie istnieje cicha przestrzeń nietknięta żadną burzą. Usiądźmy w niej.",
+    "Nie jesteś swoimi myślami. Jesteś przestrzenną świadomością, w której się pojawiają i rozpuszczają.",
+    "Zatrzymaj się. Patrz. Słuchaj. W tej chwili nie ma nic innego do zrobienia.",
+    "Pozwól tej chwili być dokładnie taką, jaka jest. Odpuść potrzebę zmieniania czegokolwiek.",
+    "Gdy tracisz kontakt z wewnętrzną ciszą, gubisz się w świecie. Wróć tutaj.",
+    "Zamknij oczy, poczuj dotyk powietrza i pozwól reszcie świata zaczekać.",
+    "Wsłuchaj się w ciszę pomiędzy dwoma oddechami. W tej krótkiej przerwie jesteś całkowicie wolny.",
+    "Poczuj ciężar grawitacji. Ziemia wspiera tę sesję – oprzyj się na niej.",
+    "Obserwuj chłodny powiew na czubku nosa przy wdechu i ciepłe westchnienie przy wydechu.",
+    "Opuść ramiona. Rozluźnij szczękę. Niech kolejny oddech będzie całkowicie bezwysiłkowy.",
+    "Poczuj łagodne unoszenie i opadanie klatki piersiowej. Jak ciche fale na spokojnym jeziorze.",
+    "Medytujemy dzisiaj, czy po prostu siedzimy tutaj, wyglądając niezwykle spokojnie?",
+    "Spójrz na drzewo, kwiat, liść. Zauważ, jak są nieruchome i zakorzenione w istnieniu. Niech Cię uczą.",
+    "Umysł jest zawsze zajęty. Ale pod hałasem kryje się głęboki ocean spokoju. Zanurz się w nim.",
+    "Obserwuj, jak Twoje myśli powstają i znikają, niczym chmury płynące po bezkresnym niebie.",
+    "Oddech jest Twoją kotwicą. Ilekroć nadciąga burza myśli, wracaj do oddechu."
+];
+
 export function renderHome() {
     const container = document.createElement('div');
     container.className = 'screen home-screen';
@@ -39,10 +63,10 @@ export function renderHome() {
                 </div>
                 <!-- Perfectly centered greeting -->
                 <div class="home-header-greeting" style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--color-text-secondary); font-weight: 500; font-family: var(--font-body); display: flex; align-items: center; gap: 3px; white-space: nowrap; pointer-events: none;">
-                    <span id="home-greeting-prefix">Good day,</span> <strong id="home-name">Alex</strong> <span id="home-greeting-emoji">👋</span>
+                    <span id="home-greeting-prefix">${tr('Good day,', 'Dzień dobry,')}</span> <strong id="home-name">Alex</strong> <span id="home-greeting-emoji">👋</span>
                 </div>
                 <!-- Profile Avatar at top right -->
-                <button id="home-profile-btn" aria-label="Profile" style="padding:0; background:none; border:none; cursor:pointer; flex-shrink:0;">
+                <button id="home-profile-btn" aria-label="${tr('Profile', 'Profil')}" style="padding:0; background:none; border:none; cursor:pointer; flex-shrink:0;">
                     <img id="home-profile-avatar-img" src="./src/assets/avatar_monk.jpg" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:2px solid var(--color-accent); box-shadow:0 2px 6px rgba(0,0,0,0.1);" alt="Profile">
                 </button>
             </div>
@@ -69,7 +93,7 @@ export function renderHome() {
             <!-- Daily goal (Click opens Goal Modal) -->
             <div class="home-stat-card row-card" id="home-goal-card" style="margin-top: 10px; cursor: pointer;">
                 <div style="flex:1;">
-                    <p class="home-stat-title">Today's Goal</p>
+                    <p class="home-stat-title">${tr("Today's Goal", 'Dzisiejszy cel')}</p>
                     <div style="display:flex; align-items:baseline; gap:4px; margin-top:2px;">
                         <span class="home-stat-big" id="home-today-minutes">0</span>
                         <span class="home-stat-title" style="font-size: 14px;">/ <span id="home-goal-minutes">20</span> min</span>
@@ -84,19 +108,19 @@ export function renderHome() {
             <!-- Streak + Level row -->
             <div class="home-stat-row">
                 <div class="home-stat-card" data-link="reflect">
-                    <p class="home-stat-title">Streak</p>
+                    <p class="home-stat-title">${tr('Streak', 'Seria')}</p>
                     <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
                         <span class="material-symbols-rounded" style="color:#e65c00; font-variation-settings: 'FILL' 1;">local_fire_department</span>
                         <div style="display:flex; align-items:baseline; gap:4px;">
                             <span class="home-stat-big" id="home-streak">0</span>
-                            <span class="home-stat-title">days</span>
+                            <span class="home-stat-title">${tr('days', 'dni')}</span>
                         </div>
                     </div>
                 </div>
                 <div class="home-stat-card" data-link="profile" style="flex: 1.5;">
                     <div style="display:flex; justify-content:space-between; width:100%;">
                         <div>
-                            <p class="home-stat-title">Level <br><span id="home-level" style="font-size:10px;">1</span></p>
+                            <p class="home-stat-title">${tr('Level', 'Poziom')} <br><span id="home-level" style="font-size:10px;">1</span></p>
                         </div>
                         <div style="display:flex; align-items:center; gap:6px;">
                             <span class="home-stat-big" id="home-xp">0</span>
@@ -112,14 +136,14 @@ export function renderHome() {
             <!-- Total Info row -->
             <div class="home-stat-row">
                 <div class="home-stat-card" data-link="profile">
-                    <p class="home-stat-title">Total Sessions</p>
+                    <p class="home-stat-title">${tr('Total Sessions', 'Liczba sesji')}</p>
                     <div style="display:flex; align-items:center; gap:8px; margin-top:2px;">
                         <span class="material-symbols-rounded" style="color:#6b8273; font-variation-settings: 'FILL' 1;">self_improvement</span>
                         <span class="home-stat-big" id="home-total-sessions">0</span>
                     </div>
                 </div>
                 <div class="home-stat-card" data-link="profile">
-                    <p class="home-stat-title">Mindful Mins</p>
+                    <p class="home-stat-title">${tr('Mindful Mins', 'Uważne minuty')}</p>
                     <div style="display:flex; align-items:center; gap:8px; margin-top:2px;">
                         <span class="material-symbols-rounded" style="color:#6b8273;">schedule</span>
                         <div style="display:flex; align-items:baseline; gap:2px;">
@@ -134,10 +158,10 @@ export function renderHome() {
             <div class="home-stat-card row-card dq-card" id="home-dq-card" style="margin-top: 10px; cursor: pointer; transition: all 0.2s; width: 100%;">
                 <div style="flex:1;">
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <p class="home-stat-title" style="font-weight:700;">Daily Quest</p>
+                        <p class="home-stat-title" style="font-weight:700;">${tr('Daily Quest', 'Zadanie Dnia')}</p>
                         <span id="home-dq-badge" style="font-size:9.5px; font-weight:700; background:var(--color-accent-light); color:var(--color-accent-dark); padding:2px 6px; border-radius:8px;">+25 XP</span>
                     </div>
-                    <p id="home-dq-text" class="text-sm" style="color:var(--color-text-secondary); margin-top:2px; font-size:11px;">Complete your daily practice</p>
+                    <p id="home-dq-text" class="text-sm" style="color:var(--color-text-secondary); margin-top:2px; font-size:11px;">${tr('Complete your daily practice', 'Ukończ swoją dzisiejszą praktykę')}</p>
                 </div>
                 <div class="home-icon-badge" id="home-dq-icon" style="background:#e8f4ec; color:#2c8242;">
                     <span class="material-symbols-rounded">task_alt</span>
@@ -147,8 +171,8 @@ export function renderHome() {
             <!-- Wisdom Card -->
             <div class="home-stat-card row-card" data-link="wisdom" style="margin-top: 10px; background: linear-gradient(135deg, #ffffff 0%, #f6f8f6 100%); border-left: 3px solid var(--color-accent); width: 100%;">
                 <div style="flex:1;">
-                    <p class="home-stat-title" style="color:var(--color-accent-dark); font-weight:700;">Wisdom Library</p>
-                    <p class="text-sm" style="color:var(--color-text-secondary); margin-top:2px; font-size:11px;">Expand your understanding of meditation and mindfulness</p>
+                    <p class="home-stat-title" style="color:var(--color-accent-dark); font-weight:700;">${tr('Wisdom Library', 'Biblioteka Mądrości')}</p>
+                    <p class="text-sm" style="color:var(--color-text-secondary); margin-top:2px; font-size:11px;">${tr('Expand your understanding of meditation and mindfulness', 'Poszerz swoją wiedzę o medytacji i uważności')}</p>
                 </div>
                 <div class="home-icon-badge plant" style="background:var(--color-accent-light); color:var(--color-accent-dark);"><span class="material-symbols-rounded">menu_book</span></div>
             </div>
@@ -161,7 +185,7 @@ export function renderHome() {
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <span class="material-symbols-rounded" style="color:var(--color-accent); font-size:24px;">target</span>
-                        <h3 style="margin:0; font-size:17px; font-family:var(--font-heading); color:var(--color-text-primary);">Set Daily Meditation Goal</h3>
+                        <h3 style="margin:0; font-size:17px; font-family:var(--font-heading); color:var(--color-text-primary);">${tr('Set Daily Meditation Goal', 'Ustaw dzienny cel medytacji')}</h3>
                     </div>
                     <button id="close-goal-modal-btn" style="background:none; border:none; cursor:pointer; padding:4px; color:var(--color-text-muted); display:flex; align-items:center;">
                         <span class="material-symbols-rounded">close</span>
@@ -169,7 +193,7 @@ export function renderHome() {
                 </div>
 
                 <p style="font-size:12.5px; color:var(--color-text-secondary); margin:0 0 12px; line-height:1.4;">
-                    How many total minutes would you like to sit each day?
+                    ${tr('How many total minutes would you like to sit each day?', 'Ile łącznie minut dziennie chcesz poświęcić na medytację?')}
                 </p>
 
                 <!-- Explanation Callout Box -->
@@ -177,7 +201,10 @@ export function renderHome() {
                     <div style="display:flex; align-items:flex-start; gap:8px;">
                         <span class="material-symbols-rounded" style="font-size:16px; color:var(--color-accent); margin-top:1px; flex-shrink:0;">info</span>
                         <p style="font-size:11px; color:var(--color-text-secondary); margin:0; line-height:1.45;">
-                            <strong>Building a Habit:</strong> Sitting even for 5 minutes counts toward maintaining your daily streak. Reaching your goal completes your daily progress bar and earns bonus XP!
+                            ${tr(
+                                '<strong>Building a Habit:</strong> Sitting even for 5 minutes counts toward maintaining your daily streak. Reaching your goal completes your daily progress bar and earns bonus XP!',
+                                '<strong>Budowanie nawyku:</strong> Nawet 5 minut sesji liczy się do utrzymania codziennej serii. Osiągnięcie celu wypełnia dzienny pasek postępu i daje bonusowe XP!'
+                            )}
                         </p>
                     </div>
                 </div>
@@ -195,12 +222,12 @@ export function renderHome() {
 
                 <!-- Custom Input -->
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
-                    <input type="number" id="goal-modal-custom-input" placeholder="Custom minutes" min="1" max="480" style="flex:1; padding:10px 14px; border-radius:12px; border:1px solid var(--color-bg-secondary); font-size:13px; outline:none; font-family:inherit; color:var(--color-text-primary); background:var(--color-bg-card);">
+                    <input type="number" id="goal-modal-custom-input" placeholder="${tr('Custom minutes', 'Własna liczba minut')}" min="1" max="480" style="flex:1; padding:10px 14px; border-radius:12px; border:1px solid var(--color-bg-secondary); font-size:13px; outline:none; font-family:inherit; color:var(--color-text-primary); background:var(--color-bg-card);">
                 </div>
 
                 <!-- Save Button -->
                 <button id="save-goal-modal-btn" class="btn" style="width:100%; padding:12px; font-size:14px; background:var(--color-accent); color:#fff; border:none; border-radius:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15);">
-                    Save Daily Goal 🎯
+                    ${tr('Save Daily Goal 🎯', 'Zapisz dzienny cel 🎯')}
                 </button>
             </div>
         </div>
@@ -811,7 +838,7 @@ export function renderHome() {
         }
     }
 
-const MINDFUL_GREETINGS = [
+const MINDFUL_GREETINGS_EN = [
     { prefix: "Good day,", emoji: "👋" },
     { prefix: "Namaste,", emoji: "🙏" },
     { prefix: "Peace be with you,", emoji: "🪷" },
@@ -824,6 +851,19 @@ const MINDFUL_GREETINGS = [
     { prefix: "Welcome back,", emoji: "☸️" }
 ];
 
+const MINDFUL_GREETINGS_PL = [
+    { prefix: "Dzień dobry,", emoji: "👋" },
+    { prefix: "Namaste,", emoji: "🙏" },
+    { prefix: "Pokój z Tobą,", emoji: "🪷" },
+    { prefix: "Witaj,", emoji: "🌿" },
+    { prefix: "Uważnego dnia,", emoji: "🌸" },
+    { prefix: "Oddychaj łagodnie,", emoji: "🍃" },
+    { prefix: "Spokojnego dnia,", emoji: "🕊️" },
+    { prefix: "Bądź w zdrowiu,", emoji: "✨" },
+    { prefix: "Cichy umysł,", emoji: "🎋" },
+    { prefix: "Witaj ponownie,", emoji: "☸️" }
+];
+
     container.updateData = () => {
         const user = DB.getUser();
         let dailyGoal = 20;
@@ -831,7 +871,8 @@ const MINDFUL_GREETINGS = [
             container.querySelector('#home-name').textContent = user.name?.split(' ')[0] || 'Alex';
             
             // Randomly select a serene greeting on screen visit
-            const greeting = MINDFUL_GREETINGS[Math.floor(Math.random() * MINDFUL_GREETINGS.length)];
+            const greetings = tr(MINDFUL_GREETINGS_EN, MINDFUL_GREETINGS_PL);
+            const greeting = greetings[Math.floor(Math.random() * greetings.length)];
             const greetingPrefixEl = container.querySelector('#home-greeting-prefix');
             const greetingEmojiEl = container.querySelector('#home-greeting-emoji');
             if (greetingPrefixEl) greetingPrefixEl.textContent = greeting.prefix;
@@ -848,14 +889,20 @@ const MINDFUL_GREETINGS = [
         container.querySelector('#home-goal-minutes').textContent = dailyGoal;
 
         const stats = DB.getStats();
-        const levelNames = [
+        const levelNames = tr([
             "Novice", "Initiate", "Seeker", "Wanderer", "Practitioner",
             "Disciple", "Student of Breath", "Devotee", "Guide of Stillness", "Contemplative",
             "Mindful Observer", "Serene Practitioner", "Anchor of Attention", "Awareness Seeker", "Sage in Training",
             "Tranquil Spirit", "Steady Mind", "Vivid Presence", "Master of Attention", "Quiet Watcher",
             "Inner Sanctuary", "Radiant Clarity", "Unshaken Anchor", "Boundless Presence", "Ascendant Watcher"
-        ];
-        const lName = levelNames[Math.min(stats.level - 1, levelNames.length - 1)] || "Novice";
+        ], [
+            "Nowicjusz", "Inicjowany", "Poszukiwacz", "Wędrowiec", "Praktyk",
+            "Uczeń", "Uczeń Oddechu", "Oddany", "Przewodnik Ciszy", "Kontemplator",
+            "Uważny Obserwator", "Pogodny Praktyk", "Kotwica Uwagi", "Badacz Świadomości", "Mędrzec w Treningu",
+            "Spokojny Duch", "Stabilny Umysł", "Żywa Obecność", "Mistrz Uwagi", "Cichy Obserwator",
+            "Wewnętrzne Sanktuarium", "Promienna Klarowność", "Niewzruszona Kotwica", "Bezgraniczna Obecność", "Przebudzony Strażnik"
+        ]);
+        const lName = levelNames[Math.min(stats.level - 1, levelNames.length - 1)] || tr("Novice", "Nowicjusz");
 
         container.querySelector('#home-streak').textContent = stats.streak;
         container.querySelector('#home-level').textContent = `${stats.level} - ${lName}`;
@@ -876,10 +923,10 @@ const MINDFUL_GREETINGS = [
             const dqIcon = container.querySelector('#home-dq-icon');
 
             if (dq.completed && !dq.claimed) {
-                dqText.textContent = `✓ Completed: ${dq.label}`;
+                dqText.textContent = `✓ ${tr('Completed:', 'Ukończono:')} ${dq.label}`;
                 dqText.style.fontWeight = '600';
                 dqText.style.color = '#1b5e20';
-                dqBadge.textContent = '🎁 Claim +25 XP';
+                dqBadge.textContent = `🎁 ${tr('Claim +25 XP', 'Odbierz +25 XP')}`;
                 dqBadge.style.background = '#277038';
                 dqBadge.style.color = '#ffffff';
                 dqBadge.style.fontWeight = '700';
@@ -904,10 +951,10 @@ const MINDFUL_GREETINGS = [
                     }
                 };
             } else if (dq.claimed) {
-                dqText.textContent = `✓ Completed: ${dq.label}`;
+                dqText.textContent = `✓ ${tr('Completed:', 'Ukończono:')} ${dq.label}`;
                 dqText.style.fontWeight = '500';
                 dqText.style.color = '#386641';
-                dqBadge.textContent = '✓ Claimed (+25 XP)';
+                dqBadge.textContent = `✓ ${tr('Claimed (+25 XP)', 'Odebrano (+25 XP)')}`;
                 dqBadge.style.background = '#d8e8dc';
                 dqBadge.style.color = '#277038';
                 dqBadge.style.fontWeight = '600';
@@ -990,9 +1037,10 @@ const MINDFUL_GREETINGS = [
 
                 let newQuote;
                 const current = bubbleText.textContent;
+                const dialogues = tr(DIALOGUES_EN, DIALOGUES_PL);
                 do {
-                    newQuote = DIALOGUES[Math.floor(Math.random() * DIALOGUES.length)];
-                } while (newQuote === current && DIALOGUES.length > 1);
+                    newQuote = dialogues[Math.floor(Math.random() * dialogues.length)];
+                } while (newQuote === current && dialogues.length > 1);
                 
                 bubbleText.textContent = newQuote;
                 bubble.classList.add('visible');

@@ -1,16 +1,17 @@
 import { DB } from '../services/db.js';
+import { tr } from '../services/i18n.js';
 
 const ARTICLES = [
     // ─── FOUNDATIONS OF MINDFULNESS ───────────────────────────────────────────
     {
         id: "intro_breath",
         unlockLevel: 1,
-        category: "Foundations of Mindfulness",
+        category: tr("Foundations of Mindfulness", "Fundamenty Uważności"),
         emoji: "🌬️",
-        title: "The Anchor of Breath: Settling the Mind",
+        title: tr("The Anchor of Breath: Settling the Mind", "Kotwica Oddechu: Wyciszanie Umysłu"),
         readTime: "4 min",
-        summary: "Discover the foundational mechanics of breath observation, correct posture, and the art of returning when the mind wanders.",
-        content: `
+        summary: tr("Discover the foundational mechanics of breath observation, correct posture, and the art of returning when the mind wanders.", "Poznaj podstawowe mechanizmy obserwacji oddechu, właściwą postawę ciała oraz sztukę łagodnego powracania, gdy umysł zaczyna błądzić."),
+        content: tr(`
             <p>Every journey into meditation begins with a single breath. The breath is not merely a biological function — it is a portable anchor that binds the scattered mind to the immediate present. By resting attention on the physical sensations of breathing, we establish a quiet harbor away from the turbulence of conceptual thoughts.</p>
 
             <h3>The Posture of Presence</h3>
@@ -24,17 +25,31 @@ const ARTICLES = [
 
             <h3>Why This Simple Practice Is So Profound</h3>
             <p>Modern neuroscience confirms what meditators have known for millennia: the practice of repeatedly returning attention trains the prefrontal cortex, the brain's seat of executive function. Each return is a mental "rep," strengthening your capacity for focused attention and emotional regulation over time. Start with five minutes. The breath will always be waiting.</p>
-        `
+        `, `
+            <p>Każda podróż w głąb medytacji zaczyna się od jednego oddechu. Oddech nie jest wyłącznie funkcją biologiczną — to przenośna kotwica, która łączy rozproszony umysł z bezpośrednią chwilą obecną. Spoczywając uwagą na fizycznych doznaniach płynących z oddychania, tworzymy cichą przystań z dala od burzy pojęciowych myśli.</p>
+
+            <h3>Postawa Obecności</h3>
+            <p>Zanim zaczniesz obserwować oddech, przyjmij postawę wyrażającą jednocześnie czujność i swobodę. Usiądź z naturalnie wyprostowanym kręgosłupem — bez sztywności, ale też bez garbienia się. Rozluźnij ramiona, zmiękcz szczękę i pozwól dłoniom spocząć łagodnie na kolanach lub udach. To ułożenie ciała odzwierciedla stan umysłu, który pielęgnujemy: stabilny, otwarty i zrelaksowany.</p>
+
+            <h3>Odnalezienie Punktu Kotwicy</h3>
+            <p>Skieruj swoją uwagę tam, gdzie odczuwasz oddech najwyraźniej. Dla wielu osób jest to uczucie chłodnego powietrza wpływającego przez nozdrza i ciepłego powietrza przy wydechu. Inni odnajdują większą klarowność w subtelnym unoszeniu się i opadaniu klatki piersiowej lub brzucha. Wybierz jedno miejsce i zakotwicz tam swoją uwagę. Obserwuj czyste doznania fizyczne — rozszerzanie, delikatne tarcie, krótką pauzę między wdechem a wydechem.</p>
+
+            <h3>Sztuka Powracania</h3>
+            <p>Już po chwili Twój umysł zacznie błądzić. Możesz przyłapać się na planowaniu, marzeniu lub odtwarzaniu rozmowy. Nie traktuj tego jako porażki. Sam moment, w którym zauważasz, że umysł odpłynął, <em>jest</em> momentem przebudzenia — błyskiem metapoznawczej jasności. Uśmiechnij się wewnętrznie, puść rozproszenie bez oceniania i łagodnie skieruj uwagę z powrotem na oddech.</p>
+
+            <h3>Dlaczego Ta Prosta Praktyka Jest Tak Głęboka</h3>
+            <p>Współczesna neuronauka potwierdza to, co medytujący wiedzieli od tysiącleci: praktyka wielokrotnego powracania uwagą trenuje korę przedczołową, ośrodek funkcji wykonawczych mózgu. Każdy powrót to mentalne „powtórzenie”, które z czasem wzmacnia zdolność koncentracji i regulacji emocji. Zacznij od pięciu minut. Oddech zawsze będzie na Ciebie czekał.</p>
+        `)
     },
     {
         id: "five_hindrances",
         unlockLevel: 1,
-        category: "Foundations of Mindfulness",
+        category: tr("Foundations of Mindfulness", "Fundamenty Uważności"),
         emoji: "🌫️",
-        title: "The Five Hindrances: Knowing Your Inner Weather",
+        title: tr("The Five Hindrances: Knowing Your Inner Weather", "Pięć Przeszkód: Poznawanie Wewnętrznej Pogody"),
         readTime: "5 min",
-        summary: "Identify the five classic mental obstacles that cloud meditation — desire, aversion, dullness, restlessness, and doubt — and how to work skillfully with each.",
-        content: `
+        summary: tr("Identify the five classic mental obstacles that cloud meditation — desire, aversion, dullness, restlessness, and doubt — and how to work skillfully with each.", "Rozpoznaj pięć klasycznych przeszkód mentalnych, które przysłaniają medytację — pożądanie, niechęć, ospałość, niepokój i zwątpienie — oraz naucz się z nimi umiejętnie pracować."),
+        content: tr(`
             <p>In the original Buddhist teachings, the Buddha identified five mental qualities that interrupt meditation and obscure clarity. These are called the <em>Pañca Nīvaraṇa</em> — the Five Hindrances. Understanding them transforms frustrating meditation sessions into rich opportunities for self-knowledge.</p>
 
             <h3>1. Sensual Desire (Kāmacchanda)</h3>
@@ -54,17 +69,37 @@ const ARTICLES = [
 
             <h3>The Bigger Picture</h3>
             <p>The hindrances are not enemies — they are teachers. Each one is a mirror showing you a conditioned pattern of the mind. When you stop fighting them and start studying them, your mediation shifts from a battle into a laboratory.</p>
-        `
+        `, `
+            <p>W klasycznych naukach buddyjskich Budda wyróżnił pięć stanów umysłu, które zakłócają medytację i przysłaniają jasność widzenia. Nazywa się je <em>Pañca Nīvaraṇa</em> — Pięcioma Przeszkodami. Ich zrozumienie przemienia frustrujące sesje medytacyjne w niezwykle cenne okazje do samopoznania.</p>
+
+            <h3>1. Pragnienie Zmysłowe (Kāmacchanda)</h3>
+            <p>To przyciąganie ku przyjemnym doświadczeniom — chęć wygodniejszego siedzenia, pragnienie, by sesja się skończyła, żeby coś zjeść, lub fantazjowanie. Lekarstwem jest rozpoznanie mentalnego obrazu lub obiektu pragnienia bez podążania za nim oraz zaobserwowanie, jak samo pragnienie przejawia się jako fizyczne doznanie w ciele: napięcie w klatce piersiowej czy niespokojna energia w dłoniach.</p>
+
+            <h3>2. Niechęć i Zła Wola (Vyāpāda)</h3>
+            <p>Obejmuje irytację, awersję, frustrację lub urazę — wobec dźwięku, wspomnienia czy osoby. Zamiast ją tłumić, zbadaj ją z ciekawością: Gdzie w ciele mieszka teraz gniew? Zauważ gorąco, zaciskanie. Nazwij to w myślach: „pojawiła się niechęć”. Samo nazwanie stanu aktywuje korę przedczołową i zmniejsza ładunek emocjonalny.</p>
+
+            <h3>3. Ospałość i Otępienie (Thīna-Middha)</h3>
+            <p>Na umysł opada mgła, uwaga staje się śliska, a ciało ciężkie. Skuteczne antidota to: lekkie uchylenie powiek, kilka głębszych oddechów, wyprostowanie kręgosłupa lub wizualizacja jasnego, białego światła na środku czoła.</p>
+
+            <h3>4. Niepokój i Zamartwianie się (Uddhacca-Kukkucca)</h3>
+            <p>Umysł pędzi, przeskakuje między myślami, planuje przyszłe rozmowy lub rozpamiętuje przeszłość. To przeciwieństwo ospałości — umysł ma zbyt dużo energii. Pomagają techniki uziemiające: poczuj ciężar swojego ciała, nacisk stóp na podłogę i wykonaj kilka długich, powolnych wydechów.</p>
+
+            <h3>5. Zwątpienie (Vicikicchā)</h3>
+            <p>To najbardziej podstępna przeszkoda — wewnętrzny głos pytający: „Czy to w ogóle działa? Może robię to źle?”. Zbadaj zwątpienie umiejętnie: zapytaj siebie: „Jak by to było praktykować bez wątpienia tylko przez kolejne pięć minut?”, a następnie po prostu wróć do oddechu. Zwątpienie rozpuszcza się poprzez bezpośrednie doświadczenie, a nie analizę.</p>
+
+            <h3>Szersza Perspektywa</h3>
+            <p>Przeszkody nie są wrogami — są nauczycielami. Każda z nich to lustro pokazujące uwarunkowane wzorce Twojego umysłu. Kiedy przestajesz z nimi walczyć, a zaczynasz je badać, medytacja zmienia się z pola bitwy w fascynujące laboratorium.</p>
+        `)
     },
     {
         id: "body_scan_basics",
         unlockLevel: 2,
-        category: "Foundations of Mindfulness",
+        category: tr("Foundations of Mindfulness", "Fundamenty Uważności"),
         emoji: "🧠",
-        title: "The Body Scan: Rediscovering Your Physical Home",
+        title: tr("The Body Scan: Rediscovering Your Physical Home", "Skanowanie Ciała: Powrót do Fizycznego Domu"),
         readTime: "5 min",
-        summary: "A systematic guide to the body scan — one of the most effective tools for developing embodied awareness, reducing stress, and releasing unconscious tension.",
-        content: `
+        summary: tr("A systematic guide to the body scan — one of the most effective tools for developing embodied awareness, reducing stress, and releasing unconscious tension.", "Systematyczny przewodnik po skanowaniu ciała — jednym z najskuteczniejszych narzędzi rozwijania ucieleśnionej uważności, redukcji stresu i uwalniania nieświadomego napięcia."),
+        content: tr(`
             <p>Most of us live from the neck up. Our attention is absorbed in thoughts, plans, and worries, while the body — our primary home in this world — is almost entirely ignored. The body scan is a meditation technique that systematically re-inhabits every corner of our physical being, dissolving tension and rebuilding the mind-body connection.</p>
 
             <h3>Why the Body Holds So Much</h3>
@@ -79,17 +114,32 @@ const ARTICLES = [
 
             <h3>Physiological Benefits</h3>
             <p>Studies at the MBSR (Mindfulness-Based Stress Reduction) program at the University of Massachusetts show that regular body scan practice reduces cortisol levels, improves sleep quality, reduces chronic pain perception, and increases interoceptive awareness — the ability to accurately sense one's own internal bodily states, which is closely linked to emotional intelligence.</p>
-        `
+        `, `
+            <p>Większość z nas żyje „od szyi w górę”. Nasza uwaga jest pochłonięta myślami, planami i zmartwieniami, podczas gdy ciało — nasz pierwszy i najważniejszy dom w tym świecie — bywa niemal całkowicie ignorowane. Skanowanie ciała to technika medytacyjna, która systematycznie przywraca obecność w każdym zakątku naszego fizycznego istnienia, rozpuszczając napięcia i odbudowując więź między umysłem a ciałem.</p>
+
+            <h3>Dlaczego Ciało Przechowuje Tak Wiele</h3>
+            <p>Terapeuta somatyczny Peter Levine zauważył, że stres i trudne doświadczenia zapisują się nie tylko w pamięci, lecz także we wzorcach chronicznego napięcia mięśniowego. Codzienne tłumienie emocji — niewyrażona frustracja czy zepchnięty lęk — gromadzi się w ciele jako mikronapięcia. Skanowanie ciała pozwala im bezpiecznie wyjść na powierzchnię i ulec rozluźnieniu.</p>
+
+            <h3>Podstawowa Praktyka</h3>
+            <p>Połóż się na plecach lub usiądź wygodnie. Zacznij od skierowania uwagi na czubek głowy. Przesuwaj uwagę powoli, obszar po obszarze, wędrując w dół przez twarz, szczękę, szyję, barki, ramiona, przedramiona, dłonie, klatkę piersiową, plecy, brzuch, biodra, uda, łydki, stopy aż po palce u stóp.</p>
+            <p>Przy każdym obszarze zatrzymaj się i <em>poczuj</em> — zamiast o nim myśleć. Zauważ: czy jest tam ciepło, czy chłód? Mrowienie czy odrętwienie? Napięcie czy swoboda? Nie próbujesz niczego zmieniać — po prostu obserwujesz to, co już tam jest.</p>
+
+            <h3>Praca z Trudnymi Obszarami</h3>
+            <p>Jeśli dotrzesz do miejsca, w którym czujesz ból, ucisk lub silną emocję, zwolnij. Oddychaj do tego obszaru — wyobraź sobie, że wdech wpływa bezpośrednio w środek napięcia. Z wydechem pozwól temu miejscu odrobinę zmięknąć. Nie wymuszaj relaksu; po prostu go zaproś.</p>
+
+            <h3>Korzyści Fizjologiczne</h3>
+            <p>Badania prowadzone w ramach programu MBSR (Redukcji Stresu Opartej na Uważności) na Uniwersytecie Massachusetts pokazują, że regularne skanowanie ciała obniża poziom kortyzolu, poprawia jakość snu, zmniejsza odczuwanie przewlekłego bólu i rozwija świadomość interocepcyjną — zdolność precyzyjnego odczuwania sygnałów płynących z wnętrza ciała, ściśle powiązaną z inteligencją emocjonalną.</p>
+        `)
     },
     {
         id: "overcome_dullness",
         unlockLevel: 2,
-        category: "Foundations of Mindfulness",
+        category: tr("Foundations of Mindfulness", "Fundamenty Uważności"),
         emoji: "☀️",
-        title: "Navigating Mental Dullness: Restoring Alert Clarity",
+        title: tr("Navigating Mental Dullness: Restoring Alert Clarity", "Przezwyciężanie Ospałości: Jak Przywrócić Czujną Klarowność"),
         readTime: "4 min",
-        summary: "Learn to identify the spectrum of dullness in meditation and apply targeted antidotes to restore sharp, luminous awareness.",
-        content: `
+        summary: tr("Learn to identify the spectrum of dullness in meditation and apply targeted antidotes to restore sharp, luminous awareness.", "Naucz się rozpoznawać spektrum otępienia i senności podczas medytacji oraz stosować skuteczne metody przywracające żywą, świetlistą uważność."),
+        content: tr(`
             <p>As your meditation practice stabilizes, you will encounter a subtle but persistent obstacle: dullness. When the mind stops wandering outward, it often collapses inward into a sleepy fog. You enter a warm, pleasant, but murky state. This is dullness, and if left unchecked, it stalls progress by replacing alert clarity with mental haze.</p>
 
             <h3>Recognizing the Spectrum</h3>
@@ -108,19 +158,38 @@ const ARTICLES = [
 
             <h3>Prevention: Practice Timing</h3>
             <p>Dullness is more prevalent after meals, in warm rooms, and in the early afternoon. If possible, schedule demanding meditation sessions in the morning on an empty stomach, when the nervous system is naturally alert. Short, frequent sessions also combat dullness more effectively than long, irregular ones.</p>
-        `
+        `, `
+            <p>Gdy Twoja praktyka medytacyjna zaczyna się stabilizować, napotkasz subtelną, lecz uporczywą przeszkodę: otępienie (ospałość). Kiedy umysł przestaje błądzić na zewnątrz, często zapada się do wewnątrz w senną mgłę. Wchodzisz w ciepły, przyjemny, lecz mętny stan. Jeśli pozostawisz go bez reakcji, zatrzyma Twój postęp, zastępując czujną klarowność półsnem.</p>
+
+            <h3>Rozpoznawanie Spektrum Ospałości</h3>
+            <p>Otępienie występuje w różnym natężeniu. W <strong>formie subtelnej</strong> uwaga jest ciągła, ale brakuje jej ostrości — oddech wydaje się odległy, a szczegóły tracą wyrazistość. W <strong>formie silnej</strong> myśli stają sięurywane, koncentracja się ześlizguje, a w <strong>skrajnym otępieniu</strong> niemal zasypiasz na siedząco.</p>
+            <p>Uważność wymaga dwóch jakości: <em>stabilności</em> (pozostawania przy obiekcie) oraz <em>żywości</em> (krystalicznie czystej świadomości). Ospałość niszczy żywość, pozostawiając jedynie powierzchowne złudzenie spokoju.</p>
+
+            <h3>Aktywne Antidota</h3>
+            <p>Gdy poczujesz nadchodzącą senność, zastosuj kolejno te korekty:</p>
+            <ul>
+                <li><strong>Wyostrzenie intencji:</strong> Postanów dostrzec <em>najdrobniejsze</em> detale oddechu — dokładny ułamek sekundy, w którym kończy się wdech, oraz mikroskopijne doznania na samym czubku nosa.</li>
+                <li><strong>Uchylenie powiek:</strong> Unieś lekko wzrok, uchyl powieki na ok. 20% i wpuść więcej światła.</li>
+                <li><strong>Głębokie oddechy:</strong> Wykonaj trzy energiczne, głębokie wdechy i pełne wydechy, aby dotlenić mózg.</li>
+                <li><strong>Napięcie i rozluźnienie mięśni:</strong> Na wdechu napnij mocno mięśnie całego ciała na 5 sekund, a z wydechem całkowicie je rozluźnij.</li>
+                <li><strong>Liczenie:</strong> Połącz każdy oddech z liczeniem w myślach od 1 do 10, aby utrzymać zaangażowanie umysłu.</li>
+            </ul>
+
+            <h3>Zapobieganie: Pora Praktyki</h3>
+            <p>Senność pojawia się najczęściej po obfitych posiłkach, w przegrzanych pomieszczeniach oraz wczesnym popołudniem. Jeśli to możliwe, planuj główne sesje rano, gdy układ nerwowy jest naturalnie rześki.</p>
+        `)
     },
 
     // ─── INSIGHT PRACTICE ─────────────────────────────────────────────────────
     {
         id: "anicca_flow",
         unlockLevel: 3,
-        category: "Insight Practice",
+        category: tr("Insight Practice", "Praktyka Wglądu"),
         emoji: "🌊",
-        title: "Anicca: Experiencing the River of Change",
+        title: tr("Anicca: Experiencing the River of Change", "Anicca: Doświadczanie Rzeki Zmian"),
         readTime: "5 min",
-        summary: "Deepen body scanning by recognizing that all sensations are fleeting currents of energy, dissolving the illusion of a fixed, solid self.",
-        content: `
+        summary: tr("Deepen body scanning by recognizing that all sensations are fleeting currents of energy, dissolving the illusion of a fixed, solid self.", "Pogłęb skanowanie ciała, rozpoznając, że wszystkie doznania są ulotnymi prądami energii, co rozpuszcza iluzję trwałego, niezmiennego „ja”."),
+        content: tr(`
             <p>In the Vipassana tradition, we move beyond anchoring attention to directly investigating the nature of reality itself. The primary insight we are invited to encounter is <em>Anicca</em> — impermanence. Nothing in our physical or mental landscape is static; everything is a flowing stream of arising and passing phenomena.</p>
 
             <h3>The Microscope of Awareness</h3>
@@ -134,17 +203,31 @@ const ARTICLES = [
 
             <h3>Freedom Through Impermanence</h3>
             <p>This insight might seem abstract, but its practical consequence is radical: if all sensations are impermanent, there is nothing to cling to and nothing to run from. Even the most intense anxiety or physical pain, observed without resistance, is revealed to be a passing river — not a permanent state. This recognition is the first major doorway to liberation in the Theravāda tradition.</p>
-        `
+        `, `
+            <p>W tradycji Vipassany wychodzimy poza samo kotwiczenie uwagi, aby bezpośrednio badać naturę rzeczywistości. Pierwszym fundamentalnym wglądem, z którym się spotykamy, jest <em>Anicca</em> — nietrwałość. Nic w naszym fizycznym ani mentalnym krajobrazie nie jest statyczne; wszystko jest płynącym strumieniem powstających i przemijających zjawisk.</p>
+
+            <h3>Mikroskop Świadomości</h3>
+            <p>Zacznij od skanowania ciała jak zwykle. Teraz jednak, zamiast akceptować nawykowe etykiety („ból kolana”, „sztywny bark”), przyjrzyj się bliżej. Gdy dotrzesz do doznania, zapytaj: co dokładnie tu jest? Nie koncepcja bólu — lecz jego surowa tekstura. Czy to gorąco? Ucisk? Wibracja o wysokiej częstotliwości? Zauważ, że to, co wydawało się litym blokiem odczucia, przy bliższej obserwacji rozpada się na pulsującą chmurę drobnych mikrozdarzeń.</p>
+
+            <h3>Rozpuszczenie Stałości Ciała</h3>
+            <p>W miarę pogłębiania koncentracji medytujący dostrzegają, że ciało przestaje przypominać bryłę, a zaczyna być odczuwane jako pole mrowiącej energii lub strumień drgań. To nie wyobraźnia — to bezpośrednie doświadczenie ciągłego ruchu na poziomie komórkowym i nerwowym.</p>
+
+            <h3>Powstawanie i Przemijanie</h3>
+            <p>Obserwuj jedno wyraźne doznanie przez dłuższy czas. Zauważ, że z chwili na chwilę <em>nigdy nie jest ono dokładnie takie samo</em>. Ma fale natężenia, nieznacznie zmienia położenie i temperaturę, aż w końcu całkowicie zanika. To nietrwałość działająca w czasie rzeczywistym w Twoim własnym ciele.</p>
+
+            <h3>Wolność Poprzez Nietrwałość</h3>
+            <p>Praktyczna konsekwencja tego wglądu jest radykalna: skoro wszystkie doznania są nietrwałe, nie ma czego kurczowo się trzymać ani przed czym uciekać. Nawet najsilniejszy niepokój czy dyskomfort, obserwowany bez oporu, okazuje się przepływającą rzeką, a nie stanem permanentnym.</p>
+        `)
     },
     {
         id: "equanimity_discomfort",
         unlockLevel: 5,
-        category: "Insight Practice",
+        category: tr("Insight Practice", "Praktyka Wglądu"),
         emoji: "⚖️",
-        title: "Equanimity: The Quiet Harbor of Non-Reaction",
+        title: tr("Equanimity: The Quiet Harbor of Non-Reaction", "Równowaga Umysłu: Cicha Przystań Niewzruszoności"),
         readTime: "5 min",
-        summary: "Develop deep psychological stability by decoupling raw sensations from mental resistance — the heart of suffering-free awareness.",
-        content: `
+        summary: tr("Develop deep psychological stability by decoupling raw sensations from mental resistance — the heart of suffering-free awareness.", "Rozwiń głęboką stabilność psychiczną, oddzielając czyste doznania od mentalnego oporu — odkryj serce wolnej od cierpienia uważności."),
+        content: tr(`
             <p>Equanimity is often misunderstood as indifference or detachment. In meditation, it refers to something far richer: the capacity to remain mentally balanced and undisturbed in the presence of whatever arises — whether pleasant, painful, or neutral.</p>
 
             <h3>The Suffering Equation</h3>
@@ -158,17 +241,31 @@ const ARTICLES = [
 
             <h3>Equanimity in Daily Life</h3>
             <p>As this quality matures on the cushion, it permeates daily experience. When plans fall through, someone speaks harshly, or the unexpected occurs, you will notice the initial wave of reactivity — and then a spaciousness that was not there before. From that spacious harbor, you begin to choose responses instead of simply executing reactions.</p>
-        `
+        `, `
+            <p>Równowaga umysłu (<em>upekkhā</em>) bywa mylona z obojętnością lub chłodnym zdystansowaniem. W medytacji oznacza jednak coś znacznie głębszego: zdolność do pozostawania w wewnętrznym balansie i otwartości wobec wszystkiego, co się pojawia — zarówno przyjemnego, bolesnego, jak i neutralnego.</p>
+
+            <h3>Równanie Cierpienia</h3>
+            <p>W praktyce uważności odkrywamy wyzwalające równanie: <strong>Cierpienie = Ból × Opór</strong>. Ból fizyczny lub dyskomfort to jeden element — samo surowe doznanie. Natomiast <em>cierpienie</em> rodzi się z naszej reakcji mentalnej: frustracji, że ból się pojawił, lęku, że się nasili, oraz pragnienia, by natychmiast zniknął. Choć nie zawsze możemy uniknąć bólu, dzięki równowadze umysłu możemy wyeliminować opór — redukując cierpienie niemal do zera.</p>
+
+            <h3>Witanie Burzy</h3>
+            <p>Gdy podczas sesji pojawi się silny dyskomfort, spróbuj zamiast uciekać, uczynić go głównym obiektem swojej medytacji. Rozluźnij mięśnie wokół tego miejsca. Zmiękcz oddech. Wyobraź sobie, że Twoja świadomość jest bezkresnym niebem, a dyskomfort to jedynie przechodzące zjawisko pogodowe. Zbadaj z ciekawością: czy to doznanie ma środek? Czy ma wyraźne granice? Czy pulsuje, grzeje, wibruje?</p>
+
+            <h3>Przyjemność Bez Chwytania</h3>
+            <p>Równowaga oznacza również nieprzywiązywanie się do stanów przyjemnych. Kiedy medytacja przynosi błogość, głęboki spokój lub radość — zauważ naturalny odruch, by je zatrzymać na stałe. Doświadczony praktyk obserwuje również te piękne stany ze spokojnym zrozumieniem: „To także jest przyjemne i to także przeminie”.</p>
+
+            <h3>Równowaga w Codziennym Życiu</h3>
+            <p>Gdy ta jakość dojrzewa na poduszce medytacyjnej, zaczyna przenikać codzienność. Kiedy plany się komplikują lub ktoś powie coś ostrego, zauważysz pierwszą falę reaktywności — a tuż za nią przestrzeń, której wcześniej nie było. Z tej cichej przystani zaczynasz świadomie wybierać odpowiedź, zamiast ślepo ulegać odruchom.</p>
+        `)
     },
     {
         id: "anatta_self",
         unlockLevel: 5,
-        category: "Insight Practice",
+        category: tr("Insight Practice", "Praktyka Wglądu"),
         emoji: "🔍",
-        title: "Anattā: The Mystery of No-Self",
+        title: tr("Anattā: The Mystery of No-Self", "Anattā: Tajemnica Braku Oddzielnego „Ja”"),
         readTime: "6 min",
-        summary: "Investigate the most radical insight of the Buddhist path — that what we call 'I' is a process rather than a fixed entity.",
-        content: `
+        summary: tr("Investigate the most radical insight of the Buddhist path — that what we call 'I' is a process rather than a fixed entity.", "Zbadaj najbardziej przełomowy wgląd ścieżki kontemplacyjnej — odkrycie, że to, co nazywamy „ja”, jest płynnym procesem, a nie stałym bytem."),
+        content: tr(`
             <p>Of the three marks of existence in Buddhist philosophy — impermanence, suffering, and no-self — <em>anattā</em> (no-self) is the most counterintuitive and transformative. It does not mean that you don't exist; it means that what you call "self" is a dynamic process, not a fixed, independent entity.</p>
 
             <h3>The Chariot Analogy</h3>
@@ -182,17 +279,31 @@ const ARTICLES = [
 
             <h3>Liberation, Not Nihilism</h3>
             <p>Anattā is frequently misunderstood as nihilism. But the historical Buddha explicitly rejected both the extreme of an eternal self and the extreme of absolute non-existence. What he pointed to was a middle way: there is this body, these thoughts, these feelings — arising and passing as part of an ongoing river. The burden of defending, maintaining, and glorifying a fixed self lifts, and with it, a profound lightness emerges.</p>
-        `
+        `, `
+            <p>Spośród trzech cech istnienia w filozofii buddyjskiej — nietrwałości (<em>anicca</em>), niesatysfakcjonującej natury zjawisk (<em>dukkha</em>) oraz braku trwałej jaźni (<em>anattā</em>) — to właśnie <em>anattā</em> jest najbardziej nieintuicyjna i wyzwalająca. Nie oznacza ona, że nie istniejesz; oznacza, że to, co nazywasz „sobą”, jest dynamicznym procesem, a nie stałym, odizolowanym bytem.</p>
+
+            <h3>Analogia Rydwanu</h3>
+            <p>Buddyjski mędrzec Nāgasena wyjaśnił to królowi Milindzie za pomocą słynnej metafory: „Czy rydwan to koła? Nie. Czy to oś? Nie. Czy to dyszel? Nie. Gdzie zatem jest rydwan?”. „Rydwan” to umowna nazwa nadana określonemu połączeniu części. W ten sam sposób „ja” jest umowną etykietą nadaną nieustannie zmieniającemu się strumieniowi ciała, odczuć, percepcji, nawyków mentalnych i świadomości.</p>
+
+            <h3>„Ja” jako Proces</h3>
+            <p>Obserwując w medytacji pojawiające się myśli, możesz zauważyć coś zaskakującego: nie zaplanowałeś kolejnej myśli — ona po prostu się wydarzyła. Jesteś bardziej przestrzenią, w której wydarzają się zjawiska mentalne, niż ich centralnym zarządcą. Strumień myśli, fale emocji i wrażenia zmysłowe pojawiają się wskutek określonych warunków, a nie rozkazów małego „zarządcy” w głowie.</p>
+
+            <h3>Badanie Pytania: „Kto Jest Świadomy?”</h3>
+            <p>Kiedy zauważasz myśl, pojawia się jej świadomość. Spróbuj teraz spojrzeć w stronę tego, kto patrzy. Zbadaj bezpośrednio: czy za samą świadomością siedzi jeszcze jakiś oddzielny obserwator? Wielu praktykujących odkrywa, że przy uczciwym zbadaniu tego pytania poczucie sztywnego „ja” rozpuszcza się w rozległym, otwartym polu przytomności.</p>
+
+            <h3>Wyzwolenie, Nie Nihilizm</h3>
+            <p>Rozpoznanie <em>anattā</em> zdejmuje z naszych barków ogromny ciężar ciągłego bronienia, udowadniania i podtrzymywania sztywnego wizerunku „siebie”. W jego miejsce pojawia się głęboka lekkość, naturalność i poczucie więzi ze wszystkim, co żyje.</p>
+        `)
     },
     {
         id: "dependent_origination",
         unlockLevel: 7,
-        category: "Insight Practice",
+        category: tr("Insight Practice", "Praktyka Wglądu"),
         emoji: "🔗",
-        title: "Dependent Origination: The Web of Becoming",
+        title: tr("Dependent Origination: The Web of Becoming", "Współzależne Powstawanie: Sieć Stawania Się"),
         readTime: "6 min",
-        summary: "Explore the Buddha's map of how suffering arises and ceases through twelve interdependent links — a profound diagnostic of the human condition.",
-        content: `
+        summary: tr("Explore the Buddha's map of how suffering arises and ceases through twelve interdependent links — a profound diagnostic of the human condition.", "Poznaj precyzyjną mapę ukazującą, jak poprzez dwanaście współzależnych ogniw powstaje i ustaje cierpienie — głęboką diagnozę ludzkiego umysłu."),
+        content: tr(`
             <p>Dependent Origination — <em>Paticca-samuppāda</em> — is considered by many scholars to be the Buddha's most distinctive and sophisticated philosophical contribution. It maps, in precise causal chains, how suffering arises and how it ceases. Understanding this map transforms meditation from a relaxation technique into a systematic path of liberation.</p>
 
             <h3>The Twelve Links</h3>
@@ -206,19 +317,33 @@ const ARTICLES = [
 
             <h3>The Chain Running Backward: Cessation</h3>
             <p>The Buddha also taught the chain of cessation: when ignorance ceases, formations cease; when formations cease, consciousness of a grasping kind ceases — all the way down the chain to the cessation of suffering. This is Nibbāna — not a heavenly realm, but the extinguishing of the fires of craving and aversion.</p>
-        `
+        `, `
+            <p>Współzależne Powstawanie — <em>Paṭicca-samuppāda</em> — jest uznawane za jedno z najbardziej przenikliwych odkryć psychologii kontemplacyjnej. Opisuje ono w precyzyjnym łańcuchu przyczynowo-skutkowym, jak rodzi się ludzkie cierpienie i w jaki sposób można je zatrzymać.</p>
+
+            <h3>Dwanaście Ogniw</h3>
+            <p>Łańcuch zaczyna się od <strong>niewiedzy</strong> (nierozpoznawania prawdziwej natury zjawisk), która warunkuje <strong>impulsy wolicjonalne</strong>, te zaś warunkują <strong>świadomość</strong>, <strong>umysł i ciało</strong>, <strong>sześć zmysłów</strong>, <strong>kontakt zmysłowy</strong>, <strong>ton uczuciowy</strong> (przyjemny, nieprzyjemny lub neutralny), <strong>pragnienie</strong> (lgnięcie), <strong>chwytanie</strong>, <strong>stawanie się</strong>, <strong>narodziny</strong> i wreszcie <strong>cierpienie</strong>.</p>
+
+            <h3>Kluczowy Punkt Zwrotny: Ton Uczuciowy (Vedanā)</h3>
+            <p>Dla medytującego najważniejsze ogniwo znajduje się pomiędzy <em>vedanā</em> (tonem uczuciowym) a <em>taṇhā</em> (pragnieniem). Każda chwila doświadczenia niesie ze sobą proste zabarwienie: przyjemne, nieprzyjemne lub neutralne. Zazwyczaj reagujemy automatycznie — chwytamy to, co przyjemne, i odpychamy to, co nieprzyjemne. Medytacja uczy nas wprowadzania uważności dokładnie w tę szczelinę: aby <em>czuć</em> przyjemne doznanie bez automatycznego lgnięcia oraz doświadczać nieprzyjemnego bez odruchowej awersji.</p>
+
+            <h3>Przerwanie Łańcucha</h3>
+            <p>Kiedy uważność przerywa automatyczne przejście od odczucia do pragnienia, dalsze ogniwa — chwytanie, napięcie i cierpienie — tracą swoje paliwo. Nie jest to wyłącznie teoria filozoficzna, lecz namacalna zmiana w sposobie, w jaki umysł przetwarza doświadczenie w każdej sekundzie.</p>
+
+            <h3>Wygaszenie Cierpienia</h3>
+            <p>Gdy ustaje niewiedza i kompulsywne chwytanie, ustaje również cierpienie. W tradycji buddyjskiej ten stan głębokiego spokoju i wolności od pożądania oraz niechęci nazywany jest <em>Nibbāną</em> — wygaszeniem ognia reaktywności.</p>
+        `)
     },
 
     // ─── ZEN TRADITION ────────────────────────────────────────────────────────
     {
         id: "shikantaza_zen",
         unlockLevel: 3,
-        category: "Zen Tradition",
+        category: tr("Zen Tradition", "Tradycja Zen"),
         emoji: "🏔️",
-        title: "Shikantaza: Resting in the Ocean of Awareness",
+        title: tr("Shikantaza: Resting in the Ocean of Awareness", "Shikantaza: Spoczywanie w Oceanie Świadomości"),
         readTime: "5 min",
-        summary: "Explore the Zen practice of 'just sitting' — releasing all focus, techniques, and goals to rest in pure, choiceless awareness.",
-        content: `
+        summary: tr("Explore the Zen practice of 'just sitting' — releasing all focus, techniques, and goals to rest in pure, choiceless awareness.", "Poznaj praktykę Zen „tylko siedzenia” — puszczenie wszelkich technik, obiektów i celów, by spocząć w czystej, otwartej przytomności."),
+        content: tr(`
             <p>In the Sōtō school of Zen, there is a practice called <em>Shikantaza</em> — literally, "just sitting." Unlike technique-based approaches that instruct you to focus on the breath or scan the body, Shikantaza involves dropping all techniques, objects, and agendas. You sit not to become calm, not to gain insight, and not to achieve enlightenment — you simply sit.</p>
 
             <h3>Choiceless Awareness</h3>
@@ -232,17 +357,31 @@ const ARTICLES = [
 
             <h3>The Paradox of Effort</h3>
             <p>Shikantaza requires a refined effort: the effort not to effortfully meditate. Master Kōdō Sawaki called it "the most difficult thing in the world, and also the simplest." If you find yourself trying hard to let go, you are not in Shikantaza — you are in the trying. Gently notice this, and relax the effort. Rest in what is already here.</p>
-        `
+        `, `
+            <p>W szkole Zen Sōtō istnieje praktyka zwana <em>Shikantaza</em> — dosłownie „tylko siedzenie”. W przeciwieństwie do podejść opartych na konkretnej technice (takich jak skupienie na oddechu czy skanowanie ciała), Shikantaza polega na odłożeniu wszelkich technik, obiektów i celów. Nie siedzisz po to, by się uspokoić, zdobyć wgląd czy osiągnąć oświecenie — po prostu siedzisz.</p>
+
+            <h3>Świadomość Bez Wyboru</h3>
+            <p>Pozwól swojej świadomości otworzyć się niczym bezkresne niebo. Nie zawężaj jej do żadnego pojedynczego obiektu. Jeśli za oknem zaśpiewa ptak, pozwól dźwiękowi pojawić się w świadomości i przeminąć. Jeśli wypłynie wspomnienie, pozwól mu przepłynąć jak obłokowi odbijającemu się w spokojnej wodzie. Nie próbujesz niczego zmieniać ani kontrolować — jesteś przestrzennym, świetlistym zwierciadłem odbijającym wszystko, co obecne.</p>
+
+            <h3>Porzucenie Medytującego</h3>
+            <p>Wielkim wyzwaniem „tylko siedzenia” jest nasz głęboko zakorzeniony nawyk chęci <em>robienia</em> czegoś. Chcemy medytować „dobrze”. W Shikantaza japoński mistrz Zen Dōgen uczył, by porzucić nawet tożsamość osoby medytującej. Jest tylko samo siedzenie.</p>
+
+            <h3>Siedzenie Jak Góra</h3>
+            <p>Siedź niczym majestatyczna góra. Wokół szczytu gromadzą się i rozpraszają chmury, wieją wiatry i zmieniają się pory roku, lecz góra pozostaje niewzruszona — po prostu obecna. Spocznij w swoim naturalnym stanie otwartej obecności, dostrzegając, że już teraz niczego Ci nie brakuje.</p>
+
+            <h3>Paradoks Wysiłku</h3>
+            <p>Shikantaza wymaga subtelnej sztuki: niewkładania wysiłku w „staranie się”. Jeśli przyłapiesz się na tym, że bardzo starasz się odpuścić — zauważ to z uśmiechem i rozluźnij samo staranie. Spocznij w tym, co już tu jest.</p>
+        `)
     },
     {
         id: "koans_gateway",
         unlockLevel: 5,
-        category: "Zen Tradition",
+        category: tr("Zen Tradition", "Tradycja Zen"),
         emoji: "❓",
-        title: "Koans: Questions That Cannot Be Answered by Thinking",
+        title: tr("Koans: Questions That Cannot Be Answered by Thinking", "Koany: Pytania, na Które Nie Odpowie Intelekt"),
         readTime: "5 min",
-        summary: "Understand the purpose and mechanics of koan practice — how paradoxical riddles are used to exhaust conceptual thought and reveal direct knowing.",
-        content: `
+        summary: tr("Understand the purpose and mechanics of koan practice — how paradoxical riddles are used to exhaust conceptual thought and reveal direct knowing.", "Zrozum cel i działanie praktyki koanów — jak paradoksalne pytania wyczerpują pojęciowe myślenie i odsłaniają bezpośrednie poznanie."),
+        content: tr(`
             <p>Among the most misunderstood innovations of the Rinzai Zen tradition are <em>koans</em> — enigmatic riddles or exchanges that seem to defy rational analysis. "What is the sound of one hand clapping?" "What was your original face before your parents were born?" These are not trick questions with clever answers. They are tools designed to drive the conceptual mind to its absolute limit, and beyond.</p>
 
             <h3>The Purpose of Paradox</h3>
@@ -256,17 +395,31 @@ const ARTICLES = [
 
             <h3>Koans in Daily Practice</h3>
             <p>You need not enter formal koan training to benefit from this spirit. You can hold simple questions in daily awareness: "Who is walking?" "Who is eating?" These questions, held lightly, can thin the membrane between conceptual and direct experience in ordinary moments.</p>
-        `
+        `, `
+            <p>Jednym z najbardziej fascynujących elementów tradycji Zen Rinzai są <em>koany</em> — enigmatyczne pytania lub dialogi wymykające się racjonalnej analizie. „Jaki jest dźwięk jednej klaszczącej dłoni?”, „Jaka była Twoja pierwotna twarz, zanim urodzili się Twoi rodzice?”. Nie są to zagadki logiczne ze sprytną odpowiedzią, lecz narzędzia zaprojektowane, by doprowadzić pojęciowy umysł do jego granicy — i poza nią.</p>
+
+            <h3>Cel Paradoksu</h3>
+            <p>Umysł analityczny jest niezwykle potężny, ale działa poprzez dzielenie, kategoryzowanie i etykietowanie. Nie potrafi uchwycić tego, co istnieje przed podziałami. Koan jest zaproszeniem do skoku poza sam proces myślenia — w bezpośrednie, niepojęciowe doświadczenie chwili.</p>
+
+            <h3>Praca z Koanem</h3>
+            <p>Klasyczna metoda polega na utrzymywaniu pytania w polu świadomości podczas siedzenia oraz w codziennych czynnościach. Zamiast myśleć <em>o</em> koanie, pozwalasz mu stać się żywym zapytaniem przenikającym uważność. Pytanie „Czym jest to?” lub „Czym jest Mu?” buduje ciche skupienie, aż zwykłe spekulacje opadają i otwiera się zupełnie inna jakość przytomności.</p>
+
+            <h3>Przebłysk Wglądu (Kenshō)</h3>
+            <p>Gdy koan „otwiera się”, rezultatem jest <em>kenshō</em> — bezpośrednie wejrzenie we własną naturę. Nie jest to odpowiedź słowna, lecz żywe ucieleśnione doświadczenie obecności.</p>
+
+            <h3>Koany w Codziennej Praktyce</h3>
+            <p>Nie musisz przechodzić formalnego treningu klasztornego, aby czerpać z ducha koanów. Możesz nosić w sobie proste, żywe pytania w ciągu dnia: „Kto teraz idzie?”, „Czym jest ta chwila?”. Trzymane lekko, rozpuszczają mur między automatycznymi myślami a żywą rzeczywistością.</p>
+        `)
     },
     {
         id: "beginner_mind",
         unlockLevel: 1,
-        category: "Zen Tradition",
+        category: tr("Zen Tradition", "Tradycja Zen"),
         emoji: "🌱",
-        title: "Beginner's Mind: The Fullness of Not-Knowing",
+        title: tr("Beginner's Mind: The Fullness of Not-Knowing", "Umysł Początkującego: Pełnia Niewiedzy"),
         readTime: "3 min",
-        summary: "Shunryū Suzuki's foundational teaching that the most fruitful posture toward life and practice is radical openness to every moment as if for the first time.",
-        content: `
+        summary: tr("Shunryū Suzuki's foundational teaching that the most fruitful posture toward life and practice is radical openness to every moment as if for the first time.", "Fundamentalna nauka Shunryū Suzukiego o tym, że najbardziej owocną postawą wobec praktyki i życia jest spotkanie każdej chwili tak, jakby wydarzała się po raz pierwszy."),
+        content: tr(`
             <p>"In the beginner's mind there are many possibilities, but in the expert's mind there are few." — Shunryū Suzuki, <em>Zen Mind, Beginner's Mind</em></p>
 
             <h3>The Expert's Trap</h3>
@@ -280,19 +433,33 @@ const ARTICLES = [
 
             <h3>The Rewards of Not-Knowing</h3>
             <p>Practitioners who cultivate beginner's mind report that their meditations feel genuinely fresh even after years of daily practice. Boredom — which is always the mind's commentary about a moment rather than the moment itself — rarely arises. Every sit becomes an adventure into undiscovered territory.</p>
-        `
+        `, `
+            <p>„W umyśle początkującego jest wiele możliwości, ale w umyśle eksperta tylko kilka”. — Shunryū Suzuki, <em>Umysł Zen, Umysł Początkującego</em></p>
+
+            <h3>Pułapka Eksperta</h3>
+            <p>Gdy rozwijamy jakąkolwiek umiejętność — w tym medytację — gromadzimy schematy, oczekiwania i wnioski: „Wiem już, jak będzie wyglądać ta sesja”, „Znam to uczucie”. Te nagromadzone oceny, choć bywają użyteczne, często przesłaniają nam to, co żywe i świeże w danej chwili. Umysł eksperta patrzy przez filtr przeszłej wiedzy. Umysł początkującego widzi bezpośrednio.</p>
+
+            <h3>Umysł Początkującego to Nie Ignorancja</h3>
+            <p>Suzuki Roshi nie pochwalał braku wiedzy, lecz wskazywał na jakość <em>otwartości i ciekawości</em>. Doświadczony praktyk z umysłem początkującego wnosi na poduszkę lata praktyki, a jednocześnie wita każdy oddech tak, jakby był to jego pierwszy oddech w życiu. To połączenie — doświadczenie bez sztywności — jest oznaką prawdziwej dojrzałości.</p>
+
+            <h3>Praktykowanie Świeżości</h3>
+            <p>Na początku każdej sesji poświęć chwilę, by świadomie odłożyć na bok założenia o tym, jaka ona będzie. Spotkaj pierwszy wdech tak, jakbyś nigdy wcześniej nie oddychał. Gdy jakieś doznanie wydaje się znajome, poszukaj w nim tego, co wydarza się po raz pierwszy właśnie teraz.</p>
+
+            <h3>Owoce Nie-Wiedzenia</h3>
+            <p>Osoby pielęgnujące umysł początkującego odkrywają, że ich medytacja pozostaje świeża nawet po wielu latach codziennej praktyki. Nuda — która jest zawsze komentarzem umysłu na temat chwili, a nie samą chwilą — znika, a każda sesja staje się spotkaniem z nieznanym.</p>
+        `)
     },
 
     // ─── LOVING-KINDNESS & COMPASSION ─────────────────────────────────────────
     {
         id: "metta_intro",
         unlockLevel: 2,
-        category: "Loving-Kindness & Compassion",
+        category: tr("Loving-Kindness & Compassion", "Miłująca Dobroć i Współczucie"),
         emoji: "💚",
-        title: "Mettā: The Radical Practice of Unlimited Goodwill",
+        title: tr("Mettā: The Radical Practice of Unlimited Goodwill", "Mettā: Praktyka Bezgranicznej Życzliwości"),
         readTime: "5 min",
-        summary: "Learn the ancient practice of Loving-Kindness meditation — generating heartfelt goodwill systematically toward yourself and all beings.",
-        content: `
+        summary: tr("Learn the ancient practice of Loving-Kindness meditation — generating heartfelt goodwill systematically toward yourself and all beings.", "Poznaj starożytną praktykę medytacji Miłującej Dobroci — systematycznego rozwijania szczerej życzliwości wobec siebie oraz wszystkich istot."),
+        content: tr(`
             <p><em>Mettā</em> — the Pāli word for loving-kindness or goodwill — is one of the four Brahmaviharas (Divine Abodes), a set of contemplative practices designed to cultivate vast, unconditional positive states of mind. Where insight practices like Vipassana investigate the nature of experience, Mettā actively cultivates the quality of the heart.</p>
 
             <h3>The Basic Method</h3>
@@ -313,17 +480,38 @@ const ARTICLES = [
 
             <h3>Mettā and Insight</h3>
             <p>The Buddha taught that Mettā is not merely a feel-good practice — it is a direct path to liberation. When the heart is fully open with goodwill for all beings without exception, the mechanisms of self-contraction and othering that generate suffering lose their grip. The boundless heart is, itself, a form of freedom.</p>
-        `
+        `, `
+            <p><em>Mettā</em> — palijskie słowo oznaczające miłującą dobroć lub bezwarunkową życzliwość — to jedna z czterech Brahmavihar (Wzniosłych Stanów Serca). Podczas gdy praktyki wglądu, takie jak Vipassana, badają naturę doświadczenia, Mettā aktywnie rozgrzewa i otwiera serce.</p>
+
+            <h3>Podstawowa Metoda</h3>
+            <p>Zacznij od wygodnej postawy oraz świadomości ciała i oddechu. Następnie wzbudź w sobie szczere życzenie własnego dobra — nie jako pustą formułkę, lecz autentyczną intencję. Powtarzaj łagodnie w myślach:</p>
+            <ul>
+                <li>Obym był bezpieczny.</li>
+                <li>Obym był zdrowy.</li>
+                <li>Obym był szczęśliwy.</li>
+                <li>Obym żył w spokoju i lekkości.</li>
+            </ul>
+            <p>Pozwól, by słowa te rezonowały w ciele. Jeśli zauważysz opór — obdarz go życzliwą ciekawością i spokojnie wróć do fraz.</p>
+
+            <h3>Rozszerzanie Kręgu</h3>
+            <p>Po kilku minutach skierowanych ku sobie stopniowo rozszerzaj krąg życzliwości: najpierw na osobę bliską lub mentora, następnie na osobę neutralną (np. mijanego przechodnia), potem na osobę, z którą masz trudności, a na końcu na wszystkie żywe istoty we wszystkich kierunkach.</p>
+
+            <h3>Neuronauka Miłującej Dobroci</h3>
+            <p>Badania prowadzone przez dr. Richarda Davidsona na Uniwersytecie Wisconsin wykazały, że praktyka Mettā znacząco zwiększa aktywność lewej kory przedczołowej — obszaru związanego z odpornością psychiczną i pozytywnym afektem — oraz przebudowuje sieci neuronalne odpowiedzialne za empatię.</p>
+
+            <h3>Mettā i Wolność Wewnętrzna</h3>
+            <p>Kiedy serce otwiera się w życzliwości wobec wszystkich istot, nawykowe kurczenie się wokół własnego „ja” oraz poczucie oddzielenia tracą swoją moc. Bezgraniczne serce samo w sobie jest przestrzenią wolności.</p>
+        `)
     },
     {
         id: "compassion_karuna",
         unlockLevel: 3,
-        category: "Loving-Kindness & Compassion",
+        category: tr("Loving-Kindness & Compassion", "Miłująca Dobroć i Współczucie"),
         emoji: "🤍",
-        title: "Karuṇā: The Trembling of the Heart Before Suffering",
+        title: tr("Karuṇā: The Trembling of the Heart Before Suffering", "Karuṇā: Drżenie Serca Wobec Cierpienia"),
         readTime: "4 min",
-        summary: "Understand compassion as an active, intelligent response to suffering — neither sentimental nor overwhelmed, but grounded and open.",
-        content: `
+        summary: tr("Understand compassion as an active, intelligent response to suffering — neither sentimental nor overwhelmed, but grounded and open.", "Zrozum współczucie jako aktywną, mądrą odpowiedź na cierpienie — wolną od przytłoczenia czy litości, a jednocześnie głęboko uziemioną i otwartą."),
+        content: tr(`
             <p>Compassion — <em>karuṇā</em> in Pāli — is often mistaken for pity or sadness. In the contemplative tradition, it is something far more powerful: the capacity to be fully present with suffering — your own and others' — without being swept away by it, and with the genuine wish that suffering be relieved.</p>
 
             <h3>The Difference Between Empathy and Compassion</h3>
@@ -340,17 +528,33 @@ const ARTICLES = [
 
             <h3>Equanimity as the Ground</h3>
             <p>True compassion requires the stability of equanimity beneath it. Without equanimity, compassion collapses into overwhelm. With equanimity, you can face the most intense suffering — your own or another's — and remain a clear, stable, effective presence. This is the combination that defines the Bodhisattva ideal in Mahāyāna Buddhism: boundless compassion, grounded in unshakeable clarity.</p>
-        `
+        `, `
+            <p>Współczucie — w języku palijskim <em>karuṇā</em> — bywa mylone z litością lub smutkiem. W tradycji kontemplacyjnej jest jednak czymś znacznie potężniejszym: zdolnością do pełnej obecności wobec cierpienia — własnego i cudzego — bez bycia przez nie przytłoczonym, połączoną ze szczerym pragnieniem ulżenia w bólu.</p>
+
+            <h3>Różnica Między Dystresem Empatycznym a Współczuciem</h3>
+            <p>Badania neurobiolożki Tanii Singer wyraźnie rozróżniają <em>dystres empatyczny</em> (przeżywanie cudzego bólu jako własnego, co prowadzi do wypalenia) od <em>współczucia</em> (ciepłej, skierowanej ku drugiemu troski). Dystres empatyczny aktywuje w mózgu sieć bólu, podczas gdy współczucie pobudza ośrodki troski, ciepła i odporności psychicznej — wzmacniając nas, zamiast wyczerpywać.</p>
+
+            <h3>Praktyka Karuṇā</h3>
+            <p>Przywołaj w myślach osobę, która przechodzi przez trudny czas. Zauważ, jak Twoje serce naturalnie porusza się wobec jej sytuacji — to delikatne „drżenie serca” jest nasieniem karuṇā. Następnie wypowiedz w myślach życzenia:</p>
+            <ul>
+                <li>Obyś był wolny od cierpienia.</li>
+                <li>Obyś był wolny od wewnętrznego bólu.</li>
+                <li>Obyś odnalazł głęboki pokój.</li>
+            </ul>
+
+            <h3>Równowaga Jako Fundament</h3>
+            <p>Prawdziwe współczucie opiera się na fundamencie równowagi umysłu. Bez równowagi łatwo wpaść w przytłoczenie; z równowagą możemy stanąć naprzeciw trudności i pozostać jasną, stabilną i wspierającą obecnością.</p>
+        `)
     },
     {
         id: "tonglen_practice",
         unlockLevel: 7,
-        category: "Loving-Kindness & Compassion",
+        category: tr("Loving-Kindness & Compassion", "Miłująca Dobroć i Współczucie"),
         emoji: "🌀",
-        title: "Tonglen: Breathing In Darkness, Breathing Out Light",
+        title: tr("Tonglen: Breathing In Darkness, Breathing Out Light", "Tonglen: Wdychanie Ciemności, Wydychanie Światła"),
         readTime: "5 min",
-        summary: "Discover the Tibetan Buddhist practice of giving and receiving — a radical reversal of self-protective instinct that turns suffering into compassionate action.",
-        content: `
+        summary: tr("Discover the Tibetan Buddhist practice of giving and receiving — a radical reversal of self-protective instinct that turns suffering into compassionate action.", "Odkryj tybetańską praktykę „dawania i przyjmowania” — odważne odwrócenie nawyku obronnego, które przemienia trudności w żywe współczucie."),
+        content: tr(`
             <p>Tonglen — "sending and receiving" in Tibetan — is among the most counterintuitive and powerful practices in the entire contemplative canon. Where every instinct tells us to push suffering away and pull pleasantness in, Tonglen deliberately reverses this: on the inhalation, we breathe in suffering, pain, and darkness; on the exhalation, we breathe out relief, spaciousness, and light.</p>
 
             <h3>Why Reverse the Instinct?</h3>
@@ -364,19 +568,33 @@ const ARTICLES = [
 
             <h3>The Paradox of Transformation</h3>
             <p>Practitioners report that contrary to expectation, Tonglen does not produce depression or heaviness. Because the suffering is not held or suppressed but breathed through, it transforms — like fuel being consumed in a furnace. The heart grows larger, not heavier. Suffering becomes the very vehicle of compassion's development.</p>
-        `
+        `, `
+            <p>Tonglen — po tybetańsku „dawanie i przyjmowanie” — należy do najbardziej niezwykłych i poruszających praktyk kontemplacyjnych. Podczas gdy nasz instynkt podpowiada, by odpychać ból i przyciągać przyjemność, Tonglen świadomie odwraca ten schemat: z wdechem przyjmujemy ciężar i ból, a z wydechem wysyłamy ulgę, przestrzeń i światło.</p>
+
+            <h3>Dlaczego Odwracamy Instynkt?</h3>
+            <p>Jak wyjaśnia Pema Chödrön, ciągłe uciekanie przed dyskomfortem i zamykanie serca w obronnej skorupie samo w sobie potęguje lęk. Gdy z odwagą wdychamy to, przed czym zwykle uciekamy, przełamujemy nawykowe kurczenie się „ja” i odkrywamy, że nasze serce jest jak bezkresna przestrzeń, której nic nie może zranić.</p>
+
+            <h3>Cztery Etapy Praktyki</h3>
+            <p><strong>Etap 1 — Spoczywanie w otwartości:</strong> Rozpocznij od chwili spoczęcia w czystej, otwartej i przestronnej świadomości.</p>
+            <p><strong>Etap 2 — Praca z teksturą oddechu:</strong> Wdychaj uczucie ciężkości, duszności i ciemności; wydychaj chłód, lekkość, jasność i przestrzeń.</p>
+            <p><strong>Etap 3 — Konkretna osoba:</strong> Przywołaj osobę, która cierpi. Z wdechem przyjmij jej ból do otwartego serca, a z wydechem prześlij jej ukojenie, pokój i siłę.</p>
+            <p><strong>Etap 4 — Wszystkie istoty:</strong> Rozszerz praktykę na wszystkich ludzi, którzy w tej samej chwili doświadczają podobnego trudu — niech Twoje współczucie obejmie ich wszystkich.</p>
+
+            <h3>Paradoks Przemiany</h3>
+            <p>Praktykujący odkrywają, że Tonglen nie przytłacza, lecz przynosi niezwykłą ulgę. Ponieważ ból nie jest tłumiony ani zatrzymywany, lecz przepływa przez otwarte serce, ulega transformacji — a serce staje się większe, silniejsze i wolne od lęku.</p>
+        `)
     },
 
     // ─── MIND & NEUROSCIENCE ──────────────────────────────────────────────────
     {
         id: "default_mode_network",
         unlockLevel: 3,
-        category: "Mind & Neuroscience",
+        category: tr("Mind & Neuroscience", "Umysł i Neuronauka"),
         emoji: "🔬",
-        title: "The Wandering Mind: Default Mode Network & Self-Referential Thought",
+        title: tr("The Wandering Mind: Default Mode Network & Self-Referential Thought", "Błądzący Umysł: Sieć Stanu Domyślnego (DMN)"),
         readTime: "5 min",
-        summary: "Discover the neuroscience behind mind-wandering, why the brain has a 'default mode,' and how meditation systematically reshapes these circuits.",
-        content: `
+        summary: tr("Discover the neuroscience behind mind-wandering, why the brain has a 'default mode,' and how meditation systematically reshapes these circuits.", "Poznaj neurobiologię błądzenia myśli — dowiedz się, czym jest Sieć Stanu Domyślnego (DMN) w mózgu i jak medytacja wycisza nadmierne zamartwianie się."),
+        content: tr(`
             <p>In 2001, neurologist Marcus Raichle and his colleagues made a striking discovery: large swaths of the brain become <em>more</em> active when people are at rest and not engaged in a task. They named this the Default Mode Network (DMN). What is the brain doing when it is "at rest"? It is thinking about itself — planning the future, ruminating on the past, and evaluating the social world. It is, in a word, daydreaming.</p>
 
             <h3>The Cost of Mind-Wandering</h3>
@@ -387,17 +605,28 @@ const ARTICLES = [
 
             <h3>The Practical Implication</h3>
             <p>Meditation is, in a very literal sense, training the brain to spend less time in self-referential narrative and more time in direct present-moment experience. This shift is associated with reduced rumination (linked to depression), improved emotional regulation, and greater subjective wellbeing. The sitting practice is the training ground; life is the arena where the training is applied.</p>
-        `
+        `, `
+            <p>W 2001 roku neurolog Marcus Raichle dokonał przełomowego odkrycia: rozległe obszary mózgu stają się <em>bardziej</em> aktywne dokładnie wtedy, gdy człowiek odpoczywa i nie wykonuje żadnego zadania. Nazwano je Siecią Stanu Domyślnego (<em>Default Mode Network</em> — DMN). Co robi mózg pozostawiony samemu sobie? Tworzy narrację o „ja” — analizuje przeszłość, martwi się o przyszłość i ocenia relacje społeczne.</p>
+
+            <h3>Koszt Błądzenia Myśli</h3>
+            <p>Psychologowie z Harvardu, Matthew Killingsworth i Daniel Gilbert, przeprowadzili głośne badanie na tysiącach osób, pytając je w losowych momentach dnia, co robią, o czym myślą i jak się czują. Okazało się, że przez blisko 47% czasu na jawie ludzie myślą o czymś innym niż to, co aktualnie robią — a błądzący umysł statystycznie wiązał się z wyraźnie niższym poczuciem szczęścia.</p>
+
+            <h3>Wpływ Medytacji na DMN</h3>
+            <p>Badania neuroobrazowania (fMRI) wykazują, że u osób regularnie medytujących aktywność Sieci Stanu Domyślnego ulega wyraźnemu wyciszeniu. Co więcej, gdy umysł medytującego zaczyna błądzić, obszary odpowiedzialne za zauważenie rozproszenia (wyspa przednia i grzbietowa sieć uwagi) reagują znacznie szybciej, pozwalając łagodnie wrócić do chwili obecnej.</p>
+
+            <h3>Praktyczne Znaczenie</h3>
+            <p>Medytacja w dosłownym sensie trenuje mózg, aby spędzał mniej czasu w kompulsywnej gonitwie myśli na własny temat, a więcej w bezpośrednim doświadczaniu życia. Przekłada się to na mniejszą skłonność do ruminacji, lepszą regulację emocji i głębszy wewnętrzny spokój.</p>
+        `)
     },
     {
         id: "neuroplasticity_meditation",
         unlockLevel: 5,
-        category: "Mind & Neuroscience",
+        category: tr("Mind & Neuroscience", "Umysł i Neuronauka"),
         emoji: "🧬",
-        title: "Neuroplasticity: How Meditation Literally Reshapes the Brain",
+        title: tr("Neuroplasticity: How Meditation Literally Reshapes the Brain", "Neuroplastyczność: Jak Medytacja Fizycznie Przebudowuje Mózg"),
         readTime: "5 min",
-        summary: "Explore the scientific evidence that meditation produces measurable structural and functional changes in the brain — and what this means for your practice.",
-        content: `
+        summary: tr("Explore the scientific evidence that meditation produces measurable structural and functional changes in the brain — and what this means for your practice.", "Poznaj dowody naukowe potwierdzające, że medytacja prowadzi do mierzalnych zmian strukturalnych i funkcjonalnych w mózgu."),
+        content: tr(`
             <p>For most of the 20th century, neuroscience held that the brain's architecture was essentially fixed by early adulthood. Santiago Ramón y Cajal, the father of modern neuroscience, wrote in 1913 that adult neurons are "fixed, immutable; nothing may be regenerated." We now know this is profoundly wrong. The brain is plastic throughout life — and meditation is one of the most potent reshaping forces available.</p>
 
             <h3>The Harvard Studies</h3>
@@ -411,17 +640,28 @@ const ARTICLES = [
 
             <h3>What This Means for You</h3>
             <p>Every time you sit and return your attention to the present moment, you are not just having a nice experience — you are participating in the literal, physical restructuring of your nervous system. The brain changes you are making today will compound over months and years into a genuinely different quality of mind.</p>
-        `
+        `, `
+            <p>Przez większość XX wieku sądzono, że struktura dorosłego mózgu jest niezmienna. Dziś wiemy, że mózg zachowuje neuroplastyczność przez całe życie — nieustannie tworzy nowe połączenia synaptyczne i przebudowuje swoją architekturę w odpowiedzi na to, jak kierujemy uwagą.</p>
+
+            <h3>Badania z Harvardu</h3>
+            <p>Neurobiolożka Sara Lazar z Harvard Medical School wykazała, że osoby medytujące charakteryzują się większą grubością kory mózgowej w obszarze kory przedczołowej oraz prawej wyspy przedniej — rejonach odpowiedzialnych za koncentrację uwagi, świadomość ciała i integrację zmysłową. Efekt ten był szczególnie widoczny u starszych uczestników, co sugeruje, że medytacja spowalnia starzenie się kory mózgowej.</p>
+
+            <h3>Osiem Tygodni do Zmiany Mózgu</h3>
+            <p>W słynnym badaniu pod kierunkiem Britty Hölzel wykazano, że już osiem tygodni codziennej praktyki uważności (ok. 27 minut dziennie) powoduje mierzalny wzrost gęstości istoty szarej w hipokampie (odpowiedzialnym za uczenie się, pamięć i regulację emocji) oraz w skrzyżowaniu skroniowo-ciemieniowym (odpowiedzialnym za empatię). Jednocześnie ciało migdałowate — centrum alarmowe stresu i lęku — zmniejszyło swoją objętość.</p>
+
+            <h3>Co To Oznacza dla Ciebie</h3>
+            <p>Za każdym razem, gdy siadasz do medytacji i łagodnie sprowadzasz uwagę do chwili obecnej, nie tylko odpoczywasz — dosłownie rzeźbisz swój układ nerwowy. Drobne codzienne sesje kumulują się przez miesiące i lata, tworząc trwale spokojniejszy, jaśniejszy i bardziej odporny umysł.</p>
+        `)
     },
     {
         id: "stress_response",
         unlockLevel: 2,
-        category: "Mind & Neuroscience",
+        category: tr("Mind & Neuroscience", "Umysł i Neuronauka"),
         emoji: "💡",
-        title: "The Stress Response: Biology, Suffering & the Relaxation Antidote",
+        title: tr("The Stress Response: Biology, Suffering & the Relaxation Antidote", "Reakcja Stresowa: Biologia Napięcia i Antidotum Relaksacji"),
         readTime: "4 min",
-        summary: "Understand how the body's stress response system works, why it causes so much modern suffering, and how meditation directly interrupts it.",
-        content: `
+        summary: tr("Understand how the body's stress response system works, why it causes so much modern suffering, and how meditation directly interrupts it.", "Zrozum, jak działa biologiczny mechanizm stresu, dlaczego we współczesnym świecie obraca się przeciwko nam i jak medytacja przywraca równowagę autonomiczną."),
+        content: tr(`
             <p>The stress response was designed for a world of brief, physical dangers: a predator, a fight, a fall. Cortisol and adrenaline flood the body, heart rate spikes, muscles tense, blood flow prioritizes large muscles over digestive organs, and the prefrontal cortex (reasoning) partially cedes control to the amygdala (threat detection). This "fight-or-flight" response is extraordinarily effective for short-term survival.</p>
 
             <h3>The Modern Mismatch</h3>
@@ -432,19 +672,30 @@ const ARTICLES = [
 
             <h3>Meditation as a Physiological Reset</h3>
             <p>Each meditation session — as short as ten minutes — provides a measurable relaxation response. Over time, regular practice appears to lower the "set point" of the stress system, making individuals less reactive to stressors and quicker to recover when stress does occur. This is measurable in reduced baseline cortisol, lower resting heart rate variability, and improved immune markers.</p>
-        `
+        `, `
+            <p>Reakcja stresowa wyewoluowała w świecie krótkotrwałych zagrożeń fizycznych. Gdy pojawia się niebezpieczeństwo, kortyzol i adrenalina zalewają krwiobieg, tętno przyspiesza, mięśnie się napinają, a kora przedczołowa (logiczne myślenie) częściowo oddaje ster ciału migdałowatemu. Ten tryb „walcz lub uciekaj” doskonale sprawdza się w przetrwaniu krótkiego kryzysu.</p>
+
+            <h3>Współczesne Niedopasowanie</h3>
+            <p>Problem polega na tym, że nasz układ nerwowy nie odróżnia drapieżnika od trudnej wiadomości e-mail czy presji w pracy — na oba bodźce reaguje tą samą kaskadą biochemiczną. Przewlekłe utrzymywanie organizmu w stanie alarmowym prowadzi do przemęczenia, zaburzeń snu, osłabienia odporności i chronicznego niepokoju.</p>
+
+            <h3>Reakcja Relaksacyjna</h3>
+            <p>Kardiolog z Harvardu Herbert Benson wprowadził pojęcie „reakcji relaksacyjnej”, opisując stan fizjologiczny wywoływany przez medytację — dokładne przeciwieństwo reakcji stresowej. Aktywuje ona przywspółczulny układ nerwowy (nerw błędny): zwalnia akcję serca, obniża ciśnienie krwi, redukuje poziom kortyzolu i przywraca organizmowi zdolność regeneracji.</p>
+
+            <h3>Medytacja jako Fizjologiczny Reset</h3>
+            <p>Każda, nawet 10-minutowa sesja uważnego oddechu stanowi dla układu nerwowego sygnał bezpieczeństwa. Z czasem regularna praktyka obniża bazowy próg reaktywności stresowej — sprawiając, że trudniej wyprowadzić Cię z równowagi, a powrót do spokoju następuje znacznie szybciej.</p>
+        `)
     },
 
     // ─── CONTEMPLATIVE PHILOSOPHY ─────────────────────────────────────────────
     {
         id: "stoic_mindfulness",
         unlockLevel: 4,
-        category: "Contemplative Philosophy",
+        category: tr("Contemplative Philosophy", "Filozofia Kontemplacyjna"),
         emoji: "🏛️",
-        title: "Stoic Mindfulness: The Discipline of Attention in Ancient Rome",
+        title: tr("Stoic Mindfulness: The Discipline of Attention in Ancient Rome", "Uważność Stoicka: Dyscyplina Uwagi w Starożytnym Rzymie"),
         readTime: "5 min",
-        summary: "Discover how Stoic philosophers like Marcus Aurelius and Epictetus cultivated present-moment awareness centuries before the word 'mindfulness' existed.",
-        content: `
+        summary: tr("Discover how Stoic philosophers like Marcus Aurelius and Epictetus cultivated present-moment awareness centuries before the word 'mindfulness' existed.", "Odkryj, jak filozofowie stoiccy, tacy jak Marek Aureliusz i Epiktet, pielęgnowali uważność chwili obecnej na wieki przed powstaniem współczesnej psychologii."),
+        content: tr(`
             <p>The Stoic philosophical tradition, flourishing from Athens to Rome between 300 BCE and 200 CE, developed a sophisticated practice of mental training that bears striking resemblance to modern mindfulness. Though separated by culture and language, the Stoics arrived at many of the same insights as the Buddhist contemplative tradition.</p>
 
             <h3>The Dichotomy of Control</h3>
@@ -458,17 +709,31 @@ const ARTICLES = [
 
             <h3>Living According to Nature</h3>
             <p>Stoics held that the highest good was living "according to nature" — meaning in accordance with one's rational nature and the rational order of the cosmos. This produces what they called <em>eudaimonia</em> — flourishing, or deep wellbeing — which is neither pleasure nor the absence of pain, but the expression of one's highest virtues in full engagement with life.</p>
-        `
+        `, `
+            <p>Tradycja filozofii stoickiej, kwitnąca w Atenach i Rzymie między III w. p.n.e. a II w. n.e., wypracowała kunsztowny trening umysłu niezwykle bliski współczesnej uważności. Choć oddzieleni kulturą i językiem, stoicy doszli do wielu tych samych odkryć co wschodnie tradycje kontemplacyjne (nazywając czujną obecność umysłu słowem <em>prosoche</em>).</p>
+
+            <h3>Dychotomia Kontroli</h3>
+            <p>Epiktet rozpoczął swój <em>Encheiridion</em> od fundamentalnej zasady: „Jedne rzeczy zależą od nas, a inne nie zależą”. Od nas zależą nasze sądy, intencje i reakcje. Nie zależą od nas okoliczności zewnętrzne ani działania innych ludzi. Ta dyscyplina odpowiada medytacyjnemu rozróżnieniu między surowym doznaniem (tym, co jest) a naszą mentalną opowieścią na jego temat (tym, co sami dodajemy).</p>
+
+            <h3>Marek Aureliusz: Medytujący Cesarz</h3>
+            <p>Cesarz Marek Aureliusz spisywał swoje <em>Rozmyślania</em> jako prywatny dziennik duchowych ćwiczeń. Nieustannie powracał w nich do nietrwałości wszystkich zjawisk, wartości skupienia na chwili obecnej oraz spokoju ducha: „Masz władzę nad swoim umysłem, a nie nad wydarzeniami zewnętrznymi. Uświadom to sobie, a odnajdziesz siłę”.</p>
+
+            <h3>Wdzięczność Poprzez Świadomość Nietrwałości</h3>
+            <p>Stoicy praktykowali świadomą refleksję nad ulotnością rzeczy — nie po to, by budzić lęk, lecz by pielęgnować nieprzywiązanie i głęboką wdzięczność za to, co obecne tu i teraz.</p>
+
+            <h3>Życie w Zgodzie z Naturą</h3>
+            <p>Najwyższym celem stoika była <em>eudajmonia</em> — głęboki rozkwit wewnętrzny i niewzruszony pokój ducha wynikający z życia w harmonii z własną naturą oraz biegiem świata.</p>
+        `)
     },
     {
         id: "taoist_flow",
         unlockLevel: 4,
-        category: "Contemplative Philosophy",
+        category: tr("Contemplative Philosophy", "Filozofia Kontemplacyjna"),
         emoji: "☯️",
-        title: "Tao & Wu Wei: The Art of Effortless Action",
+        title: tr("Tao & Wu Wei: The Art of Effortless Action", "Tao i Wu Wei: Sztuka Bezwysiłkowego Działania"),
         readTime: "4 min",
-        summary: "Understand the Taoist concepts of the Tao (the Way) and wu wei (effortless action) — and how they offer a profound orientation to both meditation and daily life.",
-        content: `
+        summary: tr("Understand the Taoist concepts of the Tao (the Way) and wu wei (effortless action) — and how they offer a profound orientation to both meditation and daily life.", "Zrozum taoistyczne pojęcia Tao (Drogi) oraz wu wei (działania bez siłowania się) — i odkryj, jak wnoszą one lekkość do medytacji oraz codziennego życia."),
+        content: tr(`
             <p>The Tao Te Ching, attributed to Laozi (6th century BCE), opens: "The Tao that can be spoken is not the eternal Tao." This radical opening acknowledges what the entire text explores: reality, at its deepest level, cannot be captured by concepts. It can only be participated in. This is the Tao — the Way, the ground of all being.</p>
 
             <h3>Wu Wei: Non-Forcing</h3>
@@ -479,17 +744,28 @@ const ARTICLES = [
 
             <h3>Te: Virtue as Natural Expression</h3>
             <p>The second great concept of Taoism is <em>Te</em> (virtue, power, or expression). While the Tao is the universal ground, Te is the unique expression of that ground through each individual being. A tree expresses its Te by growing fully and uniquely as the particular tree it is. In the same way, a human being's highest aspiration is to live in such alignment with the Tao that their actions flow naturally from their deepest nature — neither self-conscious nor mechanical, but spontaneously appropriate.</p>
-        `
+        `, `
+            <p>Księga <em>Tao Te Ching</em>, przypisywana Laozi, otwiera się słowami: „Tao, które można wyrazić słowami, nie jest wiecznym Tao”. Rzeczywistość na swoim najgłębszym poziomie nie daje się zamknąć w sztywnych pojęciach — można w niej jedynie uczestniczyć. Tym właśnie jest Tao: naturalnym rytmem i podłożem wszelkiego istnienia.</p>
+
+            <h3>Wu Wei: Brak Siłowania Się</h3>
+            <p><em>Wu wei</em> bywa tłumaczone jako „niedziałanie”, lecz dokładniej oznacza „niewymuszanie” lub „działanie w zgodzie z naturalnym przepływem rzeczy”. Najlepszym symbolem taoizmu jest woda: miękka i ustępliwa, nie walczy z przeszkodami, lecz swobodnie je opływa, a mimo to z czasem drąży najtwardszą skałę. Wu wei to jakość inteligentnej, bezwysiłkowej uważności.</p>
+
+            <h3>Wu Wei w Medytacji</h3>
+            <p>Jakość <em>wu wei</em> jest dokładnie tym, czego uczymy się na poduszce medytacyjnej. Napięty wysiłek, by „zmusić umysł do ciszy”, przypomina próbę wygładzenia fal na wodzie za pomocą żelazka — tworzy tylko jeszcze większe wzburzenie. Kiedy pozwalamy umysłowi być takim, jaki jest, i po prostu obserwujemy go bez przymusu, osad opada samoczynnie, a woda staje się przejrzysta.</p>
+
+            <h3>Te: Naturalny Wyraz Istnienia</h3>
+            <p>Drugim filarem taoizmu jest <em>Te</em> — naturalna cnota i autentyczność. Gdy przestajemy walczyć z chwilą obecną, nasze działania w codziennym życiu zaczynają wypływać ze spokoju i naturalnej harmonii.</p>
+        `)
     },
     {
         id: "advaita_nonduality",
         unlockLevel: 7,
-        category: "Contemplative Philosophy",
+        category: tr("Contemplative Philosophy", "Filozofia Kontemplacyjna"),
         emoji: "✨",
-        title: "Advaita Vedānta: The Nondual Recognition of Being",
+        title: tr("Advaita Vedānta: The Nondual Recognition of Being", "Advaita Vedānta: Niedualne Rozpoznanie Istnienia"),
         readTime: "6 min",
-        summary: "Explore the ancient Indian philosophy of nonduality — the recognition that awareness itself is the ground of all experience, and is never born or dies.",
-        content: `
+        summary: tr("Explore the ancient Indian philosophy of nonduality — the recognition that awareness itself is the ground of all experience, and is never born or dies.", "Poznaj starożytną indyjską filozofię niedualności — rozpoznanie, że sama świadomość jest cichym, niezmiennym podłożem wszelkiego doświadczenia."),
+        content: tr(`
             <p>Advaita Vedānta — meaning "the teaching that reality is not-two" — is one of the most radical and influential philosophical systems in human history. Systematized by the 8th-century philosopher Ādi Shankarāchārya, it holds that the deepest truth of human existence is identical to the deepest truth of ultimate reality.</p>
 
             <h3>The Core Teaching: Tat Tvam Asi</h3>
@@ -503,19 +779,30 @@ const ARTICLES = [
 
             <h3>Integration with Contemplative Practice</h3>
             <p>Whether one follows Buddhist, Taoist, Stoic, or any other contemplative path, the Advaita inquiry offers a powerful complement: rather than purifying or calming the mind to eventually achieve some future awakening, it points to what is already and always present as the very ground of this moment's awareness. The pathless path — already home.</p>
-        `
+        `, `
+            <p>Advaita Vedānta — co w sanskrycie oznacza dosłownie „niedwoistość” (<em>nie-dwa</em>) — to jeden z najgłębszych systemów filozoficznych i kontemplacyjnych Indii. Wskazuje on, że najgłębsza istota naszej świadomości nie jest oddzielona od fundamentalnej natury wszechświata.</p>
+
+            <h3>Rdzeń Nauki: Tat Tvam Asi</h3>
+            <p>W upaniszadzie Czhandogja znajduje się słynne zdanie: <em>Tat Tvam Asi</em> — „Ty jesteś Tym”. To, czym jesteś u samych podstaw — czystym, przytomnym świadkiem (<em>Ātman</em>) — jest tożsame z nieskończonym podłożem wszelkiego istnienia (<em>Brahman</em>).</p>
+
+            <h3>Błędne Utożsamienie (Avidyā)</h3>
+            <p>Dlaczego na co dzień nie doświadczamy tej pełni? Advaita odpowiada: przez <em>avidyā</em> — błędne utożsamienie. Zamiast rozpoznawać siebie jako przestrzenną świadomość, w której pojawiają się myśli i emocje, utożsamiamy się wyłącznie z ograniczonym strumieniem myśli. Podobnie jak ekran kinowy nie zostaje zalany wodą ani spalony ogniem wyświetlanych na nim filmów, tak sama świadomość pozostaje nietknięta zmiennymi nastrojami.</p>
+
+            <h3>Badanie Siebie (Ātma-Vichāra)</h3>
+            <p>Mędrzec Ramana Maharshi proponował bezpośrednią metodę kontemplacji: kierowanie uwagi ku źródłu pytania „Kim jestem?”. Gdy pojawia się myśl lub emocja, zapytaj: „Komu się ona pojawia?” — „Mnie”. „Kim zatem jest to ja?”. Zamiast szukać słownej odpowiedzi, pozwól uwadze spocząć w cichym źródle samej obecności.</p>
+        `)
     },
 
     // ─── ADVANCED STATES ──────────────────────────────────────────────────────
     {
         id: "jhana_introduction",
         unlockLevel: 7,
-        category: "Advanced States",
+        category: tr("Advanced States", "Zaawansowane Stany"),
         emoji: "🌸",
-        title: "Jhāna: The Four Absorptions of Deep Concentration",
+        title: tr("Jhāna: The Four Absorptions of Deep Concentration", "Jhāna: Cztery Stopnie Głębokiego Skupienia"),
         readTime: "7 min",
-        summary: "Understand the classical map of meditative absorption — four progressive states of refined concentration described in the Pāli Canon.",
-        content: `
+        summary: tr("Understand the classical map of meditative absorption — four progressive states of refined concentration described in the Pāli Canon.", "Poznaj klasyczną mapę medytacyjnej absorpcji — cztery progresywne stany głębokiego skupienia i wyciszenia opisane w Kanonie Palijskim."),
+        content: tr(`
             <p>The Buddha described four sequential states of meditative absorption, called <em>jhāna</em> (Sanskrit: <em>dhyāna</em> — the source of the word "Zen"). These are not mere relaxation; they are profoundly altered states of consciousness arising from prolonged, sustained attention, characterized by extraordinary clarity, stability, and in the earlier jhānas, intense bliss.</p>
 
             <h3>First Jhāna: Applied and Sustained Thought with Joy</h3>
@@ -532,17 +819,31 @@ const ARTICLES = [
 
             <h3>Context and Caution</h3>
             <p>Jhāna states are genuine experiences available to dedicated practitioners, but they require sustained daily practice over months or years to access. They are also somewhat controversial — different teachers describe their phenomenology differently, and some Buddhist schools deprioritize them in favor of insight practice. Approach these teachings with curiosity and without grasping, as another useful map — not the territory itself.</p>
-        `
+        `, `
+            <p>W klasycznych tekstach opisano cztery kolejne stany głębokiego wchłonięcia medytacyjnego, zwane <em>jhāna</em> (w sanskrycie <em>dhyāna</em> — skąd wywodzi się słowo „Zen”). Nie są to stany zwykłego relaksu, lecz głębokie skupienie wyłaniające się, gdy pięć przeszkód mentalnych całkowicie opadnie, a uwaga zjednoczy się z obiektem medytacji.</p>
+
+            <h3>Pierwsza Jhāna: Radość i Błogość Skupienia</h3>
+            <p>Gdy ciągłość uwagi ustabilizuje się, pojawia się pierwsza jhāna. Charakteryzuje się ona skierowaniem i utrzymaniem uwagi (<em>vitakka</em> i <em>vicāra</em>), którym towarzyszą <em>pīti</em> (energetyczna radość odczuwana często jako fale ciepła lub mrowienia) oraz <em>sukha</em> (głębokie ukojenie i dobrostan).</p>
+
+            <h3>Druga Jhāna: BezwysiłkoweZjednoczenie</h3>
+            <p>W miarę pogłębiania stanu znika potrzeba celowego nakierowywania uwagi — umysł spoczywa w skupieniu samoczynnie, niczym rzeka wpływająca do spokojnego jeziora. Pozostają radość i błogość zrodzone z wewnętrznej ciszy.</p>
+
+            <h3>Trzecia Jhāna: Spokojne Szczęście i Równowaga</h3>
+            <p>Wibrująca ekscytacja (<em>pīti</em>) cichnie, ustępując miejsca subtelnemu, cichemu szczęściu (<em>sukha</em>) połączonemu z głęboką równowagą i pełną przytomnością ciała.</p>
+
+            <h3>Czwarta Jhāna: Czysta Równowaga i Uważność</h3>
+            <p>W czwartej jhānie ustaje nawet subtelne poruszenie szczęścia — pozostaje krystalicznie czysta, lustrzana równowaga umysłu (<em>upekkhā</em>) i nieskazitelna uważność. Umysł staje się doskonale wyciszony, elastyczny i gotowy do najgłębszego wglądu.</p>
+        `)
     },
     {
         id: "cessation_nirodha",
         unlockLevel: 10,
-        category: "Advanced States",
+        category: tr("Advanced States", "Zaawansowane Stany"),
         emoji: "🌌",
-        title: "Nirodha-Samāpatti: The Cessation of Perception and Feeling",
+        title: tr("Nirodha-Samāpatti: The Cessation of Perception and Feeling", "Nirodha: Wygaśnięcie Percepcji i Odczuwania"),
         readTime: "6 min",
-        summary: "An advanced exploration of the highest meditative attainment in the Theravāda tradition — total cessation of consciousness, and what this reveals about the nature of mind.",
-        content: `
+        summary: tr("An advanced exploration of the highest meditative attainment in the Theravāda tradition — total cessation of consciousness, and what this reveals about the nature of mind.", "Zaawansowane spojrzenie na najgłębsze stany kontemplacyjne w tradycji Theravady — chwilowe ustanie strumienia pojęć i odkrycie bezwarunkowego pokoju."),
+        content: tr(`
             <p>Beyond the four material jhānas lie four formless absorptions — attainments of infinite space, infinite consciousness, nothingness, and neither-perception-nor-non-perception. And beyond all of these lies a state described in the Pāli Canon as <em>nirodha-samāpatti</em> — the cessation of perception and feeling. In this state, the meditator's mental activity ceases completely. They are alive, breathing (minimally), but for all intents and purposes, consciousness has stopped.</p>
 
             <h3>The Philosophical Significance</h3>
@@ -556,17 +857,28 @@ const ARTICLES = [
 
             <h3>The Limits of the Map</h3>
             <p>States like nirodha are significant markers on the contemplative map, but the tradition consistently warns against making attainments an end in themselves. Enlightenment, in the fullest sense, is not a state that comes and goes — it is a permanent shift in the basic orientation of the mind, where grasping at any state, including the most sublime, has ceased.</p>
-        `
+        `, `
+            <p>Ponad czterema jhānami tradycja opisuje cztery bezforemne sfery kontemplacji — nieskończonej przestrzeni, nieskończonej świadomości, nicości oraz sfery ani-percepcji-ani-nie-percepcji — a u ich szczytu stan <em>nirodha</em>, czyli wygaśnięcie uwarunkowanego strumienia percepcji i odczuć.</p>
+
+            <h3>Filozoficzne Znaczenie</h3>
+            <p>Doświadczenie to pokazuje w sposób bezpośredni, że wszystkie zjawiska mentalne są procesami powstającymi wskutek określonych warunków. Gdy warunki tworzące napięcie i lgnięcie zostają na chwilę całkowicie wyciszone, odsłania się bezwarunkowy pokój.</p>
+
+            <h3>Momenty Owocu (Phala)</h3>
+            <p>Praktykujący głęboką medytację wglądu opisują krótkie momenty przełomu zwane <em>phala</em> („owoc ścieżki”), po których następuje poczucie ogromnej ulgi, przejrzystości i trwałego spadku reaktywności emocjonalnej.</p>
+
+            <h3>Mądrość Nieprzywiązywania Się do Stanów</h3>
+            <p>Mistrzowie wszystkich tradycji przypominają jednak, że żadne niezwykłe doświadczenie medytacyjne nie jest celem samym w sobie. Prawdziwym owocem praktyki nie jest stan, który przychodzi i odchodzi, lecz trwała przemiana serca: wolność od chwytania, życzliwość i przytomność w zwykłej codzienności.</p>
+        `)
     },
     {
         id: "rigpa_dzogchen",
         unlockLevel: 10,
-        category: "Advanced States",
+        category: tr("Advanced States", "Zaawansowane Stany"),
         emoji: "💎",
-        title: "Rigpa: Naked Awareness in Dzogchen",
+        title: tr("Rigpa: Naked Awareness in Dzogchen", "Rigpa: Naga Świadomość w Tradycji Dzogczen"),
         readTime: "6 min",
-        summary: "Explore the Tibetan Great Perfection teaching that the nature of mind is primordially pure, luminous awareness — and how this is directly introduced by a teacher.",
-        content: `
+        summary: tr("Explore the Tibetan Great Perfection teaching that the nature of mind is primordially pure, luminous awareness — and how this is directly introduced by a teacher.", "Poznaj tybetańskie nauki Wielkiej Doskonałości (Dzogczen), według których naturalny stan umysłu jest od początku czysty, świetlisty i nieuwarunkowany."),
+        content: tr(`
             <p>Dzogchen — "the Great Perfection" — is the pinnacle teaching of the Nyingma school of Tibetan Buddhism. It is said to be the most direct and unelaborated expression of the path to liberation. Unlike gradual practices that purify the mind through progressive steps, Dzogchen points directly to what is already the case: the mind's natural state is primordially pure, self-knowing awareness, untouched by any defilement.</p>
 
             <h3>Rigpa: The Nature of Mind</h3>
@@ -585,19 +897,35 @@ const ARTICLES = [
 
             <h3>Practice After Recognition</h3>
             <p>Once introduced to rigpa, the practice is described as "resting in recognition" — not creating or modifying anything, but sustaining the naked clarity of awareness as the ground of all activity. Thoughts and emotions still arise, but they are recognized as the spontaneous display of rigpa itself, like reflections in a mirror that do not tarnish the mirror. Over time, this recognition becomes continuous and unshakeable — the state known as full enlightenment in the Dzogchen tradition.</p>
-        `
+        `, `
+            <p>Dzogczen — „Wielka Doskonałość” — stanowi szczytowe nauczanie najstarszej szkoły buddyzmu tybetańskiego (Nyingma). Wskazuje ono bezpośrednio na to, że naturalny stan umysłu jest od samego początku czysty, przytomny i nienaruszony przez przemijające chmury myśli oraz emocji.</p>
+
+            <h3>Rigpa: Natura Umysłu</h3>
+            <p><em>Rigpa</em> — tłumaczona jako „naga świadomość” lub „wrodzona przytomność” — odróżniana jest od zwykłego, pojęciowego umysłu (<em>sems</em>). Podczas gdy zwykły umysł nieustannie ocenia, chwyta i dzieli, <em>rigpa</em> jest samą przestrzenią poznania, opisywaną przez trzy cechy:</p>
+            <ul>
+                <li><strong>Pusta w swej istocie</strong> — niemająca kształtu, koloru ani granic,</li>
+                <li><strong>Świetlista w swej naturze</strong> — przejrzyście świadoma i przytomna,</li>
+                <li><strong>Nieograniczona we współczuciu</strong> — otwarta na wszystkie przejawy życia.</li>
+            </ul>
+
+            <h3>Lustro i Odbicia</h3>
+            <p>Klasyczną metaforą Dzogczen jest lustro: w lustrze mogą pojawiać się zarówno piękne, jak i przerażające obrazy, lecz tafla lustra nigdy nie zostaje przez nie zabrudzona ani uszkodzona. Podobnie myśli i emocje wydarzają się w przestrzeni czystej świadomości i rozpuszczają się w niej niczym rysunki kreślone palcem na wodzie.</p>
+
+            <h3>Spoczywanie w Rozpoznaniu</h3>
+            <p>Praktyka polega na prostym, niewymuszonym spoczywaniu w tej naturalnej przytomności — bez poprawiania chwili obecnej i bez podążania za łańcuchami myśli.</p>
+        `)
     },
 
     // ─── PRACTICAL GUIDANCE ───────────────────────────────────────────────────
     {
         id: "building_habit",
         unlockLevel: 1,
-        category: "Practical Guidance",
+        category: tr("Practical Guidance", "Praktyczne Wskazówki"),
         emoji: "📅",
-        title: "The Architecture of a Daily Practice",
+        title: tr("The Architecture of a Daily Practice", "Architektura Codziennej Praktyki"),
         readTime: "4 min",
-        summary: "Evidence-based guidance for building a sustainable, consistent meditation habit — including time of day, environment, duration, and dealing with resistance.",
-        content: `
+        summary: tr("Evidence-based guidance for building a sustainable, consistent meditation habit — including time of day, environment, duration, and dealing with resistance.", "Praktyczne, oparte na badaniach wskazówki, jak zbudować trwały, codzienny nawyk medytacji — dobór pory dnia, miejsca, czasu trwania i radzenie sobie z oporem."),
+        content: tr(`
             <p>The single most important factor in meditation is not technique, tradition, or teacher — it is consistency. A five-minute daily practice, maintained steadily for years, will produce more transformation than a powerful weekend retreat that is never followed up. Building a sustainable habit architecture is therefore the most practical wisdom a new meditator can receive.</p>
 
             <h3>Habit Stacking: Anchoring to Existing Routines</h3>
@@ -611,17 +939,31 @@ const ARTICLES = [
 
             <h3>Working with Resistance</h3>
             <p>Resistance to sitting is almost universal and is no indication that meditation isn't working. In fact, the days when you most want to skip are often the days when practice is most valuable. A useful commitment: on days of strong resistance, commit only to sitting down and completing three breaths. Very often, once begun, the practice takes over. And on days when it truly doesn't — the habit of showing up is maintained.</p>
-        `
+        `, `
+            <p>Najważniejszym czynnikiem w medytacji nie jest skomplikowana technika, lecz regularność. Dziesięć minut codziennej praktyki, utrzymywanej konsekwentnie przez miesiące, przyniesie głębszą przemianę niż jednorazowa długa sesja raz na kilka tygodni. Zbudowanie przyjaznej architektury nawyku to najlepszy dar, jaki możesz sobie podarować.</p>
+
+            <h3>Kotwiczenie Nawyku (Habit Stacking)</h3>
+            <p>Badania nad kształtowaniem nawyków pokazują, że nowa czynność najłatwiej utrwala się wtedy, gdy połączysz ją z czymś, co już robisz każdego dnia. Przykład: „Po porannym umyciu zębów (lub zaparzeniu kawy) siadam na 10 minut, zanim sięgnę po telefon”. Stały rytuał zdejmuje z głowy konieczność codziennego negocjowania ze sobą.</p>
+
+            <h3>Stałe Miejsce Praktyki</h3>
+            <p>Wyznacz w domu jeden kącik, fotel lub poduszkę przeznaczoną do medytacji. Z czasem sam widok tego miejsca i zajęcie pozycji stanie się dla Twojego układu nerwowego sygnałem do wyciszenia.</p>
+
+            <h3>Czas Trwania: Zasada Małych Kroków</h3>
+            <p>Już 10–15 minut dziennie przynosi wyraźne korzyści. Zawsze wybieraj taki dzienny cel, który jesteś w stanie zrealizować nawet w najbardziej zabiegany dzień, a w dni spokojniejsze wydłużaj sesję z własnej chęci.</p>
+
+            <h3>Praca z Wewnętrznym Oporem</h3>
+            <p>Dni, w których najbardziej nie chce Ci się usiąść, są często dniami, w których praktyka przynosi największą wartość. W trudniejszy dzień umów się ze sobą na absolutne minimum: „Usiądę tylko na trzy świadome oddechy”. Najczęściej, gdy już usiądziesz, praktyka popłynie sama — a ciągłość nawyku zostanie zachowana.</p>
+        `)
     },
     {
         id: "integration_daily_life",
         unlockLevel: 3,
-        category: "Practical Guidance",
+        category: tr("Practical Guidance", "Praktyczne Wskazówki"),
         emoji: "🌿",
-        title: "Informal Practice: Carrying Mindfulness Into Daily Life",
+        title: tr("Informal Practice: Carrying Mindfulness Into Daily Life", "Praktyka Nieformalna: Uważność w Codziennym Życiu"),
         readTime: "4 min",
-        summary: "Extend the benefits of formal meditation into everyday activities — from washing dishes to walking to difficult conversations — through informal mindfulness practices.",
-        content: `
+        summary: tr("Extend the benefits of formal meditation into everyday activities — from washing dishes to walking to difficult conversations — through informal mindfulness practices.", "Przenieś spokój z poduszki medytacyjnej do codziennych czynności — od spaceru i picia herbaty po rozmowy z bliskimi."),
+        content: tr(`
             <p>Formal meditation — sitting on a cushion for a defined period — is essential for building the capacity for mindfulness. But the ultimate aim is a quality of awareness that permeates the entire day. Informal practice bridges the cushion and the rest of life.</p>
 
             <h3>Single-Tasking as Mindfulness</h3>
@@ -635,17 +977,31 @@ const ARTICLES = [
 
             <h3>Difficult Conversations as Practice</h3>
             <p>Challenging interpersonal moments are among the richest opportunities for practice. When a conversation becomes heated, practice: feel your feet on the ground. Take one slow breath. Notice the physical sensations of your emotional state without immediately acting on them. Listen more than you speak. These micro-practices bring formal training into the crucible of real life — where it matters most.</p>
-        `
+        `, `
+            <p>Formalna medytacja na siedząco buduje mięsień uważności, ale jej prawdziwym celem jest przeniesienie tej przytomności na resztę dnia. Praktyka nieformalna łączy ciszę sesji z rytmem codziennego życia.</p>
+
+            <h3>Jednozadaniowość jako Medytacja</h3>
+            <p>Współczesny świat promuje wielozadaniowość, która w rzeczywistości jest wyczerpującym przeskakiwaniem uwagi z tematu na temat. Spróbuj prostego eksperymentu: wykonuj jedną czynność naraz. Kiedy pijesz herbatę — tylko pij herbatę, czując jej ciepło i smak. Kiedy idziesz — poczuj krok stóp na ziemi. Zauważ, jak wiele spokoju pojawia się, gdy uwaga przestaje być rozszczepiona.</p>
+
+            <h3>Pauza Trzech Oddechów</h3>
+            <p>Mistrz Zen Thich Nhat Hanh uczył traktowania drobnych sygnałów dnia jako „dzwonków uważności”. Zanim odbierzesz telefon, zanim wejdziesz na spotkanie lub zanim otworzysz skrzynkę mailową — weź trzy świadome oddechy. Trzy oddechy wystarczą, aby wyłączyć autopilota i wrócić do ciała.</p>
+
+            <h3>Mikropraktyka STOP</h3>
+            <p>Gdy poczujesz pośpiech w ciągu dnia, zastosuj cztery kroki: <strong>S</strong>top — zatrzymaj się na ułamek sekundy. <strong>T</strong>ake a breath — weź jeden głęboki oddech. <strong>O</strong>bserve — zauważ, co dzieje się w Twoim ciele i myślach. <strong>P</strong>roceed — kontynuuj działanie ze spokojną obecnością.</p>
+
+            <h3>Uważność w Rozmowie</h3>
+            <p>Rozmowy z innymi ludźmi to jedno z najcenniejszych pól praktyki. Poczuj stopy na podłodze, rozluźnij barki i słuchaj rozmówcy z pełną obecnością, zamiast układać w głowie kolejną odpowiedź.</p>
+        `)
     },
     {
         id: "working_emotions",
         unlockLevel: 4,
-        category: "Practical Guidance",
+        category: tr("Practical Guidance", "Praktyczne Wskazówki"),
         emoji: "🌊",
-        title: "Riding the Waves: Working with Strong Emotions in Meditation",
+        title: tr("Riding the Waves: Working with Strong Emotions in Meditation", "Żeglowanie po Falach: Praca z Silnymi Emocjami"),
         readTime: "5 min",
-        summary: "Practical guidance for meeting intense emotions — grief, anger, fear, shame — in meditation without suppressing them or being swept away.",
-        content: `
+        summary: tr("Practical guidance for meeting intense emotions — grief, anger, fear, shame — in meditation without suppressing them or being swept away.", "Praktyczny przewodnik, jak spotykać trudne emocje — lęk, złość, smutek czy napięcie — bez tłumienia ich i bez ulegania przytłoczeniu."),
+        content: tr(`
             <p>Many people begin meditation expecting it to produce peace and calm, and are surprised when strong emotions arise — sometimes emotions that have been carefully avoided for years. This is not a malfunction. The quieting of mental noise allows previously suppressed feelings to surface. The question is how to work with them skillfully.</p>
 
             <h3>The RAIN Technique</h3>
@@ -665,17 +1021,34 @@ const ARTICLES = [
 
             <h3>When to Seek Support</h3>
             <p>Meditation is not a substitute for psychotherapy or trauma treatment. If meditation consistently surfaces very intense emotional material — especially relating to trauma — working with a skilled therapist or trauma-informed meditation teacher is advisable alongside or before intensive practice. The two modalities can be powerful complements when properly calibrated.</p>
-        `
+        `, `
+            <p>Wielu początkujących oczekuje, że medytacja przyniesie wyłącznie ciszę, dlatego dziwią się, gdy podczas sesji wypływają silne emocje. Nie jest to błąd — gdy codzienny hałas cichnie, stłumione wcześniej uczucia mogą bezpiecznie wyjść na powierzchnię. Kluczem jest umiejętne spotkanie się z nimi.</p>
+
+            <h3>Metoda RAIN</h3>
+            <p>Nauczycielka uważności i psycholożka Tara Brach spopularyzowała czterostopniową praktykę <strong>RAIN</strong>:</p>
+            <ul>
+                <li><strong>R — Rozpoznaj (Recognize):</strong> Zauważ i nazwij z łagodnością to, co się pojawia: „Czuję teraz lęk”, „Pojawił się smutek”.</li>
+                <li><strong>A — Akceptuj / Pozwól (Allow):</strong> Zrezygnuj na chwilę z odruchu natychmiastowego naprawiania lub odpychania tego stanu. Pozwól mu tu być.</li>
+                <li><strong>I — Zbadaj w ciele (Investigate):</strong> Z życzliwą ciekawością sprawdź, jak ta emocja wyraża się fizycznie. Czy to ucisk w gardle? Ciężar w klatce piersiowej? Ciepło w brzuchu?</li>
+                <li><strong>N — Otocz troską (Nurture):</strong> Obdarz to miejsce w ciele taką samą czułością, jaką okazałbyś bliskiemu przyjacielowi. Możesz położyć dłoń na sercu i spokojnie oddychać.</li>
+            </ul>
+
+            <h3>Emocja = Doznanie w Ciele + Historia w Głowie</h3>
+            <p>Każda emocja składa się z dwóch warstw: fizycznego odczucia w ciele oraz myślowej opowieści, która dolewa oliwy do ognia. Gdy odłączysz uwagę od powtarzania historii w głowie i przeniesiesz ją na samo czyste doznanie w ciele, odkryjesz, że fala emocji naturalnie opada w ciągu kilkudziesięciu sekund.</p>
+
+            <h3>Okno Tolerancji</h3>
+            <p>Zawsze dbaj o swoje poczucie bezpieczeństwa: jeśli emocja staje się zbyt intensywna, otwórz oczy, poczuj mocny kontakt stóp z podłogą i rozejrzyj się po pokoju.</p>
+        `)
     },
     {
         id: "sleep_meditation",
         unlockLevel: 2,
-        category: "Practical Guidance",
+        category: tr("Practical Guidance", "Praktyczne Wskazówki"),
         emoji: "🌙",
-        title: "Yoga Nidrā: The Art of Conscious Sleep",
+        title: tr("Yoga Nidrā: The Art of Conscious Sleep", "Joga Nidra: Sztuka Świadomego Snu i Głębokiego Relaksu"),
         readTime: "4 min",
-        summary: "Explore Yoga Nidrā — the 'yoga of sleep' — a systematic body-mind relaxation practice used for deep restoration, stress relief, and enhanced insight.",
-        content: `
+        summary: tr("Explore Yoga Nidrā — the 'yoga of sleep' — a systematic body-mind relaxation practice used for deep restoration, stress relief, and enhanced insight.", "Poznaj Jogę Nidrę — „jogiczny sen” — systematyczną praktykę głębokiej regeneracji ciała i umysłu oraz pracy z intencją (Sankalpą)."),
+        content: tr(`
             <p>Yoga Nidrā — "sleep of the yogis" — is an ancient technique codified in the 20th century by Swami Satyananda Saraswati. It is typically practiced lying down, guided by a teacher's voice through a systematic relaxation of body, breath, and mind, while maintaining the thin thread of consciousness. Practitioners report that 30 minutes of Yoga Nidrā feels equivalent to two to four hours of ordinary sleep in terms of restoration.</p>
 
             <h3>The Hypnagogic State</h3>
@@ -686,7 +1059,18 @@ const ARTICLES = [
 
             <h3>Structural Elements of a Session</h3>
             <p>A full Yoga Nidrā session typically includes: physical settling and sankalpa; rotation of consciousness through the body (a rapid systematic naming of body parts that produces sensory withdrawal); pairs of opposites (heaviness/lightness, warmth/coolness — amplifying the capacity to hold contradictory states); visualization; and return to ordinary awareness. The entire process systematically relaxes both the somatic nervous system and the mind.</p>
-        `
+        `, `
+            <p>Joga Nidra — „sen joginów” — to starożytna sztuka świadomego relaksu. Praktykuje się ją zazwyczaj w pozycji leżącej, prowadząc uwagę przez kolejne części ciała oraz oddech, przy zachowaniu subtelnej nici przytomności na pograniczu jawy i snu. Pół godziny głębokiej Jogi Nidry potrafi zregenerować układ nerwowy równie skutecznie jak długi odpoczynek.</p>
+
+            <h3>Stan Hipnagogiczny</h3>
+            <p>Joga Nidra wprowadza umysł w stan na progu snu (fale alfa i theta), w którym ciało głęboko odpoczywa, a analityczny filtr kory przedczołowej ulega rozluźnieniu. W tym stanie napięcia somatyczne puszczają znacznie szybciej niż podczas zwykłego leżenia.</p>
+
+            <h3>Sankalpa: Ziarno Intencji</h3>
+            <p>Sercem praktyki jest <em>Sankalpa</em> — krótka, pozytywna intencja płynąca z serca (którą możesz również ustawić przed każdą sesją na ekranie Medytacji w aplikacji Siddha). Zasiana w wyciszonym umyśle na początku i na końcu praktyki — np. „Jestem w pełni obecny i spokojny” lub „Działam z odwagą i życzliwością” — działa jak nasienie, które kiełkuje w codziennym życiu.</p>
+
+            <h3>Elementy Praktyki</h3>
+            <p>Klasyczna sesja obejmuje: wyciszenie ciała, zasiew intencji (<em>Sankalpa</em>), rotację świadomości po punktach ciała, odczuwanie par przeciwieństw (ciężar i lekkość, ciepło i chłód) oraz łagodny powrót do pełnej obecności.</p>
+        `)
     }
 ];
 
@@ -700,12 +1084,12 @@ export function renderWisdom() {
     container.innerHTML = `
         <!-- Header -->
         <div class="wd-header">
-            <button class="wd-back-btn" id="wd-back-btn" aria-label="Back">
+            <button class="wd-back-btn" id="wd-back-btn" aria-label="${tr('Back', 'Wróć')}">
                 <span class="material-symbols-rounded">arrow_back</span>
             </button>
             <div style="text-align:center; flex:1;">
-                <h1 class="wd-title">Wisdom Library</h1>
-                <p class="wd-subtitle">Nourish your mind</p>
+                <h1 class="wd-title">${tr('Wisdom Library', 'Biblioteka Mądrości')}</h1>
+                <p class="wd-subtitle">${tr('Nourish your mind', 'Nakarm swój umysł')}</p>
             </div>
             <div style="width:40px;"></div>
         </div>
@@ -721,24 +1105,24 @@ export function renderWisdom() {
                 <div class="wd-progress-container" style="position: absolute; bottom: 0; top: auto; left: 0; height: 3px;">
                     <div class="wd-progress-bar" id="wd-reader-progress"></div>
                 </div>
-                <button class="wd-reader-close" id="wd-reader-close" aria-label="Close reader">
+                <button class="wd-reader-close" id="wd-reader-close" aria-label="${tr('Close reader', 'Zamknij czytnik')}">
                     <span class="material-symbols-rounded">arrow_back</span>
                 </button>
                 <div class="wd-reader-meta">
-                    <span id="wd-meta-category">Category</span> · <span id="wd-meta-time">5 min read</span>
+                    <span id="wd-meta-category">${tr('Category', 'Kategoria')}</span> · <span id="wd-meta-time">5 min</span>
                 </div>
                 <div style="width:36px;"></div>
             </div>
 
             <div class="wd-reader-body" id="wd-reader-body">
-                <h1 class="wd-reader-title" id="wd-reader-title">Article Title</h1>
+                <h1 class="wd-reader-title" id="wd-reader-title">${tr('Article Title', 'Tytuł artykułu')}</h1>
                 <div class="wd-reader-text" id="wd-reader-text">
                     <!-- Text content injected here -->
                 </div>
 
                 <div class="wd-completion-zone">
                     <button class="btn btn-primary wd-complete-btn" id="wd-complete-btn">
-                        Complete Reading & Claim +15 XP
+                        ${tr('Complete Reading & Claim +15 XP', 'Ukończ czytanie i odbierz +15 XP')}
                     </button>
                 </div>
             </div>
@@ -1052,9 +1436,13 @@ export function renderWisdom() {
 
             const PATH_BY_CATEGORY = {
                 "Foundations of Mindfulness": "anapana",
+                "Fundamenty Uważności": "anapana",
                 "Insight Practice": "vipassana",
+                "Praktyka Wglądu": "vipassana",
                 "Zen Tradition": "zen",
-                "Loving-Kindness & Compassion": "metta"
+                "Tradycja Zen": "zen",
+                "Loving-Kindness & Compassion": "metta",
+                "Miłująca Dobroć i Współczucie": "metta"
             };
 
             list.forEach(art => {
@@ -1080,7 +1468,7 @@ export function renderWisdom() {
                                     ${isRead ? `
                                         <span class="wd-read-badge">
                                             <span class="material-symbols-rounded" style="font-size:12px; font-variation-settings: 'FILL' 1;">check_circle</span>
-                                            Completed
+                                            ${tr('Completed', 'Przeczytano')}
                                         </span>
                                     ` : ''}
                                 </div>
@@ -1090,9 +1478,9 @@ export function renderWisdom() {
 
                     card.addEventListener('click', () => openArticle(art));
                 } else {
-                    let lockText = `Lv.${art.unlockLevel} Required`;
+                    let lockText = tr(`Lv.${art.unlockLevel} Required`, `Wymagany Poz.${art.unlockLevel}`);
                     if (!isPathUnlocked) {
-                        lockText = "Path Locked";
+                        lockText = tr("Path Locked", "Ścieżka zablokowana");
                     }
 
                     card.innerHTML = `
@@ -1147,11 +1535,11 @@ export function renderWisdom() {
             completeBtn.className = 'btn wd-complete-btn claimed';
             completeBtn.innerHTML = `
                 <span class="material-symbols-rounded" style="font-size:16px; margin-right:4px;">check_circle</span>
-                Read Completed (+15 XP Claimed)
+                ${tr('Read Completed (+15 XP Claimed)', 'Przeczytano (+15 XP odebrano)')}
             `;
         } else {
             completeBtn.className = 'btn btn-primary wd-complete-btn';
-            completeBtn.innerHTML = 'Complete Reading & Claim +15 XP';
+            completeBtn.innerHTML = tr('Complete Reading & Claim +15 XP', 'Ukończ czytanie i odbierz +15 XP');
         }
 
         // Reset scroll position and progress bar
@@ -1180,7 +1568,7 @@ export function renderWisdom() {
             completeBtn.className = 'btn wd-complete-btn claimed';
             completeBtn.innerHTML = `
                 <span class="material-symbols-rounded" style="font-size:16px; margin-right:4px;">check_circle</span>
-                Read Completed (+15 XP Claimed)
+                ${tr('Read Completed (+15 XP Claimed)', 'Przeczytano (+15 XP odebrano)')}
             `;
             
             DB.checkAndTriggerAchievements(false);

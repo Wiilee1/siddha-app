@@ -1,4 +1,5 @@
 import { DB } from '../services/db.js';
+import { tr, getLang, setLang } from '../services/i18n.js';
 
 export function renderLogin(onLoginSuccess) {
     const container = document.createElement('div');
@@ -13,6 +14,7 @@ export function renderLogin(onLoginSuccess) {
         goal: 'stress',
         commitment: 10
     };
+    const activeLang = getLang();
 
     container.innerHTML = `
         <div class="onboarding-container">
@@ -26,6 +28,10 @@ export function renderLogin(onLoginSuccess) {
                 
                 <!-- Slide 0: Welcome -->
                 <div class="onboarding-slide active" data-step="0">
+                    <div class="lang-toggle-bar" style="display: inline-flex; gap: 6px; background: var(--color-bg-secondary); padding: 4px; border-radius: 999px; margin-bottom: 18px; border: 1px solid rgba(134,155,143,0.2);">
+                        <button type="button" class="lang-switch-btn" data-lang="pl" style="border:none; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; cursor: pointer; background: ${activeLang === 'pl' ? 'var(--color-accent-dark)' : 'transparent'}; color: ${activeLang === 'pl' ? '#fff' : 'var(--color-text-secondary)'};">🇵🇱 Polski</button>
+                        <button type="button" class="lang-switch-btn" data-lang="en" style="border:none; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; cursor: pointer; background: ${activeLang === 'en' ? 'var(--color-accent-dark)' : 'transparent'}; color: ${activeLang === 'en' ? '#fff' : 'var(--color-text-secondary)'};">🇬🇧 English</button>
+                    </div>
                     <div class="welcome-halo-container">
                         <div class="halo-ring ring-1"></div>
                         <div class="halo-ring ring-2"></div>
@@ -35,55 +41,58 @@ export function renderLogin(onLoginSuccess) {
                         </div>
                     </div>
                     <h1 class="welcome-title">Siddha</h1>
-                    <p class="welcome-subtitle">Gamified meditation for deep concentration</p>
+                    <p class="welcome-subtitle">${tr('Gamified meditation for deep concentration', 'Uważna medytacja i trening głębokiego skupienia')}</p>
                     <p class="welcome-text">
-                        Welcome to your personal sanctuary. Let’s take a few moments to tailor your journey towards presence and focus.
+                        ${tr(
+                            'Welcome to your personal sanctuary. Let’s take a few moments to tailor your journey towards presence and focus.',
+                            'Witaj w swoim osobistym sanktuarium. Poświęćmy chwilę, aby dopasować Twoją ścieżkę do obecności i wewnętrznego spokoju.'
+                        )}
                     </p>
                     <button class="btn btn-primary btn-next-welcome" style="margin-top: 32px; padding: 16px 40px; font-size: 16px;">
-                        Begin Onboarding
+                        ${tr('Begin Onboarding', 'Rozpocznij wprowadzenie')}
                     </button>
                 </div>
 
                 <!-- Slide 1: Name Input -->
                 <div class="onboarding-slide" data-step="1">
                     <span class="material-symbols-rounded slide-header-icon">badge</span>
-                    <h2 class="slide-title">What should we call you?</h2>
-                    <p class="slide-description">Your name will be used to personalize your daily mindfulness greeting.</p>
+                    <h2 class="slide-title">${tr('What should we call you?', 'Jak mamy się do Ciebie zwracać?')}</h2>
+                    <p class="slide-description">${tr('Your name will be used to personalize your daily mindfulness greeting.', 'Twoje imię posłuży do spersonalizowania codziennych powitań.')}</p>
                     
                     <div class="input-group">
-                        <input type="text" id="user-name-input" placeholder="Enter your name" autocomplete="off" maxlength="20">
+                        <input type="text" id="user-name-input" placeholder="${tr('Enter your name', 'Wpisz swoje imię')}" autocomplete="off" maxlength="20">
                         <span class="input-focus-line"></span>
                     </div>
 
-                    <p id="name-validation-error" class="validation-error">Please enter your name to proceed.</p>
+                    <p id="name-validation-error" class="validation-error">${tr('Please enter your name to proceed.', 'Wpisz swoje imię, aby kontynuować.')}</p>
                 </div>
 
                 <!-- Slide 2: Experience Level -->
                 <div class="onboarding-slide" data-step="2">
                     <span class="material-symbols-rounded slide-header-icon">insights</span>
-                    <h2 class="slide-title">Your meditation experience?</h2>
-                    <p class="slide-description">We will adjust the starting session times and guides accordingly.</p>
+                    <h2 class="slide-title">${tr('Your meditation experience?', 'Twoje doświadczenie z medytacją?')}</h2>
+                    <p class="slide-description">${tr('We will adjust the starting session times and guides accordingly.', 'Dopasujemy czas początkowych sesji oraz wskazówki do Twojego poziomu.')}</p>
                     
                     <div class="options-grid">
                         <div class="option-card active" data-value="beginner" data-field="experience">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">spa</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">Beginner</h4>
-                                <p class="option-desc">New to meditation or sitting occasionally. Let's start with basics.</p>
+                                <h4 class="option-label">${tr('Beginner', 'Początkujący')}</h4>
+                                <p class="option-desc">${tr("New to meditation or sitting occasionally. Let's start with basics.", 'Dopiero zaczynasz lub medytujesz okazjonalnie. Zacznijmy od podstaw.')}</p>
                             </div>
                         </div>
                         <div class="option-card" data-value="intermediate" data-field="experience">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">psychology_alt</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">Intermediate</h4>
-                                <p class="option-desc">Have a semi-regular practice. Familiar with focus and distraction.</p>
+                                <h4 class="option-label">${tr('Intermediate', 'Średniozaawansowany')}</h4>
+                                <p class="option-desc">${tr('Have a semi-regular practice. Familiar with focus and distraction.', 'Praktykujesz w miarę regularnie. Znasz podstawy pracy z uwagą i rozproszeniem.')}</p>
                             </div>
                         </div>
                         <div class="option-card" data-value="advanced" data-field="experience">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">wb_sunny</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">Advanced</h4>
-                                <p class="option-desc">Consistent daily sits. Seeking deep concentration or Jhana states.</p>
+                                <h4 class="option-label">${tr('Advanced', 'Zaawansowany')}</h4>
+                                <p class="option-desc">${tr('Consistent daily sits. Seeking deep concentration or Jhana states.', 'Codzienna, stała praktyka. Szukasz głębokiego skupienia lub stanów Dżhany.')}</p>
                             </div>
                         </div>
                     </div>
@@ -92,29 +101,29 @@ export function renderLogin(onLoginSuccess) {
                 <!-- Slide 3: Primary Goal -->
                 <div class="onboarding-slide" data-step="3">
                     <span class="material-symbols-rounded slide-header-icon">target</span>
-                    <h2 class="slide-title">What is your main goal?</h2>
-                    <p class="slide-description">Choose the focus that matters most to you right now.</p>
+                    <h2 class="slide-title">${tr('What is your main goal?', 'Jaki jest Twój główny cel?')}</h2>
+                    <p class="slide-description">${tr('Choose the focus that matters most to you right now.', 'Wybierz kierunek, który jest dla Ciebie teraz najważniejszy.')}</p>
                     
                     <div class="options-grid">
                         <div class="option-card active" data-value="stress" data-field="goal">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">grass</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">Reduce Stress</h4>
-                                <p class="option-desc">Calm your nervous system and find peace in everyday moments.</p>
+                                <h4 class="option-label">${tr('Reduce Stress', 'Redukcja stresu')}</h4>
+                                <p class="option-desc">${tr('Calm your nervous system and find peace in everyday moments.', 'Uspokój układ nerwowy i odnajdź równowagę w codziennych chwilach.')}</p>
                             </div>
                         </div>
                         <div class="option-card" data-value="focus" data-field="goal">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">center_focus_strong</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">Deepen Concentration</h4>
-                                <p class="option-desc">Sharpen stable attention, clarity, and cognitive control.</p>
+                                <h4 class="option-label">${tr('Deepen Concentration', 'Pogłębienie koncentracji')}</h4>
+                                <p class="option-desc">${tr('Sharpen stable attention, clarity, and cognitive control.', 'Wyostrz stabilną uwagę, klarowność umysłu i kontrolę poznawczą.')}</p>
                             </div>
                         </div>
                         <div class="option-card" data-value="habit" data-field="goal">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">calendar_today</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">Build a Daily Habit</h4>
-                                <p class="option-desc">Establish consistency and discipline in sitting daily.</p>
+                                <h4 class="option-label">${tr('Build a Daily Habit', 'Zbudowanie codziennego nawyku')}</h4>
+                                <p class="option-desc">${tr('Establish consistency and discipline in sitting daily.', 'Wypracuj systematyczność i dyscyplinę w codziennej praktyce.')}</p>
                             </div>
                         </div>
                     </div>
@@ -123,37 +132,37 @@ export function renderLogin(onLoginSuccess) {
                 <!-- Slide 4: Daily Commitment -->
                 <div class="onboarding-slide" data-step="4">
                     <span class="material-symbols-rounded slide-header-icon">schedule</span>
-                    <h2 class="slide-title">Daily time commitment?</h2>
-                    <p class="slide-description">Setting a small, realistic daily window helps cement the habit.</p>
+                    <h2 class="slide-title">${tr('Daily time commitment?', 'Ile czasu dziennie chcesz poświęcić?')}</h2>
+                    <p class="slide-description">${tr('Setting a small, realistic daily window helps cement the habit.', 'Wyznaczenie małego, realistycznego celu każdego dnia pomaga utrwalić nawyk.')}</p>
                     
                     <div class="options-grid">
                         <div class="option-card" data-value="5" data-field="commitment">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">alarm</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">5 Minutes</h4>
-                                <p class="option-desc">A gentle, bite-sized daily pause.</p>
+                                <h4 class="option-label">${tr('5 Minutes', '5 minut')}</h4>
+                                <p class="option-desc">${tr('A gentle, bite-sized daily pause.', 'Łagodna, krótka chwila zatrzymania w ciągu dnia.')}</p>
                             </div>
                         </div>
                         <div class="option-card active" data-value="10" data-field="commitment">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">potted_plant</span></div>
                             <div class="option-content" style="position: relative;">
-                                <span class="badge-recommended">RECOMMENDED</span>
-                                <h4 class="option-label">10 Minutes</h4>
-                                <p class="option-desc">Perfect balance of depth and consistency.</p>
+                                <span class="badge-recommended">${tr('RECOMMENDED', 'POLECANE')}</span>
+                                <h4 class="option-label">${tr('10 Minutes', '10 minut')}</h4>
+                                <p class="option-desc">${tr('Perfect balance of depth and consistency.', 'Idealna równowaga między głębią a regularnością.')}</p>
                             </div>
                         </div>
                         <div class="option-card" data-value="15" data-field="commitment">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">hourglass_empty</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">15 Minutes</h4>
-                                <p class="option-desc">A slightly deeper, traditional practice time.</p>
+                                <h4 class="option-label">${tr('15 Minutes', '15 minut')}</h4>
+                                <p class="option-desc">${tr('A slightly deeper, traditional practice time.', 'Nieco głębszy, tradycyjny wymiar codziennej sesji.')}</p>
                             </div>
                         </div>
                         <div class="option-card" data-value="20" data-field="commitment">
                             <div class="option-icon-wrapper"><span class="material-symbols-rounded">self_improvement</span></div>
                             <div class="option-content">
-                                <h4 class="option-label">20+ Minutes</h4>
-                                <p class="option-desc">A serious daily commitment to mental training.</p>
+                                <h4 class="option-label">${tr('20+ Minutes', '20+ minut')}</h4>
+                                <p class="option-desc">${tr('A serious daily commitment to mental training.', 'Poważne codzienne zaangażowanie w trening umysłu.')}</p>
                             </div>
                         </div>
                     </div>
@@ -163,39 +172,42 @@ export function renderLogin(onLoginSuccess) {
                 <div class="onboarding-slide" data-step="5">
                     <div class="summary-card glass">
                         <span class="material-symbols-rounded summary-success-icon">verified</span>
-                        <h2 class="summary-greeting" id="summary-user-greeting">Welcome, Practitioner!</h2>
+                        <h2 class="summary-greeting" id="summary-user-greeting">${tr('Welcome, Practitioner!', 'Witaj, Praktyku!')}</h2>
                         
                         <div class="summary-details">
                             <div class="summary-row">
                                 <span class="material-symbols-rounded summary-row-icon">insights</span>
                                 <div class="summary-row-text">
-                                    <strong>Experience Level:</strong>
-                                    <span id="summary-experience-val">Beginner</span>
+                                    <strong>${tr('Experience Level:', 'Poziom doświadczenia:')}</strong>
+                                    <span id="summary-experience-val">${tr('Beginner', 'Początkujący')}</span>
                                 </div>
                             </div>
                             <div class="summary-row">
                                 <span class="material-symbols-rounded summary-row-icon">target</span>
                                 <div class="summary-row-text">
-                                    <strong>Main Intent:</strong>
-                                    <span id="summary-goal-val">Reduce Stress</span>
+                                    <strong>${tr('Main Intent:', 'Główna intencja:')}</strong>
+                                    <span id="summary-goal-val">${tr('Reduce Stress', 'Redukcja stresu')}</span>
                                 </div>
                             </div>
                             <div class="summary-row">
                                 <span class="material-symbols-rounded summary-row-icon">schedule</span>
                                 <div class="summary-row-text">
-                                    <strong>Daily Commitment:</strong>
-                                    <span id="summary-commitment-val">10 minutes</span>
+                                    <strong>${tr('Daily Commitment:', 'Dzienny cel:')}</strong>
+                                    <span id="summary-commitment-val">${tr('10 minutes', '10 minut')}</span>
                                 </div>
                             </div>
                         </div>
 
                         <p class="summary-footer">
-                            Your personalized Mind Illuminated (TMI) training path is ready. Let’s enter your sanctuary.
+                            ${tr(
+                                'Your personalized Mind Illuminated (TMI) training path is ready. Let’s enter your sanctuary.',
+                                'Twoja spersonalizowana ścieżka medytacji jest gotowa. Wejdźmy do Twojego sanktuarium.'
+                            )}
                         </p>
                     </div>
 
                     <button id="btn-enter-sanctuary" class="btn btn-primary" style="margin-top: 24px; padding: 16px 40px; font-size: 16px; width: 100%;">
-                        Enter Sanctuary
+                        ${tr('Enter Sanctuary', 'Wejdź do Sanktuarium')}
                     </button>
                 </div>
 
@@ -204,10 +216,10 @@ export function renderLogin(onLoginSuccess) {
             <!-- Bottom Navigation for Onboarding -->
             <div class="onboarding-nav" id="onboarding-nav-container" style="display: none;">
                 <button class="btn btn-secondary" id="btn-prev" style="visibility: hidden;">
-                    <span class="material-symbols-rounded">arrow_back</span> Back
+                    <span class="material-symbols-rounded">arrow_back</span> ${tr('Back', 'Wstecz')}
                 </button>
                 <button class="btn btn-primary" id="btn-next">
-                    Next <span class="material-symbols-rounded">arrow_forward</span>
+                    ${tr('Next', 'Dalej')} <span class="material-symbols-rounded">arrow_forward</span>
                 </button>
             </div>
         </div>
@@ -673,6 +685,16 @@ export function renderLogin(onLoginSuccess) {
             });
         });
 
+        // Language switch buttons on welcome screen
+        container.querySelectorAll('.lang-switch-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const chosen = btn.dataset.lang;
+                if (chosen && chosen !== getLang()) {
+                    setLang(chosen, true);
+                }
+            });
+        });
+
         // Welcome screen advance
         btnWelcome.addEventListener('click', () => {
             goToStep(1);
@@ -788,22 +810,26 @@ export function renderLogin(onLoginSuccess) {
             const displayCommitment = container.querySelector('#summary-commitment-val');
 
             const firstName = onboardingData.name.split(' ')[0];
-            displayGreeting.textContent = `Welcome, ${firstName}!`;
+            displayGreeting.textContent = tr(`Welcome, ${firstName}!`, `Witaj, ${firstName}!`);
 
             // Format experience label
-            const experiences = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
-            displayExp.textContent = experiences[onboardingData.experience] || 'Beginner';
+            const experiences = {
+                beginner: tr('Beginner', 'Początkujący'),
+                intermediate: tr('Intermediate', 'Średniozaawansowany'),
+                advanced: tr('Advanced', 'Zaawansowany')
+            };
+            displayExp.textContent = experiences[onboardingData.experience] || tr('Beginner', 'Początkujący');
 
             // Format goal label
             const goals = { 
-                stress: 'Reduce Stress & Anxiety', 
-                focus: 'Deepen Concentration', 
-                habit: 'Build a Daily Habit'
+                stress: tr('Reduce Stress & Anxiety', 'Redukcja stresu i napięcia'), 
+                focus: tr('Deepen Concentration', 'Pogłębienie koncentracji'), 
+                habit: tr('Build a Daily Habit', 'Zbudowanie codziennego nawyku')
             };
-            displayGoal.textContent = goals[onboardingData.goal] || 'Tailored Path';
+            displayGoal.textContent = goals[onboardingData.goal] || tr('Tailored Path', 'Dopasowana ścieżka');
 
             // Format commitment minutes
-            displayCommitment.textContent = `${onboardingData.commitment} minutes`;
+            displayCommitment.textContent = tr(`${onboardingData.commitment} minutes`, `${onboardingData.commitment} minut`);
         }
 
     }, 0);

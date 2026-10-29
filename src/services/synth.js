@@ -65,7 +65,65 @@ function stopSilentKeepAlive() {
     }
 }
 
-function playBellAudioWithFade(audioKey, fadeAfterMs = 4500, fadeDurationMs = 2000) {
+const BELL_BUFFERS = {
+    start: null,
+    interval: null,
+    end: null
+};
+
+async function preloadBellBuffer(key) {
+    if (BELL_BUFFERS[key]) return BELL_BUFFERS[key];
+    try {
+        initAudioContext();
+        const resp = await fetch(BELL_SOURCES[key]);
+        const arrayBuf = await resp.arrayBuffer();
+        const decoded = await audioCtx.decodeAudioData(arrayBuf);
+        BELL_BUFFERS[key] = decoded;
+        return decoded;
+    } catch (e) {
+        console.warn(`[Synth] WebAudio preload failed for ${key}:`, e);
+        return null;
+    }
+}
+
+function playWebAudioBell(key, fadeAfterSec = 6, fadeDurationSec = 4) {
+    if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return false;
+    try {
+        initAudioContext();
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        const buffer = BELL_BUFFERS[key];
+        if (!buffer) return false;
+
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+
+        const gainNode = audioCtx.createGain();
+        const now = audioCtx.currentTime;
+        const targetVol = getScaledGain(0.85);
+
+        gainNode.gain.setValueAtTime(targetVol, now);
+
+        if (fadeAfterSec > 0 && fadeDurationSec > 0) {
+            const fadeStartTime = now + fadeAfterSec;
+            const fadeEndTime = fadeStartTime + fadeDurationSec;
+            gainNode.gain.setValueAtTime(targetVol, fadeStartTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, fadeEndTime);
+            gainNode.gain.setValueAtTime(0, fadeEndTime + 0.05);
+        }
+
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        source.start(now);
+        return true;
+    } catch (e) {
+        console.warn(`[Synth] WebAudio play error for ${key}:`, e);
+        return false;
+    }
+}
+
+function playBellAudioWithFade(audioKey, fadeAfterMs = 6000, fadeDurationMs = 4000) {
     if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
     try {
         if (!BELL_AUDIO[audioKey]) {
@@ -98,7 +156,7 @@ function playBellAudioWithFade(audioKey, fadeAfterMs = 4500, fadeDurationMs = 20
             audio.fadeTimeout = setTimeout(() => {
                 if (!audio || audio.paused) return;
                 const startVol = audio.volume;
-                const steps = 20;
+                const steps = 25;
                 const stepTime = fadeDurationMs / steps;
                 let step = 0;
                 audio.fadeInterval = setInterval(() => {
@@ -108,8 +166,7 @@ function playBellAudioWithFade(audioKey, fadeAfterMs = 4500, fadeDurationMs = 20
                     if (step >= steps) {
                         clearInterval(audio.fadeInterval);
                         if (audio) {
-                            audio.pause();
-                            audio.currentTime = 0;
+                            audio.volume = 0;
                         }
                     }
                 }, stepTime);
@@ -301,15 +358,18 @@ export const Synth = {
 
     playStartBell: () => {
         if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
-        if (!BELL_AUDIO.start) {
-            BELL_AUDIO.start = new Audio(BELL_SOURCES.start);
-            BELL_AUDIO.start.preload = 'auto';
+        const playedWebAudio = playWebAudioBell('start', 6, 4);
+        if (!playedWebAudio) {
+            playBellAudioWithFade('start', 6000, 4000);
         }
-        playBellAudioWithFade('start', 0, 0); // Plays full 7s start bell naturally
     },
 
     playIntervalBell: () => {
-        playBellAudioWithFade('interval', 0, 0); // Plays full 5s awareness bell naturally
+        if (localStorage.getItem('siddha_sound_meditation_muted') === 'true' || localStorage.getItem('siddha_sound_muted') === 'true') return;
+        const playedWebAudio = playWebAudioBell('interval', 6, 4);
+        if (!playedWebAudio) {
+            playBellAudioWithFade('interval', 6000, 4000);
+        }
     },
 
     isEndBellPlaying: () => {
@@ -330,7 +390,10 @@ export const Synth = {
             } catch(e) {}
         }
 
-        playBellAudioWithFade('end', 0, 0);
+        const playedWebAudio = playWebAudioBell('end', 0, 0);
+        if (!playedWebAudio) {
+            playBellAudioWithFade('end', 0, 0);
+        }
 
         const endAudio = BELL_AUDIO['end'];
         if (endAudio) {
@@ -353,7 +416,12 @@ export const Synth = {
     },
 
     primeBells: () => {
-        // Call this when user starts a session to authorize background playback
+        // Preload WebAudio buffers in parallel for hardware-accelerated smooth playback
+        preloadBellBuffer('start');
+        preloadBellBuffer('interval');
+        preloadBellBuffer('end');
+
+        // Prime HTML5 Audio fallback elements
         Object.keys(BELL_SOURCES).forEach(key => {
             if (!BELL_AUDIO[key]) {
                 const audio = new Audio(BELL_SOURCES[key]);

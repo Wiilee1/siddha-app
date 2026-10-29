@@ -2,6 +2,7 @@
 // Plays a singing bowl chord, shows rotating geometry, leaf particles, and the unlocked badge name & description.
 
 import { Synth } from '../services/synth.js';
+import { tr } from '../services/i18n.js';
 
 // Synth chime using Web Audio API (singing bowl)
 function playSingingBowlChime() {
@@ -378,7 +379,7 @@ export function triggerAchievementModal(ach) {
     // Labels
     const typeLbl = document.createElement("p");
     typeLbl.className = "ac-lbl-type";
-    typeLbl.textContent = "Milestone Unlocked";
+    typeLbl.textContent = tr("Milestone Unlocked", "Odblokowano Kamień Milowy");
     card.appendChild(typeLbl);
 
     const titleEl = document.createElement("h2");
@@ -396,14 +397,14 @@ export function triggerAchievementModal(ach) {
     rewardBox.className = "ac-reward-box";
     rewardBox.innerHTML = `
         <span class="material-symbols-rounded" style="font-size:15px; font-variation-settings: 'FILL' 1;">stars</span>
-        +${ach.xp} XP Granted
+        +${ach.xp} XP ${tr("Granted", "Przyznano")}
     `;
     card.appendChild(rewardBox);
 
     // Action Button
     const btn = document.createElement("button");
     btn.className = "ac-btn";
-    btn.textContent = "Acknowledge";
+    btn.textContent = tr("Acknowledge", "Przyjmij");
     card.appendChild(btn);
 
     overlay.appendChild(card);

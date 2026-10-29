@@ -1,4 +1,5 @@
 import { DB } from '../services/db.js';
+import { tr } from '../services/i18n.js';
 
 export function startOnboardingTutorial(onComplete) {
     // Prevent creating multiple overlays
@@ -21,72 +22,75 @@ export function startOnboardingTutorial(onComplete) {
                 <div class="tu-mascot-container">
                     <img src="./src/assets/logo.png" alt="Siddha Mascot" class="tu-mascot">
                 </div>
-                <h2 class="tu-title">Welcome, Traveler</h2>
+                <h2 class="tu-title">${tr('Welcome, Traveler', 'Witaj, Wędrowcze')}</h2>
                 <p class="tu-text">
-                    I am <strong>Siddha</strong>, your companion on this path. Together, we will walk the path inward to train attention, quiet the mind, and find clarity.
+                    ${tr(
+                        'I am <strong>Siddha</strong>, your companion on this path. Together, we will walk the path inward to train attention, quiet the mind, and find clarity.',
+                        'Jestem <strong>Siddha</strong>, Twoim towarzyszem na tej drodze. Razem wyruszymy w podróż do wnętrza, by ćwiczyć uwagę, wyciszyć umysł i odnaleźć klarowność.'
+                    )}
                 </p>
-                <button class="btn btn-primary tu-btn-next" data-next="2" style="margin-top: 24px;">Begin Journey</button>
+                <button class="btn btn-primary tu-btn-next" data-next="2" style="margin-top: 24px;">${tr('Begin Journey', 'Rozpocznij podróż')}</button>
             </div>
 
             <!-- Step 2: Choose Path -->
             <div class="tu-slide" data-step="2">
-                <h2 class="tu-title" style="font-size: 18px; margin-bottom: 4px;">Choose Your Starting Path</h2>
-                <p class="tu-subtitle" style="margin-bottom: 12px;">This path will be unlocked instantly. You can switch anytime.</p>
+                <h2 class="tu-title" style="font-size: 18px; margin-bottom: 4px;">${tr('Choose Your Starting Path', 'Wybierz swoją pierwszą ścieżkę')}</h2>
+                <p class="tu-subtitle" style="margin-bottom: 12px;">${tr('This path will be unlocked instantly. You can switch anytime.', 'Ta ścieżka zostanie odblokowana od razu. Możesz ją zmienić w dowolnej chwili.')}</p>
                 
                 <div class="tu-options-list">
                     <div class="tu-option-card active" data-path="anapana">
                         <div class="tu-option-icon"><span class="material-symbols-rounded">air</span></div>
                         <div class="tu-option-info">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h4 class="tu-option-label">Calm (Anapana)</h4>
-                                <span class="tu-difficulty-tag low">Low</span>
+                                <h4 class="tu-option-label">${tr('Calm (Anapana)', 'Spokój (Anapana)')}</h4>
+                                <span class="tu-difficulty-tag low">${tr('Low', 'Łatwy')}</span>
                             </div>
-                            <p class="tu-option-desc">Focus strictly on natural breath sensations. Best for beginners.</p>
+                            <p class="tu-option-desc">${tr('Focus strictly on natural breath sensations. Best for beginners.', 'Skupienie na naturalnym oddechu. Najlepsze dla początkujących.')}</p>
                         </div>
                     </div>
                     <div class="tu-option-card" data-path="metta">
                         <div class="tu-option-icon"><span class="material-symbols-rounded">favorite</span></div>
                         <div class="tu-option-info">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h4 class="tu-option-label">Kindness (Metta)</h4>
-                                <span class="tu-difficulty-tag low">Low</span>
+                                <h4 class="tu-option-label">${tr('Kindness (Metta)', 'Życzliwość (Metta)')}</h4>
+                                <span class="tu-difficulty-tag low">${tr('Low', 'Łatwy')}</span>
                             </div>
-                            <p class="tu-option-desc">Heart-centered phrases to cultivate boundless goodwill and empathy.</p>
+                            <p class="tu-option-desc">${tr('Heart-centered phrases to cultivate boundless goodwill and empathy.', 'Praktyka serca rozwijająca bezgraniczną życzliwość i empatię.')}</p>
                         </div>
                     </div>
                     <div class="tu-option-card" data-path="vipassana">
                         <div class="tu-option-icon"><span class="material-symbols-rounded">water_drop</span></div>
                         <div class="tu-option-info">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h4 class="tu-option-label">Insight (Vipassana)</h4>
-                                <span class="tu-difficulty-tag high">High</span>
+                                <h4 class="tu-option-label">${tr('Insight (Vipassana)', 'Wgląd (Vipassana)')}</h4>
+                                <span class="tu-difficulty-tag high">${tr('High', 'Wysoki')}</span>
                             </div>
-                            <p class="tu-option-desc">Observe physical body scan sensations to learn non-reactivity.</p>
+                            <p class="tu-option-desc">${tr('Observe physical body scan sensations to learn non-reactivity.', 'Obserwacja doznań w ciele ucząca głębokiego spokoju i braku reaktywności.')}</p>
                         </div>
                     </div>
                     <div class="tu-option-card" data-path="tmi">
                         <div class="tu-option-icon"><span class="material-symbols-rounded">local_florist</span></div>
                         <div class="tu-option-info">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h4 class="tu-option-label">Focus (TMI)</h4>
-                                <span class="tu-difficulty-tag medium">Medium</span>
+                                <h4 class="tu-option-label">${tr('Focus (TMI)', 'Skupienie (TMI)')}</h4>
+                                <span class="tu-difficulty-tag medium">${tr('Medium', 'Średni')}</span>
                             </div>
-                            <p class="tu-option-desc">Structured 10-stage attention training. Excellent for mental discipline.</p>
+                            <p class="tu-option-desc">${tr('Structured 10-stage attention training. Excellent for mental discipline.', 'Ustrukturyzowany 10-stopniowy trening uwagi i dyscypliny umysłu.')}</p>
                         </div>
                     </div>
                     <div class="tu-option-card" data-path="zen">
                         <div class="tu-option-icon"><span class="material-symbols-rounded">circle</span></div>
                         <div class="tu-option-info">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h4 class="tu-option-label">Stillness (Zen)</h4>
-                                <span class="tu-difficulty-tag high">High</span>
+                                <h4 class="tu-option-label">${tr('Stillness (Zen)', 'Cisza (Zen)')}</h4>
+                                <span class="tu-difficulty-tag high">${tr('High', 'Wysoki')}</span>
                             </div>
-                            <p class="tu-option-desc">Radical silent presence (Shikantaza). Choiceless open awareness.</p>
+                            <p class="tu-option-desc">${tr('Radical silent presence (Shikantaza). Choiceless open awareness.', 'Radykalna cicha obecność (Shikantaza). Otwarta świadomość bez wyboru.')}</p>
                         </div>
                     </div>
                 </div>
 
-                <button class="btn btn-primary tu-btn-next" id="tu-select-path-btn" data-next="3" style="margin-top: 14px;">Confirm & Unlock Path</button>
+                <button class="btn btn-primary tu-btn-next" id="tu-select-path-btn" data-next="3" style="margin-top: 14px;">${tr('Confirm & Unlock Path', 'Potwierdź i odblokuj ścieżkę')}</button>
             </div>
 
             <!-- Step 3: First Meditation (Counting Sit) -->
@@ -94,11 +98,14 @@ export function startOnboardingTutorial(onComplete) {
                 <div class="tu-mascot-container small">
                     <img src="./src/assets/logo.png" alt="Siddha Mascot" class="tu-mascot">
                 </div>
-                <h2 class="tu-title">Your First Meditation</h2>
+                <h2 class="tu-title">${tr('Your First Meditation', 'Twoja pierwsza medytacja')}</h2>
                 <p class="tu-text" id="tu-timer-instruction" style="font-size: 13px; line-height: 1.5; margin-bottom: 20px;">
-                    Let us sit for a simple 1-minute meditation. 
+                    ${tr('Let us sit for a simple 1-minute meditation.', 'Usiądźmy na prostą, 1-minutową medytację.')}
                     <br><br>
-                    <strong>Anchor</strong>: Close your eyes, settle into your body, and observe your breath. At the end of each exhalation, silently count <strong>"one"</strong>, then <strong>"two"</strong>, up to ten. If your mind wanders, gently return to one.
+                    ${tr(
+                        '<strong>Anchor</strong>: Close your eyes, settle into your body, and observe your breath. At the end of each exhalation, silently count <strong>"one"</strong>, then <strong>"two"</strong>, up to ten. If your mind wanders, gently return to one.',
+                        '<strong>Kotwica</strong>: Zamknij oczy, rozluźnij ciało i obserwuj oddech. Pod koniec każdego wydechu policz w myślach <strong>„jeden”</strong>, potem <strong>„dwa”</strong>, aż do dziesięciu. Jeśli umysł odpłynie, łagodnie wróć do jedynki.'
+                    )}
                 </p>
 
                 <!-- Timer Display -->
@@ -108,8 +115,8 @@ export function startOnboardingTutorial(onComplete) {
                 </div>
 
                 <!-- Timer Controls -->
-                <button class="btn btn-primary" id="tu-timer-btn" style="margin-top: 16px;">Begin Sit</button>
-                <button class="btn btn-secondary hidden" id="tu-timer-skip-btn" style="margin-top: 8px; font-size: 11px; padding: 4px 12px;">Skip to End</button>
+                <button class="btn btn-primary" id="tu-timer-btn" style="margin-top: 16px;">${tr('Begin Sit', 'Rozpocznij sesję')}</button>
+                <button class="btn btn-secondary hidden" id="tu-timer-skip-btn" style="margin-top: 8px; font-size: 11px; padding: 4px 12px;">${tr('Skip to End', 'Pomiń do końca')}</button>
             </div>
 
             <!-- Step 4: Practice Completed! -->
@@ -117,61 +124,70 @@ export function startOnboardingTutorial(onComplete) {
                 <div class="tu-mascot-container">
                     <img src="./src/assets/logo.png" alt="Siddha Mascot" class="tu-mascot">
                 </div>
-                <h2 class="tu-title">Practice Completed!</h2>
+                <h2 class="tu-title">${tr('Practice Completed!', 'Praktyka ukończona!')}</h2>
                 <p class="tu-text">
-                    Well done. You have successfully completed your first sit and earned <strong>+75 XP</strong>!
+                    ${tr(
+                        'Well done. You have successfully completed your first sit and earned <strong>+75 XP</strong>!',
+                        'Świetna robota! Ukończyłeś swoją pierwszą sesję i zdobyłeś <strong>+75 XP</strong>!'
+                    )}
                 </p>
-                <button class="btn btn-primary" id="tu-claim-xp-btn" style="margin-top: 24px; width: 100%;">Claim Rewards</button>
+                <button class="btn btn-primary" id="tu-claim-xp-btn" style="margin-top: 24px; width: 100%;">${tr('Claim Rewards', 'Odbierz nagrodę')}</button>
             </div>
 
             <!-- Step 5: Journey Map & Node -->
             <div class="tu-slide" data-step="5">
                 <p class="tu-text" style="font-size: 13px; line-height: 1.5; margin-bottom: 8px; text-align: left;">
-                    🗺️ <strong>The Journey Map</strong>: Here is your progressive path.
+                    🗺️ <strong>${tr('The Journey Map', 'Mapa Ścieżki')}</strong>: ${tr('Here is your progressive path.', 'Oto Twoja ścieżka rozwoju.')}
                     <br>
-                    <span style="color:var(--color-accent-dark); font-weight:700;">👉 Try it:</span> Tap the highlighted pulsing node on the map above to inspect its missions!
+                    <span style="color:var(--color-accent-dark); font-weight:700;">👉 ${tr('Try it:', 'Wypróbuj:')}</span> ${tr('Tap the highlighted pulsing node on the map above to inspect its missions!', 'Dotknij podświetlonego, pulsującego kręgu na mapie powyżej, aby zobaczyć jego misje!')}
                 </p>
-                <button class="btn btn-secondary" id="tu-journey-fallback-btn" style="font-size: 11px; padding: 2px 10px; width:100%; margin-top: 4px;">Skip Map Tour</button>
+                <button class="btn btn-secondary" id="tu-journey-fallback-btn" style="font-size: 11px; padding: 2px 10px; width:100%; margin-top: 4px;">${tr('Skip Map Tour', 'Pomiń przewodnik po mapie')}</button>
             </div>
 
             <!-- Step 5.5: Mission Selection inside Modal (Flipped to Top) -->
             <div class="tu-slide" data-step="55">
                 <p class="tu-text" style="font-size: 13px; line-height: 1.5; margin-bottom: 8px; text-align: left;">
-                    🎯 <strong>Meditation Missions</strong>: Each node contains sequential challenges.
+                    🎯 <strong>${tr('Meditation Missions', 'Misje Medytacyjne')}</strong>: ${tr('Each node contains sequential challenges.', 'Każdy węzeł zawiera kolejne wyzwania.')}
                     <br>
-                    <span style="color:var(--color-accent-dark); font-weight:700;">👉 Try it:</span> Tap the first mission card below to load it onto the meditation timer!
+                    <span style="color:var(--color-accent-dark); font-weight:700;">👉 ${tr('Try it:', 'Wypróbuj:')}</span> ${tr('Tap the first mission card below to load it onto the meditation timer!', 'Dotknij pierwszej karty misji poniżej, aby załadować ją do minutnika medytacji!')}
                 </p>
-                <button class="btn btn-secondary" id="tu-mission-fallback-btn" style="font-size: 11px; padding: 2px 10px; width:100%; margin-top: 4px;">Skip Mission Select</button>
+                <button class="btn btn-secondary" id="tu-mission-fallback-btn" style="font-size: 11px; padding: 2px 10px; width:100%; margin-top: 4px;">${tr('Skip Mission Select', 'Pomiń wybór misji')}</button>
             </div>
 
             <!-- Step 6: Breathe Timer Page (Flipped to Top) -->
             <div class="tu-slide" data-step="6">
                 <p class="tu-text" style="font-size: 13px; line-height: 1.5; margin-bottom: 8px; text-align: left;">
-                    ⏱️ <strong>Meditate Timer</strong>: The mission's minimum duration is loaded.
+                    ⏱️ <strong>${tr('Meditate Timer', 'Minutnik Medytacji')}</strong>: ${tr("The mission's minimum duration is loaded.", 'Załadowano minimalny czas trwania misji.')}
                     <br>
-                    You can choose a <strong>longer preset</strong>, or enter a custom duration (minimum required sits are enforced). Customize your bell chimes and tap Play when ready.
+                    ${tr(
+                        'You can choose a <strong>longer preset</strong>, or enter a custom duration (minimum required sits are enforced). Customize your bell chimes and tap Play when ready.',
+                        'Możesz wybrać <strong>dłuższy czas</strong> lub wpisać własny. Dostosuj dźwięki dzwonków i naciśnij Start, gdy będziesz gotowy.'
+                    )}
                 </p>
-                <button class="btn btn-primary" id="tu-breathe-next-btn" style="padding: 6px 12px; font-size: 12px; width:100%; margin-top: 4px;">Next: Wisdom Library</button>
+                <button class="btn btn-primary" id="tu-breathe-next-btn" style="padding: 6px 12px; font-size: 12px; width:100%; margin-top: 4px;">${tr('Next: Wisdom Library', 'Dalej: Biblioteka Mądrości')}</button>
             </div>
 
             <!-- Step 7: The Wisdom Library -->
             <div class="tu-slide" data-step="7">
                 <p class="tu-text" style="font-size: 13px; line-height: 1.5; margin-bottom: 8px; text-align: left;">
-                    📖 <strong>Wisdom & Lineages</strong>: Access guidebooks and posture tips.
+                    📖 <strong>${tr('Wisdom & Lineages', 'Mądrość i Tradycje')}</strong>: ${tr('Access guidebooks and posture tips.', 'Przewodniki oraz wskazówki dotyczące postawy.')}
                     <br>
-                    <span style="color:var(--color-accent-dark); font-weight:700;">👉 Try it:</span> Tap the highlighted article to open and read lineage insights!
+                    <span style="color:var(--color-accent-dark); font-weight:700;">👉 ${tr('Try it:', 'Wypróbuj:')}</span> ${tr('Tap the highlighted article to open and read lineage insights!', 'Dotknij podświetlonego artykułu, aby otworzyć i przeczytać nauki!')}
                 </p>
-                <button class="btn btn-secondary" id="tu-wisdom-fallback-btn" style="font-size: 11px; padding: 2px 10px; width:100%; margin-top: 4px;">Skip Wisdom</button>
+                <button class="btn btn-secondary" id="tu-wisdom-fallback-btn" style="font-size: 11px; padding: 2px 10px; width:100%; margin-top: 4px;">${tr('Skip Wisdom', 'Pomiń Bibliotekę')}</button>
             </div>
 
             <!-- Step 7.5: Reading Wisdom Article (Flipped to Top) -->
             <div class="tu-slide" data-step="75">
                 <p class="tu-text" style="font-size: 13px; line-height: 1.5; margin-bottom: 8px; text-align: left;">
-                    🌿 <strong>Wisdom Reader</strong>: Review techniques offline to guide your sitting sessions.
+                    🌿 <strong>${tr('Wisdom Reader', 'Czytnik Mądrości')}</strong>: ${tr('Review techniques offline to guide your sitting sessions.', 'Czytaj techniki offline, aby pogłębiać swoją praktykę.')}
                     <br>
-                    Once done, tap the back arrow or **Mark as Read** to earn <strong>+25 XP</strong> and complete the tour.
+                    ${tr(
+                        'Once done, tap the back arrow or <strong>Mark as Read</strong> to earn <strong>+25 XP</strong> and complete the tour.',
+                        'Gdy skończysz, dotknij strzałki wstecz lub <strong>Oznacz jako przeczytane</strong>, aby zdobyć <strong>+25 XP</strong> i ukończyć samouczek.'
+                    )}
                 </p>
-                <button class="btn btn-secondary" id="tu-wisdom-skip-reader-btn" style="font-size: 11px; padding: 2px 10px; width:100%; margin-top: 4px;">Skip Reader</button>
+                <button class="btn btn-secondary" id="tu-wisdom-skip-reader-btn" style="font-size: 11px; padding: 2px 10px; width:100%; margin-top: 4px;">${tr('Skip Reader', 'Pomiń czytnik')}</button>
             </div>
 
             <!-- Step 8: Outro -->
@@ -179,11 +195,14 @@ export function startOnboardingTutorial(onComplete) {
                 <div class="tu-mascot-container">
                     <img src="./src/assets/logo.png" alt="Siddha Mascot" class="tu-mascot">
                 </div>
-                <h2 class="tu-title">Your Sanctuary Awaits</h2>
+                <h2 class="tu-title">${tr('Your Sanctuary Awaits', 'Twoje Sanktuarium Czeka')}</h2>
                 <p class="tu-text">
-                    You are now ready to explore the <strong>Journey Map</strong>, complete daily quests, and delve into teachings. Take a deep breath and step inside.
+                    ${tr(
+                        'You are now ready to explore the <strong>Journey Map</strong>, complete daily quests, and delve into teachings. Take a deep breath and step inside.',
+                        'Jesteś już gotowy, by odkrywać <strong>Mapę Ścieżki</strong>, wykonywać codzienne zadania i zgłębiać nauki. Weź głęboki oddech i wejdź do środka.'
+                    )}
                 </p>
-                <button class="btn btn-primary" id="tu-finish-btn" style="margin-top: 28px; padding: 16px 40px; font-size: 16px; width: 100%;">Enter Sanctuary</button>
+                <button class="btn btn-primary" id="tu-finish-btn" style="margin-top: 28px; padding: 16px 40px; font-size: 16px; width: 100%;">${tr('Enter Sanctuary', 'Wejdź do Sanktuarium')}</button>
             </div>
         </div>
     `;
@@ -486,18 +505,24 @@ export function startOnboardingTutorial(onComplete) {
     const timerSkipBtn = overlay.querySelector('#tu-timer-skip-btn');
     const timerInstruction = overlay.querySelector('#tu-timer-instruction');
 
-    const prompts = [
+    const prompts = tr([
         "Quietly count each exhalation...",
         "If thoughts arise, just return to 'one'...",
         "Anchor your focus in your posture...",
         "Settle into this present moment...",
         "Ten counts, then restart from one..."
-    ];
+    ], [
+        "W ciszy licz każdy wydech...",
+        "Jeśli pojawią się myśli, łagodnie wróć do „jedynki”...",
+        "Zakotwicz uwagę w swojej postawie...",
+        "Osadź się w chwili obecnej...",
+        "Odlicz do dziesięciu, a potem zacznij od nowa..."
+    ]);
 
     timerBtn.addEventListener('click', () => {
         if (!timerRunning) {
             timerRunning = true;
-            timerBtn.textContent = 'Pause';
+            timerBtn.textContent = tr('Pause', 'Pauza');
             timerBtn.classList.remove('btn-primary');
             timerBtn.classList.add('btn-secondary');
             timerSkipBtn.classList.remove('hidden');
@@ -521,7 +546,7 @@ export function startOnboardingTutorial(onComplete) {
         } else {
             timerRunning = false;
             clearInterval(timerInterval);
-            timerBtn.textContent = 'Resume Sit';
+            timerBtn.textContent = tr('Resume Sit', 'Wznów sesję');
             timerBtn.classList.remove('btn-secondary');
             timerBtn.classList.add('btn-primary');
         }
@@ -593,8 +618,8 @@ export function startOnboardingTutorial(onComplete) {
             const titleEl = breatheScreen.querySelector('#breathe-screen-title');
             const descEl = breatheScreen.querySelector('#breathe-screen-desc');
             if (banner) banner.style.display = 'none';
-            if (titleEl) titleEl.textContent = 'Meditation';
-            if (descEl) descEl.textContent = 'Find your center';
+            if (titleEl) titleEl.textContent = tr('Meditation', 'Medytacja');
+            if (descEl) descEl.textContent = tr('Find your center', 'Odnajdź swój spokój');
         }
     }
 

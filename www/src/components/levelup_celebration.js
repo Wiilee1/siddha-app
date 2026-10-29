@@ -2,13 +2,19 @@
 // Plays a synthetic singing bowl chime, shows rotating sacred geometry, falling leaf particles, and a grounding quote.
 
 import { Synth } from '../services/synth.js';
+import { tr } from '../services/i18n.js';
 
-const LEVEL_NAMES = [
+const LEVEL_NAMES_EN = [
     "Novice", "Initiate", "Adept", "Seeker", "Wanderer",
     "Practitioner", "Disciple", "Guide", "Sage", "Master"
 ];
 
-const GROUNDING_QUOTES = [
+const LEVEL_NAMES_PL = [
+    "Nowicjusz", "Inicjowany", "Adept", "Poszukiwacz", "Wędrowiec",
+    "Praktyk", "Uczeń", "Przewodnik", "Mędrzec", "Mistrz"
+];
+
+const GROUNDING_QUOTES_EN = [
     { text: "Be here now.", author: "Ram Dass" },
     { text: "The little things? The little moments? They aren't little.", author: "Jon Kabat-Zinn" },
     { text: "Peace is every step.", author: "Thich Nhat Hanh" },
@@ -17,6 +23,17 @@ const GROUNDING_QUOTES = [
     { text: "The present moment is filled with joy and happiness. If you are attentive, you will see it.", author: "Thich Nhat Hanh" },
     { text: "Quiet mind, warm heart.", author: "Zen Proverb" },
     { text: "In the midst of movement, make peace in your heart.", author: "Deepak Chopra" }
+];
+
+const GROUNDING_QUOTES_PL = [
+    { text: "Bądź tu i teraz.", author: "Ram Dass" },
+    { text: "Małe rzeczy? Małe chwile? One wcale nie są małe.", author: "Jon Kabat-Zinn" },
+    { text: "Spokój jest w każdym kroku.", author: "Thich Nhat Hanh" },
+    { text: "Wycisz umysł, a przemówi dusza.", author: "Ma Jaya Sati Bhagavati" },
+    { text: "Uczucia przychodzą i odchodzą jak chmury na wietrznym niebie. Świadomy oddech jest moją kotwicą.", author: "Thich Nhat Hanh" },
+    { text: "Chwila obecna jest pełna radości i szczęścia. Jeśli jesteś uważny, dostrzeżesz to.", author: "Thich Nhat Hanh" },
+    { text: "Spokojny umysł, ciepłe serce.", author: "Przysłowie Zen" },
+    { text: "Pośród ruchu zachowaj spokój w sercu.", author: "Deepak Chopra" }
 ];
 
 // Synth chime using Web Audio API (metal singing bowl tone)
@@ -483,7 +500,7 @@ export function triggerLevelUpModal(oldLevel, newLevel) {
     badge.className = "lu-center-badge";
     badge.innerHTML = `
         <span class="lu-level-num">${newLevel}</span>
-        <span class="lu-level-lbl">Level</span>
+        <span class="lu-level-lbl">${tr("Level", "Poziom")}</span>
     `;
     mandalaWrap.appendChild(badge);
     card.appendChild(mandalaWrap);
@@ -491,7 +508,7 @@ export function triggerLevelUpModal(oldLevel, newLevel) {
     // Title & Level Information
     const titleEl = document.createElement("h2");
     titleEl.className = "lu-title";
-    titleEl.textContent = "Consciousness Expanded";
+    titleEl.textContent = tr("Consciousness Expanded", "Świadomość Poszerzona");
     card.appendChild(titleEl);
 
     function getLevelImage(level) {
@@ -512,12 +529,13 @@ export function triggerLevelUpModal(oldLevel, newLevel) {
     const isEvolution = oldImg !== newImg;
 
     if (isEvolution) {
-        subtitleEl.textContent = "Siddha Has Evolved!";
+        subtitleEl.textContent = tr("Siddha Has Evolved!", "Siddha Ewoluował!");
         subtitleEl.style.color = "#e2b857";
         subtitleEl.style.textShadow = "0 0 10px rgba(226,184,87,0.3)";
     } else {
-        const titleText = LEVEL_NAMES[Math.min(newLevel - 1, LEVEL_NAMES.length - 1)] || "Novice";
-        subtitleEl.textContent = `Level Up · ${titleText}`;
+        const levelNames = tr(LEVEL_NAMES_EN, LEVEL_NAMES_PL);
+        const titleText = levelNames[Math.min(newLevel - 1, levelNames.length - 1)] || tr("Novice", "Nowicjusz");
+        subtitleEl.textContent = `${tr("Level Up", "Awans")} · ${titleText}`;
     }
     card.appendChild(subtitleEl);
 
@@ -528,7 +546,8 @@ export function triggerLevelUpModal(oldLevel, newLevel) {
     card.appendChild(imgCard);
 
     // Calming quote selection
-    const quote = GROUNDING_QUOTES[Math.floor(Math.random() * GROUNDING_QUOTES.length)];
+    const quotes = tr(GROUNDING_QUOTES_EN, GROUNDING_QUOTES_PL);
+    const quote = quotes[Math.floor(Math.random() * quotes.length)];
     const quoteBox = document.createElement("div");
     quoteBox.className = "lu-quote-box";
     quoteBox.innerHTML = `
@@ -540,7 +559,7 @@ export function triggerLevelUpModal(oldLevel, newLevel) {
     // Button
     const btn = document.createElement("button");
     btn.className = "lu-btn";
-    btn.textContent = "Return to Practice";
+    btn.textContent = tr("Return to Practice", "Powrót do praktyki");
     card.appendChild(btn);
 
     overlay.appendChild(card);

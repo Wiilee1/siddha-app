@@ -1,4 +1,5 @@
 import { DB } from '../services/db.js';
+import { tr, getLang, setLang, getLocale } from '../services/i18n.js';
 
 export function renderProfile(onOpenSettings) {
     const container = document.createElement('div');
@@ -6,34 +7,37 @@ export function renderProfile(onOpenSettings) {
     
     container.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-            <h1 style="font-size: 24px; margin: 0;">Profile</h1>
-            <div style="display: flex; gap: 8px;">
-                <button class="icon-btn" style="color: var(--color-text-primary);" id="open-settings-screen-btn" title="Settings" aria-label="Open Settings">
+            <h1 style="font-size: 24px; margin: 0;">${tr('Profile', 'Profil')}</h1>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="icon-btn" style="color: var(--color-text-primary); font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 10px; background: var(--color-bg-secondary);" id="profile-lang-btn" title="${tr('Switch Language', 'Zmień język')}" aria-label="${tr('Switch Language', 'Zmień język')}">
+                    ${getLang() === 'pl' ? '🇵🇱 PL' : '🇬🇧 EN'}
+                </button>
+                <button class="icon-btn" style="color: var(--color-text-primary);" id="open-settings-screen-btn" title="${tr('Settings', 'Ustawienia')}" aria-label="${tr('Open Settings', 'Otwórz ustawienia')}">
                     <span class="material-symbols-rounded">settings</span>
                 </button>
-                <button class="icon-btn" style="color: var(--color-text-primary);" id="logout-btn" title="Logout" aria-label="Logout">
+                <button class="icon-btn" style="color: var(--color-text-primary);" id="logout-btn" title="${tr('Logout', 'Wyloguj')}" aria-label="${tr('Logout', 'Wyloguj')}">
                     <span class="material-symbols-rounded">logout</span>
                 </button>
             </div>
         </div>
 
         <div style="text-align: center; margin-bottom: 32px;">
-            <div id="profile-avatar-btn" style="position: relative; width: 100px; height: 100px; margin: 0 auto 16px; cursor: pointer;" title="Change Profile Picture">
+            <div id="profile-avatar-btn" style="position: relative; width: 100px; height: 100px; margin: 0 auto 16px; cursor: pointer;" title="${tr('Change Profile Picture', 'Zmień zdjęcie profilowe')}">
                 <img id="profile-avatar-img" src="./src/assets/avatar_monk.jpg" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-accent); box-shadow: 0 4px 14px rgba(0,0,0,0.1); transition: transform 0.2s;" alt="Profile Avatar">
                 <div style="position: absolute; bottom: 0; right: 0; background: var(--color-accent-dark); color: #fff; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
                     <span class="material-symbols-rounded" style="font-size: 16px;">photo_camera</span>
                 </div>
             </div>
-            <h2 id="profile-name" style="font-size: 20px; margin-bottom: 4px;">User Name</h2>
+            <h2 id="profile-name" style="font-size: 20px; margin-bottom: 4px;">${tr('User Name', 'Nazwa użytkownika')}</h2>
         </div>
 
         <div style="display: flex; gap: 16px; margin-bottom: 32px;">
             <div class="card" style="flex: 1; text-align: center;">
-                <p class="text-sm" style="margin-bottom: 8px;">Level</p>
+                <p class="text-sm" style="margin-bottom: 8px;">${tr('Level', 'Poziom')}</p>
                 <h2 id="profile-level" style="font-size: 24px; color: var(--color-text-primary);">1</h2>
             </div>
             <div class="card" style="flex: 1; text-align: center;">
-                <p class="text-sm" style="margin-bottom: 8px;">Total XP</p>
+                <p class="text-sm" style="margin-bottom: 8px;">${tr('Total XP', 'Suma XP')}</p>
                 <h2 id="profile-xp" style="font-size: 24px; color: var(--color-accent-dark);">0</h2>
             </div>
         </div>
@@ -42,17 +46,17 @@ export function renderProfile(onOpenSettings) {
         <div class="rfl-week-card card" id="rfl-analytics-card" style="margin-bottom: 32px;">
             <div class="rfl-week-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <div style="display:flex; align-items:center; gap:8px;">
-                    <h3 class="rfl-section-title" id="rfl-card-title" style="margin:0;">Analytics</h3>
-                    <button id="open-analytics-modal-btn" style="background:var(--color-bg-secondary); border:none; cursor:pointer; color:var(--color-accent-dark); display:flex; align-items:center; gap:3px; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:10px;" title="Expand Full Analytics Modal">
-                        <span>Expand</span>
+                    <h3 class="rfl-section-title" id="rfl-card-title" style="margin:0;">${tr('Analytics', 'Statystyki')}</h3>
+                    <button id="open-analytics-modal-btn" style="background:var(--color-bg-secondary); border:none; cursor:pointer; color:var(--color-accent-dark); display:flex; align-items:center; gap:3px; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:10px;" title="${tr('Expand Full Analytics Modal', 'Rozwiń pełne statystyki')}">
+                        <span>${tr('Expand', 'Rozwiń')}</span>
                         <span class="material-symbols-rounded" style="font-size:14px;">open_in_full</span>
                     </button>
                 </div>
                 <!-- Tab pills -->
                 <div class="rfl-tab-pills" style="display:flex; background:var(--color-bg-secondary); padding:2px; border-radius:12px;">
-                    <button class="rfl-tab-btn active" data-tab="week" style="padding:4px 10px; border:none; background:var(--color-bg-card); border-radius:10px; font-size:11px; font-weight:600; cursor:pointer; color:var(--color-text-primary); transition:all 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.05);">Week</button>
-                    <button class="rfl-tab-btn" data-tab="heatmap" style="padding:4px 10px; border:none; background:transparent; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer; color:var(--color-text-muted); transition:all 0.2s;">Heatmap</button>
-                    <button class="rfl-tab-btn" data-tab="growth" style="padding:4px 10px; border:none; background:transparent; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer; color:var(--color-text-muted); transition:all 0.2s;">Growth</button>
+                    <button class="rfl-tab-btn active" data-tab="week" style="padding:4px 10px; border:none; background:var(--color-bg-card); border-radius:10px; font-size:11px; font-weight:600; cursor:pointer; color:var(--color-text-primary); transition:all 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.05);">${tr('Week', 'Tydzień')}</button>
+                    <button class="rfl-tab-btn" data-tab="heatmap" style="padding:4px 10px; border:none; background:transparent; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer; color:var(--color-text-muted); transition:all 0.2s;">${tr('Heatmap', 'Mapa')}</button>
+                    <button class="rfl-tab-btn" data-tab="growth" style="padding:4px 10px; border:none; background:transparent; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer; color:var(--color-text-muted); transition:all 0.2s;">${tr('Growth', 'Rozwój')}</button>
                 </div>
             </div>
 
@@ -67,12 +71,12 @@ export function renderProfile(onOpenSettings) {
                         <div class="rfl-stat-divider"></div>
                         <div class="rfl-stat">
                             <span id="rfl-total-sessions" class="rfl-stat-val">0</span>
-                            <span class="rfl-stat-label">sits</span>
+                            <span class="rfl-stat-label">${tr('sits', 'sesji')}</span>
                         </div>
                         <div class="rfl-stat-divider"></div>
                         <div class="rfl-stat">
                             <span id="rfl-streak" class="rfl-stat-val">0</span>
-                            <span class="rfl-stat-label">streak</span>
+                            <span class="rfl-stat-label">${tr('streak', 'passa')}</span>
                         </div>
                     </div>
                 </div>
@@ -87,14 +91,14 @@ export function renderProfile(onOpenSettings) {
                     <!-- Rendered by JS -->
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:10px; color:var(--color-text-muted);">
-                    <span id="rfl-heatmap-popover" style="font-weight:600; color:var(--color-text-secondary);">Tap any tile to view sit details</span>
+                    <span id="rfl-heatmap-popover" style="font-weight:600; color:var(--color-text-secondary);">${tr('Tap any tile to view sit details', 'Dotknij kafelka, aby zobaczyć szczegóły sesji')}</span>
                     <div style="display:flex; align-items:center; gap:3px;">
-                        <span>Less</span>
+                        <span>${tr('Less', 'Mniej')}</span>
                         <span style="width:8px; height:8px; border-radius:2px; background:var(--color-bg-secondary); display:inline-block;"></span>
                         <span style="width:8px; height:8px; border-radius:2px; background:rgba(74, 144, 98, 0.35); display:inline-block;"></span>
                         <span style="width:8px; height:8px; border-radius:2px; background:rgba(74, 144, 98, 0.7); display:inline-block;"></span>
                         <span style="width:8px; height:8px; border-radius:2px; background:var(--color-accent); display:inline-block;"></span>
-                        <span>More</span>
+                        <span>${tr('More', 'Więcej')}</span>
                     </div>
                 </div>
             </div>
@@ -102,10 +106,10 @@ export function renderProfile(onOpenSettings) {
             <!-- Tab View 3: Growth Wave Area Chart -->
             <div class="rfl-tab-view hidden" id="rfl-view-growth">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span id="rfl-growth-summary" style="font-size:11px; font-weight:600; color:var(--color-text-secondary);">Practice Trend</span>
+                    <span id="rfl-growth-summary" style="font-size:11px; font-weight:600; color:var(--color-text-secondary);">${tr('Practice Trend', 'Trend praktyki')}</span>
                     <div class="rfl-growth-toggle" style="display:flex; background:var(--color-bg-secondary); padding:2px; border-radius:8px;">
-                        <button class="rfl-growth-btn active" data-period="week" style="padding:2px 8px; border:none; background:var(--color-bg-card); border-radius:6px; font-size:9px; font-weight:700; cursor:pointer; color:var(--color-text-primary); box-shadow:0 1px 2px rgba(0,0,0,0.05);">Week</button>
-                        <button class="rfl-growth-btn" data-period="month" style="padding:2px 8px; border:none; background:transparent; border-radius:6px; font-size:9px; font-weight:700; cursor:pointer; color:var(--color-text-muted);">Month</button>
+                        <button class="rfl-growth-btn active" data-period="week" style="padding:2px 8px; border:none; background:var(--color-bg-card); border-radius:6px; font-size:9px; font-weight:700; cursor:pointer; color:var(--color-text-primary); box-shadow:0 1px 2px rgba(0,0,0,0.05);">${tr('Week', 'Tydzień')}</button>
+                        <button class="rfl-growth-btn" data-period="month" style="padding:2px 8px; border:none; background:transparent; border-radius:6px; font-size:9px; font-weight:700; cursor:pointer; color:var(--color-text-muted);">${tr('Month', 'Miesiąc')}</button>
                     </div>
                 </div>
                 <div id="rfl-growth-chart" style="height:95px; width:100%;">
@@ -119,7 +123,7 @@ export function renderProfile(onOpenSettings) {
             <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
                 <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display:flex; align-items:center; gap:8px;">
                     <span class="material-symbols-rounded" style="color: var(--color-accent); font-size:20px;">workspace_premium</span>
-                    Milestones & Badges
+                    ${tr('Milestones & Badges', 'Kamienie Milowe i Odznaki')}
                 </h3>
                 <span class="material-symbols-rounded collapsible-toggle" style="color: var(--color-text-muted);">expand_more</span>
             </div>
@@ -133,30 +137,30 @@ export function renderProfile(onOpenSettings) {
             <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
                 <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display:flex; align-items:center; gap:8px;">
                     <span class="material-symbols-rounded" style="color: var(--color-accent); font-size:20px;">analytics</span>
-                    Lifetime Practice Stats
+                    ${tr('Lifetime Practice Stats', 'Całkowite Statystyki Praktyki')}
                 </h3>
                 <span class="material-symbols-rounded collapsible-toggle" style="color: var(--color-text-muted);">expand_more</span>
             </div>
             
             <div class="collapsible-content" style="margin-top: 14px;">
                 <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-bg-secondary);">
-                    <span class="text-sm" style="color: var(--color-text-secondary);">Total Sessions</span>
+                    <span class="text-sm" style="color: var(--color-text-secondary);">${tr('Total Sessions', 'Wszystkie sesje')}</span>
                     <span id="stat-sessions" style="font-weight: 600;">0</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-bg-secondary);">
-                    <span class="text-sm" style="color: var(--color-text-secondary);">Mindful Minutes</span>
+                    <span class="text-sm" style="color: var(--color-text-secondary);">${tr('Mindful Minutes', 'Uważne minuty')}</span>
                     <span id="stat-minutes" style="font-weight: 600;">0m</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-bg-secondary);">
-                    <span class="text-sm" style="color: var(--color-text-secondary);">Current Streak</span>
-                    <span id="stat-streak" style="font-weight: 600;">0 days</span>
+                    <span class="text-sm" style="color: var(--color-text-secondary);">${tr('Current Streak', 'Aktualna passa')}</span>
+                    <span id="stat-streak" style="font-weight: 600;">0 ${tr('days', 'dni')}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-bg-secondary);">
-                    <span class="text-sm" style="color: var(--color-text-secondary);">Longest Streak</span>
-                    <span id="stat-longest-streak" style="font-weight: 600;">0 days</span>
+                    <span class="text-sm" style="color: var(--color-text-secondary);">${tr('Longest Streak', 'Najdłuższa passa')}</span>
+                    <span id="stat-longest-streak" style="font-weight: 600;">0 ${tr('days', 'dni')}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 10px 0;">
-                    <span class="text-sm" style="color: var(--color-text-secondary);">Avg. Sit Duration</span>
+                    <span class="text-sm" style="color: var(--color-text-secondary);">${tr('Avg. Sit Duration', 'Średni czas sesji')}</span>
                     <span id="stat-avg-duration" style="font-weight: 600;">0m</span>
                 </div>
             </div>
@@ -167,7 +171,7 @@ export function renderProfile(onOpenSettings) {
             <div class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
                 <h3 style="font-size: 16px; margin: 0; font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
                     <span class="material-symbols-rounded" style="color: var(--color-accent); font-size: 20px;">schedule</span>
-                    Sit Reminders
+                    ${tr('Sit Reminders', 'Przypomnienia o medytacji')}
                 </h3>
                 <span class="material-symbols-rounded collapsible-toggle" style="color: var(--color-text-muted);">expand_more</span>
             </div>
@@ -176,9 +180,9 @@ export function renderProfile(onOpenSettings) {
                 <!-- Sit Reminders -->
                 <div style="margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span style="font-weight: 600; font-size: 12.5px; color: var(--color-text-primary);">📅 Daily Prompts</span>
+                        <span style="font-weight: 600; font-size: 12.5px; color: var(--color-text-primary);">📅 ${tr('Daily Prompts', 'Codzienne przypomnienia')}</span>
                         <button id="add-reminder-btn" class="btn" style="padding: 5px 12px; font-size: 11px; background: var(--color-bg-secondary); color: var(--color-text-primary); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                            <span class="material-symbols-rounded" style="font-size: 15px; color: var(--color-accent);">add</span> Add Time
+                            <span class="material-symbols-rounded" style="font-size: 15px; color: var(--color-accent);">add</span> ${tr('Add Time', 'Dodaj godzinę')}
                         </button>
                     </div>
                     <div id="reminders-list-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
@@ -187,8 +191,8 @@ export function renderProfile(onOpenSettings) {
                 <!-- Session End Notification Toggle -->
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-bg-secondary); padding-top: 14px;">
                     <div>
-                        <span style="font-weight: 600; font-size: 12.5px; color: var(--color-text-primary);">🔔 Session End Notification</span>
-                        <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin: 2px 0 0;">Chime & alert when timer completes</p>
+                        <span style="font-weight: 600; font-size: 12.5px; color: var(--color-text-primary);">🔔 ${tr('Session End Notification', 'Powiadomienie o końcu sesji')}</span>
+                        <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin: 2px 0 0;">${tr('Chime & alert when timer completes', 'Dzwonek i powiadomienie po zakończeniu czasu')}</p>
                     </div>
                     <label class="switch-toggle">
                         <input type="checkbox" id="toggle-session-notification" checked>
@@ -198,33 +202,21 @@ export function renderProfile(onOpenSettings) {
             </div>
         </div>
 
-        <!-- Support Siddha Card (Dedicated Card - Placed Above Community) -->
-        <div class="card" style="margin-bottom: 24px; padding: 20px; text-align: center;">
-            <span class="material-symbols-rounded" style="color: #e2b857; font-size: 32px; margin-bottom: 6px;">favorite</span>
-            <h3 style="font-size: 16px; margin: 0 0 6px; font-family: var(--font-heading); color: var(--color-text-primary);">Support Siddha</h3>
-            <p class="text-sm" style="color: var(--color-text-muted); font-size: 11.5px; margin-bottom: 14px; line-height: 1.4;">
-                Siddha is free and built with love. If it helps you stay mindful, consider supporting our journey.
-            </p>
-            <button id="profile-donate-btn" class="btn" style="width: 100%; background: var(--color-accent); color: #fff; border: none; font-size: 13px; font-weight: 700; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.12);">
-                <span class="material-symbols-rounded" style="font-size: 18px;">coffee</span>
-                Support the App ☕
-            </button>
-        </div>
 
         <!-- Share & Community Card -->
         <div class="card" style="margin-bottom: 24px; padding: 20px;">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
                 <span class="material-symbols-rounded" style="color: var(--color-accent); font-size: 24px;">share</span>
                 <div>
-                    <h3 style="font-size: 15px; margin: 0; font-family: var(--font-heading); color: var(--color-text-primary);">Share & Community</h3>
-                    <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin: 2px 0 0;">Connect with our mindfulness journey</p>
+                    <h3 style="font-size: 15px; margin: 0; font-family: var(--font-heading); color: var(--color-text-primary);">${tr('Share & Community', 'Społeczność i Udostępnianie')}</h3>
+                    <p class="text-sm" style="color: var(--color-text-muted); font-size: 11px; margin: 2px 0 0;">${tr('Connect with our mindfulness journey', 'Dołącz do naszej podróży uważności')}</p>
                 </div>
             </div>
 
             <!-- Share Button -->
             <button id="profile-share-btn" class="btn" style="width: 100%; padding: 12px; font-size: 13px; background: var(--color-accent); color: #ffffff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); margin-bottom: 12px;">
                 <span class="material-symbols-rounded" style="font-size: 18px;">share</span>
-                Share Siddha App 🧘
+                ${tr('Share Siddha App 🧘', 'Udostępnij aplikację Siddha 🧘')}
             </button>
 
             <!-- Social Links Row -->
@@ -245,7 +237,7 @@ export function renderProfile(onOpenSettings) {
             <!-- Email Feedback & Bug Report Direct Pill -->
             <a id="profile-email-btn" href="mailto:siddhameditation@gmail.com?subject=Siddha%20App%20Feedback%20%26%20Bug%20Report&body=Hi%20Siddha%20Team%2C%0A%0AHere%20is%20my%20feedback%20or%20bug%20report%3A%0A%0A" style="width: 100%; padding: 11px 12px; font-size: 12px; background: var(--color-bg-secondary); color: var(--color-text-primary); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; box-sizing: border-box;">
                 <span class="material-symbols-rounded" style="font-size: 17px; color: var(--color-accent);">rate_review</span>
-                Give Feedback or Report a Bug 💬
+                ${tr('Give Feedback or Report a Bug 💬', 'Prześlij opinię lub zgłoś błąd 💬')}
             </a>
         </div>
 
@@ -273,17 +265,17 @@ export function renderProfile(onOpenSettings) {
         <!-- Avatar Selection Modal Overlay -->
         <div id="avatar-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); z-index:999; display:none; justify-content:center; align-items:center; padding:20px;">
             <div style="background:var(--color-bg-card); border-radius:24px; padding:24px; max-width:340px; width:100%; text-align:center; box-shadow:0 12px 32px rgba(0,0,0,0.15); animation:fadeIn 0.2s ease;">
-                <h3 style="font-size:18px; margin:0 0 6px; font-family:var(--font-heading); color:var(--color-text-primary);">Choose Profile Avatar</h3>
-                <p class="text-sm" style="color:var(--color-text-secondary); margin-bottom:18px;">Select a Zen watercolor avatar</p>
+                <h3 style="font-size:18px; margin:0 0 6px; font-family:var(--font-heading); color:var(--color-text-primary);">${tr('Choose Profile Avatar', 'Wybierz Awatar Profilu')}</h3>
+                <p class="text-sm" style="color:var(--color-text-secondary); margin-bottom:18px;">${tr('Select a Zen watercolor avatar', 'Wybierz akwarelowy awatar Zen')}</p>
                 
                 <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:20px;">
                     <div class="avatar-opt-btn" data-avatar="./src/assets/avatar_monk.jpg" style="cursor:pointer; text-align:center;">
                         <img src="./src/assets/avatar_monk.jpg" style="width:68px; height:68px; border-radius:50%; object-fit:cover; border:3px solid transparent; transition:all 0.2s;" alt="Monk">
-                        <span class="text-sm" style="display:block; margin-top:4px; font-size:11px; font-weight:600; color:var(--color-text-primary);">Monk</span>
+                        <span class="text-sm" style="display:block; margin-top:4px; font-size:11px; font-weight:600; color:var(--color-text-primary);">${tr('Monk', 'Mnich')}</span>
                     </div>
                     <div class="avatar-opt-btn" data-avatar="./src/assets/avatar_lotus.jpg" style="cursor:pointer; text-align:center;">
                         <img src="./src/assets/avatar_lotus.jpg" style="width:68px; height:68px; border-radius:50%; object-fit:cover; border:3px solid transparent; transition:all 0.2s;" alt="Lotus">
-                        <span class="text-sm" style="display:block; margin-top:4px; font-size:11px; font-weight:600; color:var(--color-text-primary);">Lotus</span>
+                        <span class="text-sm" style="display:block; margin-top:4px; font-size:11px; font-weight:600; color:var(--color-text-primary);">${tr('Lotus', 'Lotos')}</span>
                     </div>
                     <div class="avatar-opt-btn" data-avatar="./src/assets/avatar_mascot.jpg" style="cursor:pointer; text-align:center;">
                         <img src="./src/assets/avatar_mascot.jpg" style="width:68px; height:68px; border-radius:50%; object-fit:cover; border:3px solid transparent; transition:all 0.2s;" alt="Siddha">
@@ -291,15 +283,15 @@ export function renderProfile(onOpenSettings) {
                     </div>
                     <div class="avatar-opt-btn" data-avatar="./src/assets/avatar_sun_moon.jpg" style="cursor:pointer; text-align:center;">
                         <img src="./src/assets/avatar_sun_moon.jpg" style="width:68px; height:68px; border-radius:50%; object-fit:cover; border:3px solid transparent; transition:all 0.2s;" alt="Sun & Moon">
-                        <span class="text-sm" style="display:block; margin-top:4px; font-size:11px; font-weight:600; color:var(--color-text-primary);">Sun & Moon</span>
+                        <span class="text-sm" style="display:block; margin-top:4px; font-size:11px; font-weight:600; color:var(--color-text-primary);">${tr('Sun & Moon', 'Słońce i Księżyc')}</span>
                     </div>
                     <div class="avatar-opt-btn" data-avatar="./src/assets/avatar_mountain.jpg" style="cursor:pointer; text-align:center;">
                         <img src="./src/assets/avatar_mountain.jpg" style="width:68px; height:68px; border-radius:50%; object-fit:cover; border:3px solid transparent; transition:all 0.2s;" alt="Mountain">
-                        <span class="text-sm" style="display:block; margin-top:4px; font-size:11px; font-weight:600; color:var(--color-text-primary);">Mountain</span>
+                        <span class="text-sm" style="display:block; margin-top:4px; font-size:11px; font-weight:600; color:var(--color-text-primary);">${tr('Mountain', 'Góra')}</span>
                     </div>
                 </div>
 
-                <button id="close-avatar-modal" class="btn" style="width:100%; background:var(--color-bg-secondary); color:var(--color-text-primary); border:none; padding:10px; border-radius:12px; font-weight:600; cursor:pointer;">Close</button>
+                <button id="close-avatar-modal" class="btn" style="width:100%; background:var(--color-bg-secondary); color:var(--color-text-primary); border:none; padding:10px; border-radius:12px; font-weight:600; cursor:pointer;">${tr('Close', 'Zamknij')}</button>
             </div>
         </div>
 
@@ -310,7 +302,7 @@ export function renderProfile(onOpenSettings) {
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--color-bg-secondary); padding-bottom:10px;">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <span class="material-symbols-rounded" style="color:var(--color-accent); font-size:22px;">analytics</span>
-                        <h3 style="margin:0; font-size:16px; font-family:var(--font-heading); color:var(--color-text-primary);">Full Practice Analytics</h3>
+                        <h3 style="margin:0; font-size:16px; font-family:var(--font-heading); color:var(--color-text-primary);">${tr('Full Practice Analytics', 'Pełne Statystyki Praktyki')}</h3>
                     </div>
                     <button id="close-analytics-modal-btn" style="background:var(--color-bg-secondary); border:none; color:var(--color-text-secondary); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
                         <span class="material-symbols-rounded" style="font-size:18px;">close</span>
@@ -319,22 +311,22 @@ export function renderProfile(onOpenSettings) {
 
                 <!-- Modal Subtitle -->
                 <p style="font-size:11px; color:var(--color-text-secondary); margin:0 0 14px 0; line-height:1.4;">
-                    Detailed breakdown of your meditation consistency, weekly progress, and long-term practice growth trends.
+                    ${tr('Detailed breakdown of your meditation consistency, weekly progress, and long-term practice growth trends.', 'Szczegółowe podsumowanie regularności Twojej medytacji, postępów tygodniowych oraz długoterminowych trendów rozwoju.')}
                 </p>
 
                 <!-- Expanded Analytics Content -->
                 <div id="modal-analytics-content" style="display:flex; flex-direction:column; gap:16px;">
                     <!-- 1. Expanded Heatmap Section (52 Weeks - Sideways Scrollable) -->
                     <div style="background:var(--color-bg-secondary); padding:14px; border-radius:16px;">
-                        <h4 style="margin:0 0 8px 0; font-size:13px; font-weight:700; color:var(--color-text-primary);">📅 Practice Consistency Heatmap</h4>
+                        <h4 style="margin:0 0 8px 0; font-size:13px; font-weight:700; color:var(--color-text-primary);">📅 ${tr('Practice Consistency Heatmap', 'Mapa Regularności Praktyki')}</h4>
                         
                         <div id="modal-heatmap-container" style="overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; scrollbar-width:thin; width:100%;"></div>
-                        <p id="modal-heatmap-popover" style="font-size:10.5px; font-weight:700; color:var(--color-accent); margin:8px 0 0 0; text-align:center;">Tap any tile to view sit details</p>
+                        <p id="modal-heatmap-popover" style="font-size:10.5px; font-weight:700; color:var(--color-accent); margin:8px 0 0 0; text-align:center;">${tr('Tap any tile to view sit details', 'Dotknij kafelka, aby zobaczyć szczegóły sesji')}</p>
                     </div>
 
                     <!-- 2. Practice Trend Summary -->
                     <div style="background:var(--color-bg-secondary); padding:14px; border-radius:16px;">
-                        <h4 style="margin:0 0 4px 0; font-size:13px; font-weight:700; color:var(--color-text-primary);">📈 Practice Growth Wave</h4>
+                        <h4 style="margin:0 0 4px 0; font-size:13px; font-weight:700; color:var(--color-text-primary);">📈 ${tr('Practice Growth Wave', 'Fala Rozwoju Praktyki')}</h4>
                         <div id="modal-growth-chart" style="height:100px; width:100%; margin-top:8px;"></div>
                     </div>
                 </div>
@@ -506,7 +498,7 @@ export function renderProfile(onOpenSettings) {
     `;
     container.appendChild(style);
 
-    const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const DAYS = getLang() === 'pl' ? ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Niedz'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const todayIdx = (new Date().getDay() + 6) % 7; // 0=Mon, 6=Sun
     let activeAnalyticsTab = 'week';
     let activeGrowthPeriod = 'week';
@@ -566,7 +558,7 @@ export function renderProfile(onOpenSettings) {
         // Day Labels Column (S, M, T, W, T, F, S)
         const dayLabelsCol = document.createElement('div');
         dayLabelsCol.style.cssText = 'display:flex; flex-direction:column; gap:3px; font-size:8px; font-weight:700; color:var(--color-text-muted); margin-top:18px; text-align:right; flex-shrink:0; width:14px;';
-        const dayLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        const dayLetters = getLang() === 'pl' ? ['N', 'P', 'W', 'Ś', 'C', 'P', 'S'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
         dayLetters.forEach(letter => {
             const lbl = document.createElement('div');
             lbl.style.cssText = 'height:11px; line-height:11px;';
@@ -595,7 +587,7 @@ export function renderProfile(onOpenSettings) {
             if (m !== lastMonth) {
                 const mSpan = document.createElement('span');
                 mSpan.style.cssText = `grid-column-start: ${colIdx + 1}; font-size:9.5px; font-weight:700; color:var(--color-text-secondary); white-space:nowrap; pointer-events:none;`;
-                mSpan.textContent = colSunDate.toLocaleDateString('en-US', { month: 'short' });
+                mSpan.textContent = colSunDate.toLocaleDateString(getLocale(), { month: 'short' });
                 monthRow.appendChild(mSpan);
                 lastMonth = m;
             }
@@ -624,13 +616,13 @@ export function renderProfile(onOpenSettings) {
 
             const tile = document.createElement('div');
             tile.style.cssText = `width:11px; height:11px; border-radius:2.5px; background:${bg}; border:1px solid rgba(0,0,0,0.04); cursor:pointer; transition:transform 0.1s; flex-shrink:0;`;
-            tile.title = `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${mins} min`;
+            tile.title = `${d.toLocaleDateString(getLocale(), { month: 'short', day: 'numeric' })}: ${mins} min`;
 
             tile.addEventListener('click', () => {
                 const popover = targetPopover || container.querySelector('#rfl-heatmap-popover');
                 if (popover) {
-                    const formattedDate = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                    popover.textContent = `📅 ${formattedDate}: ${mins > 0 ? `${mins} minutes sit` : 'No sit recorded'}`;
+                    const formattedDate = d.toLocaleDateString(getLocale(), { weekday: 'short', month: 'short', day: 'numeric' });
+                    popover.textContent = `📅 ${formattedDate}: ${mins > 0 ? tr(`${mins} minutes sit`, `${mins} min medytacji`) : tr('No sit recorded', 'Brak zapisanej sesji')}`;
                     popover.style.color = mins > 0 ? 'var(--color-accent)' : 'var(--color-text-muted)';
                 }
             });
@@ -677,12 +669,12 @@ export function renderProfile(onOpenSettings) {
                     }
                 });
                 buckets.push(totalMins);
-                labels.push(i === 0 ? 'This Wk' : `Wk -${i}`);
+                labels.push(i === 0 ? tr('This Wk', 'Ten tydz.') : tr(`Wk -${i}`, `Tydz. -${i}`));
             }
         } else {
             for (let i = 5; i >= 0; i--) {
                 const mDate = new Date(today.getFullYear(), today.getMonth() - i, 1);
-                const monthName = mDate.toLocaleDateString('en-US', { month: 'short' });
+                const monthName = mDate.toLocaleDateString(getLocale(), { month: 'short' });
                 const mYear = mDate.getFullYear();
                 const mMonth = mDate.getMonth();
 
@@ -707,7 +699,7 @@ export function renderProfile(onOpenSettings) {
         const pctDiff = prevTotal > 0 ? Math.round(((recentTotal - prevTotal) / prevTotal) * 100) : 0;
 
         if (summaryEl) {
-            summaryEl.textContent = `Total: ${totalPeriodMins}m ${pctDiff !== 0 ? `(${pctDiff > 0 ? '+' : ''}${pctDiff}%)` : ''}`;
+            summaryEl.textContent = `${tr('Total', 'Suma')}: ${totalPeriodMins}m ${pctDiff !== 0 ? `(${pctDiff > 0 ? '+' : ''}${pctDiff}%)` : ''}`;
         }
 
         const svgW = 280;
@@ -797,7 +789,7 @@ export function renderProfile(onOpenSettings) {
                             <span class="material-symbols-rounded" style="font-size:13px; color:#2c8242; font-variation-settings: 'FILL' 1;">check_circle</span>
                         </div>
                         <p class="ach-desc">${ach.desc}</p>
-                        <span class="ach-reward-tag">✓ Unlocked (+${ach.xp} XP)</span>
+                        <span class="ach-reward-tag">✓ ${tr('Unlocked', 'Odblokowano')} (+${ach.xp} XP)</span>
                     </div>
                 `;
             } else {
@@ -869,12 +861,12 @@ export function renderProfile(onOpenSettings) {
         container.querySelector('#profile-xp').textContent = stats.xp;
         container.querySelector('#stat-sessions').textContent = stats.totalSessions;
         container.querySelector('#stat-minutes').textContent = stats.totalMinutes + 'm';
-        container.querySelector('#stat-streak').textContent = stats.streak + ' days';
+        container.querySelector('#stat-streak').textContent = stats.streak + tr(' days', ' dni');
 
         const longest = stats.longestStreak || stats.streak || 0;
         const avgDur = stats.totalSessions > 0 ? Math.round(stats.totalMinutes / stats.totalSessions) : 0;
         const longestEl = container.querySelector('#stat-longest-streak');
-        if (longestEl) longestEl.textContent = longest + ' days';
+        if (longestEl) longestEl.textContent = longest + tr(' days', ' dni');
         const avgEl = container.querySelector('#stat-avg-duration');
         if (avgEl) avgEl.textContent = avgDur + 'm';
 
@@ -1000,8 +992,8 @@ export function renderProfile(onOpenSettings) {
                         const [hrs, mins] = (r.time || '08:00').split(':').map(Number);
 
                         return {
-                            title: "Time for Mindfulness 🧘",
-                            body: "Take a few moments to sit and find your center.",
+                            title: tr("Time for Mindfulness 🧘", "Czas na Uważność 🧘"),
+                            body: tr("Take a few moments to sit and find your center.", "Usiądź na kilka chwil i odnajdź wewnętrzny spokój."),
                             id: 101 + index,
                             schedule: {
                                 on: { hour: hrs, minute: mins },
@@ -1026,7 +1018,7 @@ export function renderProfile(onOpenSettings) {
 
         remindersContainer.innerHTML = '';
         if (reminders.length === 0) {
-            remindersContainer.innerHTML = `<p style="font-size:11.5px; color:var(--color-text-muted); margin:0;">No reminders set. Click "Add Time" to add one.</p>`;
+            remindersContainer.innerHTML = `<p style="font-size:11.5px; color:var(--color-text-muted); margin:0;">${tr('No reminders set. Click "Add Time" to add one.', 'Brak przypomnień. Kliknij „Dodaj godzinę”, aby dodać nowe.')}</p>`;
             return;
         }
 
@@ -1217,7 +1209,7 @@ export function renderProfile(onOpenSettings) {
         shareBtn.addEventListener('click', () => {
             const shareData = {
                 title: 'Siddha Meditation',
-                text: 'Find your inner calm and build a mindful habit with Siddha Meditation! 🧘✨',
+                text: tr('Find your inner calm and build a mindful habit with Siddha Meditation! 🧘✨', 'Odnajdź wewnętrzny spokój i zbuduj nawyk uważności z aplikacją Siddha Meditation! 🧘✨'),
                 url: 'https://siddha.app'
             };
 
@@ -1227,8 +1219,17 @@ export function renderProfile(onOpenSettings) {
                 navigator.share(shareData).catch(err => console.log('[Profile] Web share error:', err));
             } else {
                 navigator.clipboard.writeText('https://siddha.app');
-                alert('App link copied to clipboard! (https://siddha.app)');
+                alert(tr('App link copied to clipboard! (https://siddha.app)', 'Link do aplikacji skopiowany do schowka! (https://siddha.app)'));
             }
+        });
+    }
+
+    // Language switch button in Profile header
+    const profileLangBtn = container.querySelector('#profile-lang-btn');
+    if (profileLangBtn) {
+        profileLangBtn.addEventListener('click', () => {
+            sessionStorage.setItem('siddha_return_screen', 'profile');
+            setLang(getLang() === 'pl' ? 'en' : 'pl', true);
         });
     }
 
@@ -1458,12 +1459,6 @@ export function renderProfile(onOpenSettings) {
     }
 
     // 8. Buttons & Actions
-    const donateBtn = container.querySelector('#profile-donate-btn');
-    if (donateBtn) {
-        donateBtn.addEventListener('click', () => {
-            window.open('https://ko-fi.com/siddha', '_blank');
-        });
-    }
 
     const openSettingsBtn = container.querySelector('#open-settings-screen-btn');
     if (openSettingsBtn && onOpenSettings) {

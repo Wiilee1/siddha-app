@@ -1,6 +1,7 @@
 import { DB, xpInCurrentLevel } from '../services/db.js';
 import { Synth } from '../services/synth.js';
 import { HapticService } from '../services/haptics.js';
+import { tr } from '../services/i18n.js';
 
 // All meditation paths
 const PATHS = {
@@ -9,61 +10,61 @@ const PATHS = {
         label: 'Anapana',
         shortLabel: 'Anapana',
         unlockLevel: 1,
-        difficulty: 'Low',
+        difficulty: tr('Low', 'Niski'),
         bgImage: './src/assets/anapana_bg.jpg',
         accentColor: '#705E39',
         nodeAccent: 'rgba(112,94,57,0.15)',
         icon: 'air',
-        description: 'Mindfulness of breathing to build concentration',
+        description: tr('Mindfulness of breathing to build concentration', 'Uważność oddechu budująca głęboką koncentrację'),
         nodes: [
             {
-                id: 1, label: 'Natural Respiration', subtitle: 'Breath', icon: 'air',
-                description: 'Observe the flow of the breath just as it is, without trying to control it.',
+                id: 1, label: tr('Natural Respiration', 'Naturalny Oddech'), subtitle: tr('Breath', 'Oddech'), icon: 'air',
+                description: tr('Observe the flow of the breath just as it is, without trying to control it.', 'Obserwuj przepływ oddechu takim, jaki jest, bez próby kontrolowania go.'),
                 xPct: 45, yPct: 8,
                 missions: [
-                    { text: 'Sit and observe the touch of the breath at the nostrils.', duration: 10 },
-                    { text: 'Notice if the breath is long or short.', duration: 12 },
-                    { text: 'Complete a 15-minute natural breath sit.', duration: 15 }
+                    { text: tr('Sit and observe the touch of the breath at the nostrils.', 'Usiądź i obserwuj dotyk oddechu przy nozdrzach.'), duration: 10 },
+                    { text: tr('Notice if the breath is long or short.', 'Zauważ, czy oddech jest długi, czy krótki.'), duration: 12 },
+                    { text: tr('Complete a 15-minute natural breath sit.', 'Ukończ 15-minutową sesję z naturalnym oddechem.'), duration: 15 }
                 ]
             },
             {
-                id: 2, label: 'The Touchpoint', subtitle: 'Sensation', icon: 'pin_drop',
-                description: 'Narrow your focus to the exact area where the breath touches: the upper lip or nostrils.',
+                id: 2, label: tr('The Touchpoint', 'Punkt Dotyku'), subtitle: tr('Sensation', 'Doznanie'), icon: 'pin_drop',
+                description: tr('Narrow your focus to the exact area where the breath touches: the upper lip or nostrils.', 'Zawęź swoją uwagę do dokładnego miejsca, w którym dotyka oddech: górnej wargi lub nozdrzy.'),
                 xPct: 60, yPct: 26,
                 missions: [
-                    { text: 'Locate the exact spot of touch inside the nostrils.', duration: 15 },
-                    { text: 'Detect the difference in touch between inhale and exhale.', duration: 15 },
-                    { text: 'Sit for 20 minutes maintaining focus on the touchpoint.', duration: 20 }
+                    { text: tr('Locate the exact spot of touch inside the nostrils.', 'Zlokalizuj dokładny punkt dotyku wewnątrz nozdrzy.'), duration: 15 },
+                    { text: tr('Detect the difference in touch between inhale and exhale.', 'Wyczuj różnicę w dotyku pomiędzy wdechem a wydechem.'), duration: 15 },
+                    { text: tr('Sit for 20 minutes maintaining focus on the touchpoint.', 'Medytuj przez 20 minut, utrzymując skupienie na punkcie dotyku.'), duration: 20 }
                 ]
             },
             {
-                id: 3, label: 'Cool & Warm', subtitle: 'Temperature', icon: 'thermostat',
-                description: 'Note the changing temperature of the air as it enters and leaves your body.',
+                id: 3, label: tr('Cool & Warm', 'Chłód i Ciepło'), subtitle: tr('Temperature', 'Temperatura'), icon: 'thermostat',
+                description: tr('Note the changing temperature of the air as it enters and leaves your body.', 'Zauważaj zmienną temperaturę powietrza, gdy wpływa do ciała i je opuszcza.'),
                 xPct: 40, yPct: 44,
                 missions: [
-                    { text: 'Notice the cool air entering the nostrils on inhale.', duration: 15 },
-                    { text: 'Notice the warm air exiting on the exhale.', duration: 15 },
-                    { text: 'Maintain thermal awareness for a full 25-minute sit.', duration: 25 }
+                    { text: tr('Notice the cool air entering the nostrils on inhale.', 'Zauważ chłodne powietrze wpływające przez nozdrza podczas wdechu.'), duration: 15 },
+                    { text: tr('Notice the warm air exiting on the exhale.', 'Zauważ ciepłe powietrze wypływające podczas wydechu.'), duration: 15 },
+                    { text: tr('Maintain thermal awareness for a full 25-minute sit.', 'Utrzymaj świadomość temperatury przez pełną 25-minutową sesję.'), duration: 25 }
                 ]
             },
             {
-                id: 4, label: 'Subtle Breath', subtitle: 'Calm', icon: 'waves',
-                description: 'As your mind settles, the breath becomes extremely soft, shallow, and quiet. Follow it closely.',
+                id: 4, label: tr('Subtle Breath', 'Subtelny Oddech'), subtitle: tr('Calm', 'Wyciszenie'), icon: 'waves',
+                description: tr('As your mind settles, the breath becomes extremely soft, shallow, and quiet. Follow it closely.', 'Gdy umysł się wycisza, oddech staje się niezwykle delikatny, płytki i cichy. Podążaj za nim uważnie.'),
                 xPct: 58, yPct: 62,
                 missions: [
-                    { text: 'Notice the breath becoming very shallow or faint.', duration: 20 },
-                    { text: 'Observe the brief gap between the in-breath and out-breath.', duration: 20 },
-                    { text: 'Keep single-pointed attention on the faint breath for 30 minutes.', duration: 30 }
+                    { text: tr('Notice the breath becoming very shallow or faint.', 'Zauważ, jak oddech staje się bardzo płytki i subtelny.'), duration: 20 },
+                    { text: tr('Observe the brief gap between the in-breath and out-breath.', 'Obserwuj krótką przerwę pomiędzy wdechem a wydechem.'), duration: 20 },
+                    { text: tr('Keep single-pointed attention on the faint breath for 30 minutes.', 'Utrzymaj jednopunktową uwagę na subtelnym oddechu przez 30 minut.'), duration: 30 }
                 ]
             },
             {
-                id: 5, label: 'Absorption', subtitle: 'Ekaggata', icon: 'brightness_5',
-                description: 'Mind and breath merge. Focus is effortless and steady, preparing you for deeper insight.',
+                id: 5, label: tr('Absorption', 'Absorpcja'), subtitle: 'Ekaggata', icon: 'brightness_5',
+                description: tr('Mind and breath merge. Focus is effortless and steady, preparing you for deeper insight.', 'Umysł i oddech łączą się w jedno. Skupienie jest bezwysiłkowe i stabilne, przygotowując Cię na głębszy wgląd.'),
                 xPct: 46, yPct: 80,
                 missions: [
-                    { text: 'Sit for 20 minutes with zero wandering of attention.', duration: 20 },
-                    { text: 'Let go of the effort to concentrate; rest in the focus.', duration: 25 },
-                    { text: 'Complete a 30-minute silent concentration session.', duration: 30 }
+                    { text: tr('Sit for 20 minutes with zero wandering of attention.', 'Medytuj przez 20 minut bez rozpraszania uwagi.'), duration: 20 },
+                    { text: tr('Let go of the effort to concentrate; rest in the focus.', 'Puść wysiłek wkładany w koncentrację; spocznij w samym skupieniu.'), duration: 25 },
+                    { text: tr('Complete a 30-minute silent concentration session.', 'Ukończ 30-minutową sesję cichej koncentracji.'), duration: 30 }
                 ]
             }
         ]
@@ -73,66 +74,66 @@ const PATHS = {
         label: 'Metta',
         shortLabel: 'Metta',
         unlockLevel: 2,
-        difficulty: 'Low',
+        difficulty: tr('Low', 'Niski'),
         bgImage: './src/assets/metta_bg.jpg',
         accentColor: '#7C4559',
         nodeAccent: 'rgba(124,69,89,0.15)',
         icon: 'favorite',
-        description: 'Loving-kindness to build compassion and dissolve aversion',
+        description: tr('Loving-kindness to build compassion and dissolve aversion', 'Miłująca dobroć budująca współczucie i rozpuszczająca niechęć'),
         nodes: [
             {
-                id: 1, label: 'Self-Compassion', subtitle: 'Self', icon: 'person',
-                description: 'Direct wishes of safety, happiness, and peace toward yourself.',
+                id: 1, label: tr('Self-Compassion', 'Współczucie dla Siebie'), subtitle: tr('Self', 'Ja'), icon: 'person',
+                description: tr('Direct wishes of safety, happiness, and peace toward yourself.', 'Skieruj życzenia bezpieczeństwa, szczęścia i pokoju w stronę samego siebie.'),
                 xPct: 46, yPct: 8,
                 missions: [
-                    { text: 'Silently repeat: "May I be happy, may I be peaceful."', duration: 10 },
-                    { text: 'Notice any internal resistance or self-criticism and release it.', duration: 15 },
-                    { text: 'Cultivate a feeling of warmth in your chest area.', duration: 15 },
-                    { text: 'Sit for 20 minutes sending metta to yourself.', duration: 20 }
+                    { text: tr('Silently repeat: "May I be happy, may I be peaceful."', 'Powtarzaj w myślach: „Obym był szczęśliwy, obym był spokojny”.'), duration: 10 },
+                    { text: tr('Notice any internal resistance or self-criticism and release it.', 'Zauważ wszelki wewnętrzny opór lub samokrytykę i pozwól im odejść.'), duration: 15 },
+                    { text: tr('Cultivate a feeling of warmth in your chest area.', 'Rozwijaj uczucie ciepła w okolicy klatki piersiowej.'), duration: 15 },
+                    { text: tr('Sit for 20 minutes sending metta to yourself.', 'Medytuj przez 20 minut, wysyłając mettę samemu sobie.'), duration: 20 }
                 ]
             },
             {
-                id: 2, label: 'The Guide', subtitle: 'Gratitude', icon: 'school',
-                description: 'Direct loving-kindness to someone who has guided, helped, or inspired you.',
+                id: 2, label: tr('The Guide', 'Przewodnik'), subtitle: tr('Gratitude', 'Wdzięczność'), icon: 'school',
+                description: tr('Direct loving-kindness to someone who has guided, helped, or inspired you.', 'Skieruj miłującą dobroć ku osobie, która Cię prowadziła, pomogła Ci lub Cię zainspirowała.'),
                 xPct: 59, yPct: 26,
                 missions: [
-                    { text: 'Bring to mind a mentor or teacher and smile internally.', duration: 15 },
-                    { text: 'Wish them: "May you be free from suffering, may you be peaceful."', duration: 15 },
-                    { text: 'Observe the feeling of gratitude arising in your heart.', duration: 20 },
-                    { text: 'Dedicate a 20-minute sit to your benefactor.', duration: 20 }
+                    { text: tr('Bring to mind a mentor or teacher and smile internally.', 'Przywołaj w myślach mentora lub nauczyciela i uśmiechnij się wewnętrznie.'), duration: 15 },
+                    { text: tr('Wish them: "May you be free from suffering, may you be peaceful."', 'Życz tej osobie: „Obyś był wolny od cierpienia, obyś zaznał spokoju”.'), duration: 15 },
+                    { text: tr('Observe the feeling of gratitude arising in your heart.', 'Obserwuj uczucie wdzięczności rodzące się w Twoim sercu.'), duration: 20 },
+                    { text: tr('Dedicate a 20-minute sit to your benefactor.', 'Zadedykuj 20-minutową sesję swojemu dobroczyńcy.'), duration: 20 }
                 ]
             },
             {
-                id: 3, label: 'The Stranger', subtitle: 'Friendliness', icon: 'people',
-                description: 'Direct loving-kindness to someone you see regularly but do not know personally.',
+                id: 3, label: tr('The Stranger', 'Nieznajomy'), subtitle: tr('Friendliness', 'Życzliwość'), icon: 'people',
+                description: tr('Direct loving-kindness to someone you see regularly but do not know personally.', 'Skieruj miłującą dobroć ku komuś, kogo widujesz regularnie, ale nie znasz osobiście.'),
                 xPct: 42, yPct: 44,
                 missions: [
-                    { text: 'Recall the face of a cashier, neighbor, or driver.', duration: 15 },
-                    { text: 'Acknowledge: "Just like me, they wish to be happy."', duration: 15 },
-                    { text: 'Wish them: "May you be safe, may you live with ease."', duration: 20 },
-                    { text: 'Maintain focus on the neutral person for a 25-minute sit.', duration: 25 }
+                    { text: tr('Recall the face of a cashier, neighbor, or driver.', 'Przypomnij sobie twarz sprzedawcy, sąsiada lub kierowcy.'), duration: 15 },
+                    { text: tr('Acknowledge: "Just like me, they wish to be happy."', 'Uznaj w myślach: „Tak samo jak ja, ta osoba pragnie być szczęśliwa”.'), duration: 15 },
+                    { text: tr('Wish them: "May you be safe, may you live with ease."', 'Życz jej: „Obyś był bezpieczny, obyś żył w spokoju i lekkości”.'), duration: 20 },
+                    { text: tr('Maintain focus on the neutral person for a 25-minute sit.', 'Utrzymaj skupienie na osobie neutralnej przez 25-minutową sesję.'), duration: 25 }
                 ]
             },
             {
-                id: 4, label: 'The Difficult Person', subtitle: 'Pardon', icon: 'healing',
-                description: 'Gently direct loving-kindness to someone with whom you have minor friction or conflict.',
+                id: 4, label: tr('The Difficult Person', 'Trudna Osoba'), subtitle: tr('Pardon', 'Przebaczenie'), icon: 'healing',
+                description: tr('Gently direct loving-kindness to someone with whom you have minor friction or conflict.', 'Łagodnie skieruj miłującą dobroć ku osobie, z którą masz drobne napięcia lub nieporozumienia.'),
                 xPct: 61, yPct: 62,
                 missions: [
-                    { text: 'Bring to mind a person with mild friction (avoid major trauma at first).', duration: 15 },
-                    { text: 'Observe physical tightness in your body and breathe into it.', duration: 20 },
-                    { text: 'Wish them peace: "May you be happy, may we be free from conflict."', duration: 20 },
-                    { text: 'Sit for 30 minutes holding the difficult person in kindness.', duration: 30 }
+                    { text: tr('Bring to mind a person with mild friction (avoid major trauma at first).', 'Przywołaj osobę, z którą masz drobny konflikt (na początku unikaj głębokich traum).'), duration: 15 },
+                    { text: tr('Observe physical tightness in your body and breathe into it.', 'Zaobserwuj fizyczne napięcie w ciele i skieruj w nie oddech.'), duration: 20 },
+                    { text: tr('Wish them peace: "May you be happy, may we be free from conflict."', 'Życz jej pokoju: „Obyś był szczęśliwy, obyśmy byli wolni od konfliktu”.'), duration: 20 },
+                    { text: tr('Sit for 30 minutes holding the difficult person in kindness.', 'Medytuj przez 30 minut, otaczając trudną osobę życzliwością.'), duration: 30 }
                 ]
             },
             {
-                id: 5, label: 'Universal Goodwill', subtitle: 'Boundless', icon: 'public',
-                description: 'Extend your heart outward to all directions, covering all living beings everywhere.',
+                id: 5, label: tr('Universal Goodwill', 'Powszechna Życzliwość'), subtitle: tr('Boundless', 'Bezgraniczność'), icon: 'public',
+                description: tr('Extend your heart outward to all directions, covering all living beings everywhere.', 'Otwórz serce we wszystkich kierunkach, obejmując wszystkie żywe istoty wszędzie.'),
                 xPct: 48, yPct: 80,
                 missions: [
-                    { text: 'Radiate metta to your room, your building, and your city.', duration: 20 },
-                    { text: 'Extend the field of love to the entire country and continent.', duration: 25 },
-                    { text: 'Radiate boundless goodwill to all creatures, seen and unseen.', duration: 25 },
-                    { text: 'Abide in the ocean of universal loving-kindness for 40 minutes.', duration: 40 }
+                    { text: tr('Radiate metta to your room, your building, and your city.', 'Promieniuj mettą na swój pokój, budynek i całe miasto.'), duration: 20 },
+                    { text: tr('Extend the field of love to the entire country and continent.', 'Rozszerz pole życzliwości na cały kraj i kontynent.'), duration: 25 },
+                    { text: tr('Radiate boundless goodwill to all creatures, seen and unseen.', 'Promieniuj bezgraniczną życzliwością ku wszystkim istotom, widzialnym i niewidzialnym.'), duration: 25 },
+                    { text: tr('Abide in the ocean of universal loving-kindness for 40 minutes.', 'Spoczywaj w oceanie powszechnej miłującej dobroci przez 40 minut.'), duration: 40 }
                 ]
             }
         ]
@@ -142,135 +143,135 @@ const PATHS = {
         label: 'Vipassana',
         shortLabel: 'Vipassana',
         unlockLevel: 3,
-        difficulty: 'High',
+        difficulty: tr('High', 'Wysoki'),
         bgImage: './src/assets/vipassana_bg.jpg',
         accentColor: '#1A4A5A',
         nodeAccent: 'rgba(26,74,90,0.15)',
         icon: 'water_drop',
-        description: 'Ancient insight practice through body scanning',
+        description: tr('Ancient insight practice through body scanning', 'Starożytna praktyka wglądu poprzez skanowanie ciała'),
         nodes: [
             {
-                id: 1, label: 'Body Scan', subtitle: 'Foundation', icon: 'accessibility_new',
-                description: 'Learn to feel sensation as pure energy, not concept.',
+                id: 1, label: tr('Body Scan', 'Skanowanie Ciała'), subtitle: tr('Foundation', 'Fundament'), icon: 'accessibility_new',
+                description: tr('Learn to feel sensation as pure energy, not concept.', 'Naucz się odczuwać doznania jako czystą energię, a nie pojęcia.'),
                 xPct: 48, yPct: 8,
                 missions: [
-                    { text: 'Scan slowly from crown of head to feet without reacting.', duration: 15 },
-                    { text: 'Note gross sensations: heat, tingling, pressure.', duration: 15 },
-                    { text: 'Scan in both directions, top-to-bottom and bottom-to-top.', duration: 20 },
-                    { text: 'Sit for 30 minutes with continuous scanning.', duration: 30 }
+                    { text: tr('Scan slowly from crown of head to feet without reacting.', 'Skanuj powoli od czubka głowy do stóp bez reagowania.'), duration: 15 },
+                    { text: tr('Note gross sensations: heat, tingling, pressure.', 'Zauważaj wyraźne doznania: ciepło, mrowienie, ucisk.'), duration: 15 },
+                    { text: tr('Scan in both directions, top-to-bottom and bottom-to-top.', 'Skanuj w obu kierunkach: od góry do dołu i od dołu do góry.'), duration: 20 },
+                    { text: tr('Sit for 30 minutes with continuous scanning.', 'Medytuj przez 30 minut, nieprzerwanie skanując ciało.'), duration: 30 }
                 ]
             },
             {
-                id: 2, label: 'Impermanence', subtitle: 'Anicca', icon: 'change_circle',
-                description: 'Observe that every sensation arises and passes away.',
+                id: 2, label: tr('Impermanence', 'Nietrwałość'), subtitle: 'Anicca', icon: 'change_circle',
+                description: tr('Observe that every sensation arises and passes away.', 'Zaobserwuj, że każde doznanie powstaje i przemija.'),
                 xPct: 58, yPct: 26,
                 missions: [
-                    { text: 'Label each sensation: "arising" or "passing".', duration: 20 },
-                    { text: 'Notice a pleasant sensation dissolve without craving.', duration: 20 },
-                    { text: 'Notice an unpleasant sensation dissolve without aversion.', duration: 25 },
-                    { text: 'Rest in the space between sensations.', duration: 25 }
+                    { text: tr('Label each sensation: "arising" or "passing".', 'Oznaczaj w myślach każde doznanie: „powstawanie” lub „przemijanie”.'), duration: 20 },
+                    { text: tr('Notice a pleasant sensation dissolve without craving.', 'Zauważ, jak przyjemne doznanie rozpuszcza się bez pragnienia zatrzymania go.'), duration: 20 },
+                    { text: tr('Notice an unpleasant sensation dissolve without aversion.', 'Zauważ, jak nieprzyjemne doznanie rozpuszcza się bez niechęci.'), duration: 25 },
+                    { text: tr('Rest in the space between sensations.', 'Spocznij w przestrzeni pomiędzy doznaniami.'), duration: 25 }
                 ]
             },
             {
-                id: 3, label: 'Subtle Body', subtitle: 'Deeper Scan', icon: 'vibration',
-                description: 'Move beyond gross sensations to subtle vibrations.',
+                id: 3, label: tr('Subtle Body', 'Ciało Subtelne'), subtitle: tr('Deeper Scan', 'Głębszy Skan'), icon: 'vibration',
+                description: tr('Move beyond gross sensations to subtle vibrations.', 'Wyjdź poza wyraźne doznania w stronę subtelnych wibracji.'),
                 xPct: 40, yPct: 44,
                 missions: [
-                    { text: 'Scan an area of the body that feels "blank" or numb.', duration: 20 },
-                    { text: 'Notice the subtle vibration of aliveness beneath stillness.', duration: 25 },
-                    { text: 'Scan the entire body as a field of vibration.', duration: 25 },
-                    { text: 'Maintain equanimity for an entire 30-minute scan.', duration: 30 }
+                    { text: tr('Scan an area of the body that feels "blank" or numb.', 'Skanuj obszar ciała, który wydaje się „pusty” lub zdrętwiały.'), duration: 20 },
+                    { text: tr('Notice the subtle vibration of aliveness beneath stillness.', 'Zauważ subtelną wibrację żywotności pod warstwą bezruchu.'), duration: 25 },
+                    { text: tr('Scan the entire body as a field of vibration.', 'Skanuj całe ciało jako jednolite pole wibracji.'), duration: 25 },
+                    { text: tr('Maintain equanimity for an entire 30-minute scan.', 'Utrzymaj równowagę umysłu przez cały 30-minutowy skan.'), duration: 30 }
                 ]
             },
             {
-                id: 4, label: 'Equanimity', subtitle: 'Non-Reaction', icon: 'balance',
-                description: 'Neither craving nor aversion — pure observation.',
+                id: 4, label: tr('Equanimity', 'Równowaga'), subtitle: tr('Non-Reaction', 'Brak Reakcji'), icon: 'balance',
+                description: tr('Neither craving nor aversion — pure observation.', 'Ani pragnienie, ani niechęć — czysta obserwacja.'),
                 xPct: 58, yPct: 62,
                 missions: [
-                    { text: 'Sit with discomfort for 5 minutes without shifting.', duration: 15 },
-                    { text: 'Smile internally at both pleasant and painful sensations.', duration: 20 },
-                    { text: 'Observe an intense sensation with complete stillness.', duration: 25 },
-                    { text: 'Dedicate a full sit to metta — loving kindness.', duration: 30 }
+                    { text: tr('Sit with discomfort for 5 minutes without shifting.', 'Pozostań z dyskomfortem przez 5 minut bez zmiany pozycji.'), duration: 15 },
+                    { text: tr('Smile internally at both pleasant and painful sensations.', 'Uśmiechnij się wewnętrznie zarówno do przyjemnych, jak i bolesnych doznań.'), duration: 20 },
+                    { text: tr('Observe an intense sensation with complete stillness.', 'Obserwuj intensywne doznanie w całkowitym bezruchu.'), duration: 25 },
+                    { text: tr('Dedicate a full sit to metta — loving kindness.', 'Zadedykuj pełną sesję praktyce metty — miłującej dobroci.'), duration: 30 }
                 ]
             },
             {
-                id: 5, label: 'Insight', subtitle: 'Vipassana', icon: 'remove_red_eye',
-                description: 'Direct insight into the three characteristics of experience.',
+                id: 5, label: tr('Insight', 'Wgląd'), subtitle: 'Vipassana', icon: 'remove_red_eye',
+                description: tr('Direct insight into the three characteristics of experience.', 'Bezpośredni wgląd w trzy cechy istnienia.'),
                 xPct: 48, yPct: 80,
                 missions: [
-                    { text: 'Notice anicca (impermanence) in every breath cycle.', duration: 25 },
-                    { text: 'Notice dukkha (unsatisfactoriness) — nothing fully satisfies.', duration: 25 },
-                    { text: 'Notice anatta (no-self) — who is observing the observer?', duration: 30 },
-                    { text: 'Sit for 45 minutes with continuous insight observation.', duration: 45 }
+                    { text: tr('Notice anicca (impermanence) in every breath cycle.', 'Zauważaj anicca (nietrwałość) w każdym cyklu oddechu.'), duration: 25 },
+                    { text: tr('Notice dukkha (unsatisfactoriness) — nothing fully satisfies.', 'Zauważaj dukkha (niezadowolenie) — nic nie daje trwałego nasycenia.'), duration: 25 },
+                    { text: tr('Notice anatta (no-self) — who is observing the observer?', 'Zauważaj anatta (brak trwałego „ja”) — kto obserwuje obserwatora?'), duration: 30 },
+                    { text: tr('Sit for 45 minutes with continuous insight observation.', 'Medytuj przez 45 minut w nieprzerwanej obserwacji wglądu.'), duration: 45 }
                 ]
             }
         ]
     },
     tmi: {
         id: 'tmi',
-        label: 'The Mind Illuminated',
+        label: tr('The Mind Illuminated', 'Oświecony Umysł (TMI)'),
         shortLabel: 'TMI',
         unlockLevel: 4,
-        difficulty: 'Medium',
+        difficulty: tr('Medium', 'Średni'),
         bgImage: './src/assets/journey_bg.jpg',
         accentColor: '#3F5247',
         nodeAccent: 'rgba(63,82,71,0.15)',
         icon: 'local_florist',
-        description: 'Systematic 10-stage framework for deep concentration',
+        description: tr('Systematic 10-stage framework for deep concentration', 'Systematyczny 10-etapowy trening głębokiej koncentracji'),
         nodes: [
             {
-                id: 1, label: 'Establishing a Practice', subtitle: 'Practice', icon: 'event_seat',
-                description: 'Before mastering the mind, you must master your schedule.',
+                id: 1, label: tr('Establishing a Practice', 'Ustanowienie Praktyki'), subtitle: tr('Practice', 'Praktyka'), icon: 'event_seat',
+                description: tr('Before mastering the mind, you must master your schedule.', 'Zanim opanujesz umysł, musisz opanować swój codzienny rytm.'),
                 xPct: 44, yPct: 8,
                 missions: [
-                    { text: 'Set a non-negotiable time & space for your practice.', duration: 10 },
-                    { text: 'Sit for a realistic baseline of 15–20 minutes.', duration: 15 },
-                    { text: 'Overcome the initial wave of procrastination.', duration: 15 },
-                    { text: 'Establish a streak of 3 consecutive daily sits.', duration: 20 }
+                    { text: tr('Set a non-negotiable time & space for your practice.', 'Wyznacz stały czas i miejsce na swoją codzienną praktykę.'), duration: 10 },
+                    { text: tr('Sit for a realistic baseline of 15–20 minutes.', 'Usiądź na realistyczny czas bazowy 15–20 minut.'), duration: 15 },
+                    { text: tr('Overcome the initial wave of procrastination.', 'Przełam pierwszą falę odkładania medytacji na później.'), duration: 15 },
+                    { text: tr('Establish a streak of 3 consecutive daily sits.', 'Zbuduj passę 3 kolejnych dni codziennej medytacji.'), duration: 20 }
                 ]
             },
             {
-                id: 2, label: 'Interrupted Attention & Mind-Wandering', subtitle: 'Attention', icon: 'psychology',
-                description: 'Transition consciously into the practice to stabilize focus.',
+                id: 2, label: tr('Interrupted Attention & Mind-Wandering', 'Przerywana Uwaga i Błądzenie Umysłu'), subtitle: tr('Attention', 'Uwaga'), icon: 'psychology',
+                description: tr('Transition consciously into the practice to stabilize focus.', 'Przechodź świadomie w stan medytacji, aby ustabilizować skupienie.'),
                 xPct: 62, yPct: 26,
                 missions: [
-                    { text: 'Review your motivations before each sit.', duration: 15 },
-                    { text: 'Set a specific, bite-sized goal for this session.', duration: 15 },
-                    { text: 'Perform a mental inventory of current worries.', duration: 20 },
-                    { text: 'Adjust posture and alignment for comfort.', duration: 20 }
+                    { text: tr('Review your motivations before each sit.', 'Przypomnij sobie swoją motywację przed każdą sesją.'), duration: 15 },
+                    { text: tr('Set a specific, bite-sized goal for this session.', 'Wyznacz konkretny, osiągalny cel na tę sesję.'), duration: 15 },
+                    { text: tr('Perform a mental inventory of current worries.', 'Wykonaj mentalny przegląd obecnych zmartwień i odłóż je na bok.'), duration: 20 },
+                    { text: tr('Adjust posture and alignment for comfort.', 'Dostosuj postawę i ułożenie ciała dla stabilnego komfortu.'), duration: 20 }
                 ]
             },
             {
-                id: 3, label: 'Extended Continuity & Forgetting', subtitle: 'Continuity', icon: 'anchor',
-                description: 'Anchor yourself in the space around you.',
+                id: 3, label: tr('Extended Continuity & Forgetting', 'Wydłużona Ciągłość i Zapominanie'), subtitle: tr('Continuity', 'Ciągłość'), icon: 'anchor',
+                description: tr('Anchor yourself in the space around you.', 'Zakotwicz się w przestrzeni wokół siebie.'),
                 xPct: 38, yPct: 44,
                 missions: [
-                    { text: 'Maintain broad awareness of the present moment.', duration: 15 },
-                    { text: 'Focus solely on raw physical sensations.', duration: 20 },
-                    { text: 'Restrict attention to bodily sensations.', duration: 20 },
-                    { text: 'Develop grounding in physical support and gravity.', duration: 20 }
+                    { text: tr('Maintain broad awareness of the present moment.', 'Utrzymuj szeroką świadomość chwili obecnej.'), duration: 15 },
+                    { text: tr('Focus solely on raw physical sensations.', 'Skup się wyłącznie na czystych doznaniach fizycznych.'), duration: 20 },
+                    { text: tr('Restrict attention to bodily sensations.', 'Zawęź uwagę do doznań płynących z ciała.'), duration: 20 },
+                    { text: tr('Develop grounding in physical support and gravity.', 'Rozwiń uziemienie w fizycznym podparciu i sile grawitacji.'), duration: 20 }
                 ]
             },
             {
-                id: 4, label: 'Continuous Attention & Gross Distraction', subtitle: 'Focus', icon: 'center_focus_strong',
-                description: 'Move focus from broad body sensations to the breath.',
+                id: 4, label: tr('Continuous Attention & Gross Distraction', 'Ciągła Uwaga i Silne Rozproszenie'), subtitle: tr('Focus', 'Skupienie'), icon: 'center_focus_strong',
+                description: tr('Move focus from broad body sensations to the breath.', 'Przenieś skupienie z ogólnych doznań ciała na sam oddech.'),
                 xPct: 60, yPct: 62,
                 missions: [
-                    { text: 'Observe the somatic rises and falls of breathing.', duration: 20 },
-                    { text: 'Find and appreciate a pleasant quality in the breath.', duration: 20 },
-                    { text: 'Narrow attention to the tip of the nose.', duration: 25 },
-                    { text: 'Observe breath patterns passively without control.', duration: 25 }
+                    { text: tr('Observe the somatic rises and falls of breathing.', 'Obserwuj cielesne unoszenie się i opadanie podczas oddychania.'), duration: 20 },
+                    { text: tr('Find and appreciate a pleasant quality in the breath.', 'Odnajdź i doceń przyjemną jakość w oddechu.'), duration: 20 },
+                    { text: tr('Narrow attention to the tip of the nose.', 'Zawęź uwagę do czubka nosa.'), duration: 25 },
+                    { text: tr('Observe breath patterns passively without control.', 'Obserwuj wzorce oddechu biernie, bez ingerencji.'), duration: 25 }
                 ]
             },
             {
-                id: 5, label: 'Overcoming Subtle Dullness', subtitle: 'Dullness', icon: 'visibility',
-                description: 'Use mental count markers to bridge focus when distracted.',
+                id: 5, label: tr('Overcoming Subtle Dullness', 'Przezwyciężanie Subtelnego Otępienia'), subtitle: tr('Dullness', 'Klarowność'), icon: 'visibility',
+                description: tr('Use mental count markers to bridge focus when distracted.', 'Używaj liczenia oddechów jako pomostu wspierającego koncentrację.'),
                 xPct: 44, yPct: 80,
                 missions: [
-                    { text: 'Silently count "one" at the end of the out-breath.', duration: 20 },
-                    { text: 'Maintain counting cycles up to ten.', duration: 20 },
-                    { text: 'Restart counting calmly from one if mind wanders.', duration: 25 },
-                    { text: 'Intentionally drop counting to sit in pure silence.', duration: 30 }
+                    { text: tr('Silently count "one" at the end of the out-breath.', 'Policz w myślach „jeden” na końcu wydechu.'), duration: 20 },
+                    { text: tr('Maintain counting cycles up to ten.', 'Utrzymuj cykle liczenia oddechów aż do dziesięciu.'), duration: 20 },
+                    { text: tr('Restart counting calmly from one if mind wanders.', 'Zacznij spokojnie liczyć od jednego, jeśli umysł odpłynie.'), duration: 25 },
+                    { text: tr('Intentionally drop counting to sit in pure silence.', 'Świadomie porzuć liczenie, aby spocząć w czystej ciszy.'), duration: 30 }
                 ]
             }
         ]
@@ -280,66 +281,66 @@ const PATHS = {
         label: 'Zen',
         shortLabel: 'Zen',
         unlockLevel: 5,
-        difficulty: 'High',
+        difficulty: tr('High', 'Wysoki'),
         bgImage: './src/assets/zen_bg.jpg',
         accentColor: '#3A3228',
         nodeAccent: 'rgba(58,50,40,0.15)',
         icon: 'circle',
-        description: "Just sitting — shikantaza and open awareness",
+        description: tr("Just sitting — shikantaza and open awareness", "Tylko siedzenie — shikantaza i otwarta świadomość"),
         nodes: [
             {
-                id: 1, label: "Beginner's Mind", subtitle: 'Shoshin', icon: 'child_care',
-                description: 'Approach each sit as if for the very first time.',
+                id: 1, label: tr("Beginner's Mind", 'Umysł Początkującego'), subtitle: 'Shoshin', icon: 'child_care',
+                description: tr('Approach each sit as if for the very first time.', 'Podejdź do każdej sesji tak, jakby to był Twój pierwszy raz.'),
                 xPct: 50, yPct: 8,
                 missions: [
-                    { text: 'Sit without any goal or technique — just be present.', duration: 15 },
-                    { text: 'Notice and release every expectation that arises.', duration: 20 },
-                    { text: 'Observe the mind that wants to "do it right".', duration: 20 },
-                    { text: 'Sit for 30 minutes with nothing to achieve.', duration: 30 }
+                    { text: tr('Sit without any goal or technique — just be present.', 'Usiądź bez żadnego celu czy techniki — po prostu bądź obecny.'), duration: 15 },
+                    { text: tr('Notice and release every expectation that arises.', 'Zauważaj i puszczaj każde pojawiające się oczekiwanie.'), duration: 20 },
+                    { text: tr('Observe the mind that wants to "do it right".', 'Obserwuj umysł, który chce „zrobić to dobrze”.'), duration: 20 },
+                    { text: tr('Sit for 30 minutes with nothing to achieve.', 'Medytuj przez 30 minut bez niczego do osiągnięcia.'), duration: 30 }
                 ]
             },
             {
-                id: 2, label: 'Just Sitting', subtitle: 'Shikantaza', icon: 'airline_seat_recline_normal',
-                description: 'Pure sitting — presence without object.',
+                id: 2, label: tr('Just Sitting', 'Tylko Siedzenie'), subtitle: 'Shikantaza', icon: 'airline_seat_recline_normal',
+                description: tr('Pure sitting — presence without object.', 'Czyste siedzenie — obecność bez obiektu skupienia.'),
                 xPct: 55, yPct: 27,
                 missions: [
-                    { text: 'Sit with eyes half-open, gaze soft on the floor.', duration: 20 },
-                    { text: 'Do not follow the breath — let it breathe itself.', duration: 20 },
-                    { text: 'When a thought arises, do not grab it or push it away.', duration: 25 },
-                    { text: 'Maintain shikantaza for a full 40 minutes.', duration: 40 }
+                    { text: tr('Sit with eyes half-open, gaze soft on the floor.', 'Usiądź z półotwartymi oczami, kierując miękki wzrok na podłogę.'), duration: 20 },
+                    { text: tr('Do not follow the breath — let it breathe itself.', 'Nie podążaj za oddechem — pozwól mu oddychać samemu.'), duration: 20 },
+                    { text: tr('When a thought arises, do not grab it or push it away.', 'Gdy pojawi się myśl, nie chwytaj jej ani nie odpychaj.'), duration: 25 },
+                    { text: tr('Maintain shikantaza for a full 40 minutes.', 'Utrzymaj stan shikantaza przez pełne 40 minut.'), duration: 40 }
                 ]
             },
             {
-                id: 3, label: 'Breath Koan', subtitle: 'MU', icon: 'help_outline',
-                description: 'Use the question "What is this?" as your anchor.',
+                id: 3, label: tr('Breath Koan', 'Koan Oddechu'), subtitle: 'MU', icon: 'help_outline',
+                description: tr('Use the question "What is this?" as your anchor.', 'Użyj pytania „Czym to jest?” jako swojej kotwicy.'),
                 xPct: 44, yPct: 45,
                 missions: [
-                    { text: 'Silently ask "What is this?" on each exhale.', duration: 20 },
-                    { text: 'Don\'t answer — let the question hang open.', duration: 20 },
-                    { text: 'Notice the space before a thought forms.', duration: 25 },
-                    { text: 'Sit for 35 minutes with the koan.', duration: 35 }
+                    { text: tr('Silently ask "What is this?" on each exhale.', 'Pytaj w myślach „Czym to jest?” przy każdym wydechu.'), duration: 20 },
+                    { text: tr('Don\'t answer — let the question hang open.', 'Nie odpowiadaj — pozwól pytaniu pozostać otwartym.'), duration: 20 },
+                    { text: tr('Notice the space before a thought forms.', 'Zauważ przestrzeń zanim uformuje się myśl.'), duration: 25 },
+                    { text: tr('Sit for 35 minutes with the koan.', 'Medytuj przez 35 minut z koanem.'), duration: 35 }
                 ]
             },
             {
-                id: 4, label: 'Open Awareness', subtitle: 'Choiceless', icon: 'all_inclusive',
-                description: 'Rest in awareness itself, without narrowing attention.',
+                id: 4, label: tr('Open Awareness', 'Otwarta Świadomość'), subtitle: tr('Choiceless', 'Bez Wyboru'), icon: 'all_inclusive',
+                description: tr('Rest in awareness itself, without narrowing attention.', 'Spocznij w samej świadomości, nie zawężając uwagi.'),
                 xPct: 55, yPct: 63,
                 missions: [
-                    { text: 'Include all sounds, sensations, and thoughts equally.', duration: 20 },
-                    { text: 'Let awareness be the ocean, thoughts the waves.', duration: 25 },
-                    { text: 'Notice the awareness that is aware of awareness.', duration: 30 },
-                    { text: 'Sit for 45 minutes in pure choiceless awareness.', duration: 45 }
+                    { text: tr('Include all sounds, sensations, and thoughts equally.', 'Obejmij jednakowo wszystkie dźwięki, doznania i myśli.'), duration: 20 },
+                    { text: tr('Let awareness be the ocean, thoughts the waves.', 'Niech świadomość będzie oceanem, a myśli falami.'), duration: 25 },
+                    { text: tr('Notice the awareness that is aware of awareness.', 'Zauważ świadomość, która jest świadoma samej świadomości.'), duration: 30 },
+                    { text: tr('Sit for 45 minutes in pure choiceless awareness.', 'Medytuj przez 45 minut w czystej świadomości bez wyboru.'), duration: 45 }
                 ]
             },
             {
-                id: 5, label: 'No-Self', subtitle: 'Anatta', icon: 'person_off',
-                description: 'Who is the one who is sitting?',
+                id: 5, label: tr('No-Self', 'Brak Jaźni'), subtitle: 'Anatta', icon: 'person_off',
+                description: tr('Who is the one who is sitting?', 'Kim jest ten, który siedzi?'),
                 xPct: 50, yPct: 82,
                 missions: [
-                    { text: 'Ask: "Who is aware?" — sit with the question.', duration: 25 },
-                    { text: 'Notice: is there a "you" behind your thoughts?', duration: 30 },
-                    { text: 'Rest in the not-knowing — what is here without a self?', duration: 35 },
-                    { text: 'Sit for 60 minutes: the final recognition.', duration: 60 }
+                    { text: tr('Ask: "Who is aware?" — sit with the question.', 'Zapytaj: „Kto jest świadomy?” — pozostań z tym pytaniem.'), duration: 25 },
+                    { text: tr('Notice: is there a "you" behind your thoughts?', 'Zauważ: czy za Twoimi myślami istnieje oddzielne „ty”?'), duration: 30 },
+                    { text: tr('Rest in the not-knowing — what is here without a self?', 'Spocznij w niewiedzy — co jest tutaj bez poczucia „ja”?'), duration: 35 },
+                    { text: tr('Sit for 60 minutes: the final recognition.', 'Medytuj przez 60 minut: ostateczne rozpoznanie.'), duration: 60 }
                 ]
             }
         ]
@@ -354,16 +355,16 @@ export function renderJourney() {
         <!-- Fixed header -->
         <div class="jh-header">
             <div style="flex: 1; min-width: 0;">
-                <h1 class="jh-title">Your Journey</h1>
+                <h1 class="jh-title">${tr('Your Journey', 'Twoja Ścieżka')}</h1>
                 <p class="jh-subtitle" style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0;">
-                    <span id="j-path-subtitle">Loading...</span>
-                    <span id="j-path-learn-more" style="color: var(--color-accent-dark); font-weight: 700; cursor: pointer; text-decoration: underline; font-size: 11px; display: inline-flex; align-items: center; gap: 2px;">Learn More <span class="material-symbols-rounded" style="font-size:12px; font-variation-settings: 'FILL' 1;">info</span></span>
+                    <span id="j-path-subtitle">${tr('Loading...', 'Ładowanie...')}</span>
+                    <span id="j-path-learn-more" style="color: var(--color-accent-dark); font-weight: 700; cursor: pointer; text-decoration: underline; font-size: 11px; display: inline-flex; align-items: center; gap: 2px;">${tr('Learn More', 'Dowiedz się więcej')} <span class="material-symbols-rounded" style="font-size:12px; font-variation-settings: 'FILL' 1;">info</span></span>
                 </p>
             </div>
             <!-- Level bar -->
             <div class="jh-level-pill" id="j-level-pill">
                 <span class="material-symbols-rounded" style="font-size:14px; color:var(--color-accent-dark);">local_florist</span>
-                <span id="j-level-text" style="font-size:12px; font-weight:600;">Lv.1</span>
+                <span id="j-level-text" style="font-size:12px; font-weight:600;">${tr('Lv.', 'Poz.')}1</span>
             </div>
         </div>
 
@@ -709,39 +710,39 @@ export function renderJourney() {
         const desc = container.querySelector('#modal-desc');
         const list = container.querySelector('#modal-missions-list');
 
-        title.innerHTML = `${path.label} <span style="font-size:12px; font-weight:bold; padding: 3px 8px; border-radius:10px; margin-left: 8px; background:${path.accentColor}20; color:${path.accentColor}; border: 1px solid ${path.accentColor}40;">Difficulty: ${path.difficulty}</span>`;
-        subtitle.textContent = "Lineage & Practical Insights";
+        title.innerHTML = `${path.label} <span style="font-size:12px; font-weight:bold; padding: 3px 8px; border-radius:10px; margin-left: 8px; background:${path.accentColor}20; color:${path.accentColor}; border: 1px solid ${path.accentColor}40;">${tr('Difficulty:', 'Trudność:')} ${path.difficulty}</span>`;
+        subtitle.textContent = tr("Lineage & Practical Insights", "Tradycja i Wskazówki Praktyczne");
         
         let detailsHtml = '';
         if (path.id === 'anapana') {
             detailsHtml = `
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> Anapana is the classic Buddhist practice of mindfulness of breathing. It is the foundation for almost all meditation traditions.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> Rest your focus entirely on the physical touch of air at the rims of your nostrils or upper lip. Notice temperature, friction, and movement without following the breath into the body.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Builds sharp sensory clarity, calms the central nervous system, and prepares the mind for deep analytical body scanning.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Overview:', 'Przegląd:')}</strong> ${tr('Anapana is the classic Buddhist practice of mindfulness of breathing. It is the foundation for almost all meditation traditions.', 'Anapana to klasyczna buddyjska praktyka uważności oddechu. Stanowi fundament niemal wszystkich tradycji medytacyjnych.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Technique:', 'Technika:')}</strong> ${tr('Rest your focus entirely on the physical touch of air at the rims of your nostrils or upper lip. Notice temperature, friction, and movement without following the breath into the body.', 'Skup całą uwagę na fizycznym dotyku powietrza przy krawędziach nozdrzy lub nad górną wargą. Zauważaj temperaturę, tarcie i ruch bez podążania za oddechem w głąb ciała.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Why practice:', 'Dlaczego warto:')}</strong> ${tr('Builds sharp sensory clarity, calms the central nervous system, and prepares the mind for deep analytical body scanning.', 'Buduje wyostrzoną klarowność zmysłową, wycisza układ nerwowy i przygotowuje umysł do głębokiego skanowania ciała.')}</p>
             `;
         } else if (path.id === 'vipassana') {
             detailsHtml = `
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> Vipassana translates to "insight" — seeing things as they truly are. It is the heart of Theravada mindfulness lineages.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> Systematically scan physical body sensations from head to toe, observing them with total equanimity. You will observe impermanence (anicca) and non-reaction.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Reprograms the brain to stop reacting with craving or aversion to physical triggers, freeing you from deep-seated habit patterns.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Overview:', 'Przegląd:')}</strong> ${tr('Vipassana translates to "insight" — seeing things as they truly are. It is the heart of Theravada mindfulness lineages.', 'Vipassana oznacza „wgląd” — widzenie rzeczy takimi, jakie naprawdę są. Jest sercem tradycji uważności Theravady.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Technique:', 'Technika:')}</strong> ${tr('Systematically scan physical body sensations from head to toe, observing them with total equanimity. You will observe impermanence (anicca) and non-reaction.', 'Systematycznie skanuj fizyczne doznania w ciele od czubka głowy po stopy, obserwując je z całkowitą równowagą umysłu. Doświadczysz bezpośrednio nietrwałości (anicca) i braku reaktywności.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Why practice:', 'Dlaczego warto:')}</strong> ${tr('Reprograms the brain to stop reacting with craving or aversion to physical triggers, freeing you from deep-seated habit patterns.', 'Przeprogramowuje umysł, aby przestał reagować pożądaniem lub awersją na bodźce fizyczne, uwalniając Cię od głęboko zakorzenionych nawyków.')}</p>
             `;
         } else if (path.id === 'tmi') {
             detailsHtml = `
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> The Mind Illuminated (TMI) is a modern, highly systematic master guide that integrates classical teachings with cognitive science.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> A 10-stage progressive path focused on balancing attention (selecting specific details) with peripheral awareness (keeping track of the background environment).</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Eliminates dullness, stops mind-wandering, and establishes stable, effortless attention through structured metrics.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Overview:', 'Przegląd:')}</strong> ${tr('The Mind Illuminated (TMI) is a modern, highly systematic master guide that integrates classical teachings with cognitive science.', 'Oświecony Umysł (The Mind Illuminated — TMI) to nowoczesny, wysoce usystematyzowany przewodnik łączący klasyczne nauki z neuronauką i kognitywistyką.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Technique:', 'Technika:')}</strong> ${tr('A 10-stage progressive path focused on balancing attention (selecting specific details) with peripheral awareness (keeping track of the background environment).', '10-etapowa ścieżka skoncentrowana na równoważeniu uwagi (wybieraniu konkretnych szczegółów) ze świadomością peryferyjną (utrzymywaniem otwartości na tło doświadczenia).')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Why practice:', 'Dlaczego warto:')}</strong> ${tr('Eliminates dullness, stops mind-wandering, and establishes stable, effortless attention through structured metrics.', 'Eliminuje ospałość, zatrzymuje błądzenie myśli i ustanawia stabilną, bezwysiłkową uwagę dzięki precyzyjnym wskazówkom.')}</p>
             `;
         } else if (path.id === 'metta') {
             detailsHtml = `
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> Metta is loving-kindness or goodwill. It is a heart-centered concentration technique rather than analytical scanning.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> Silently repeat phrases of protection, happiness, and peace toward yourself, then expand the circle to a mentor, a dear friend, a neutral stranger, a difficult person, and eventually all living beings.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Actively dissolves anger, builds empathy, increases emotional resilience, and softens self-criticism.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Overview:', 'Przegląd:')}</strong> ${tr('Metta is loving-kindness or goodwill. It is a heart-centered concentration technique rather than analytical scanning.', 'Metta to miłująca dobroć i życzliwość. Jest techniką koncentracji skupioną wokół serca, a nie analitycznego skanowania.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Technique:', 'Technika:')}</strong> ${tr('Silently repeat phrases of protection, happiness, and peace toward yourself, then expand the circle to a mentor, a dear friend, a neutral stranger, a difficult person, and eventually all living beings.', 'Powtarzaj w myślach życzenia bezpieczeństwa, szczęścia i spokoju wobec siebie, a następnie rozszerzaj krąg na mentora, przyjaciela, neutralnego nieznajomego, trudną osobę i wreszcie wszystkie żywe istoty.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Why practice:', 'Dlaczego warto:')}</strong> ${tr('Actively dissolves anger, builds empathy, increases emotional resilience, and softens self-criticism.', 'Aktywnie rozpuszcza gniew, buduje empatię, zwiększa odporność emocjonalną i łagodzi wewnętrznego krytyka.')}</p>
             `;
         } else if (path.id === 'zen') {
             detailsHtml = `
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Overview:</strong> Zen (Zazen) meditation comes from East Asian Mahayana traditions. It is the ultimate practice of non-doing and radical presence.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Technique:</strong> Direct your eyes downwards, sit with open awareness (Shikantaza — "just sitting"), and allow thoughts to arise and pass without any effort to hold or reject them.</p>
-                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>Why practice:</strong> Directly reveals the spacious, non-dual nature of consciousness itself, dissolving the illusion of a separate self.</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Overview:', 'Przegląd:')}</strong> ${tr('Zen (Zazen) meditation comes from East Asian Mahayana traditions. It is the ultimate practice of non-doing and radical presence.', 'Medytacja Zen (Zazen) wywodzi się ze wschodnioazjatyckich tradycji Mahajany. To najwyższa praktyka niedziałania i radykalnej obecności.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Technique:', 'Technika:')}</strong> ${tr('Direct your eyes downwards, sit with open awareness (Shikantaza — "just sitting"), and allow thoughts to arise and pass without any effort to hold or reject them.', 'Skieruj wzrok łagodnie w dół, usiądź w otwartej świadomości (Shikantaza — „tylko siedzenie”) i pozwól myślom pojawiać się oraz przemijać bez prób ich zatrzymywania czy odpychania.')}</p>
+                <p style="margin-bottom:12px; line-height:1.5; font-size:13px; color:var(--color-text-secondary);"><strong>${tr('Why practice:', 'Dlaczego warto:')}</strong> ${tr('Directly reveals the spacious, non-dual nature of consciousness itself, dissolving the illusion of a separate self.', 'Bezpośrednio odsłania przestrzenną, niedualną naturę samej świadomości, rozpuszczając iluzję oddzielnego „ja”.')}</p>
             `;
         }
 
@@ -807,7 +808,7 @@ export function renderJourney() {
                 <div class="m-check"><span class="material-symbols-rounded">check</span></div>
                 <div class="m-body">
                     <p class="m-text">${mission.text}</p>
-                    <p class="m-meta">${mission.duration} minute sit · +20 XP on completion</p>
+                    <p class="m-meta">${mission.duration} ${tr('minute sit · +20 XP on completion', 'min medytacji · +20 XP za ukończenie')}</p>
                 </div>
                 <div class="m-badge">${mission.duration}m</div>
             `;
@@ -820,7 +821,7 @@ export function renderJourney() {
                             nodeId: node.id,
                             missionIndex: idx,
                             pathId: path.id,
-                            label: `${node.subtitle}: Mission ${idx + 1}`,
+                            label: `${node.subtitle}: ${tr('Mission', 'Misja')} ${idx + 1}`,
                             description: mission.text,
                             minDuration: mission.duration
                         };
@@ -895,7 +896,7 @@ export function renderJourney() {
             overlay.innerHTML = `
                 <span class="material-symbols-rounded">lock</span>
                 <p>${path.label}</p>
-                <span class="lk-sub">Unlocks at Level ${path.unlockLevel}</span>
+                <span class="lk-sub">${tr(`Unlocks at Level ${path.unlockLevel}`, `Odblokowuje się na Poziomie ${path.unlockLevel}`)}</span>
             `;
             mapInner.appendChild(overlay);
         }
@@ -916,7 +917,7 @@ export function renderJourney() {
             tab.innerHTML = `
                 <span class="material-symbols-rounded">${isUnlocked ? path.icon : 'lock'}</span>
                 ${path.shortLabel}
-                ${!isUnlocked ? `<span style="font-size:9px;opacity:0.75;">Lv.${path.unlockLevel}</span>` : ''}
+                ${!isUnlocked ? `<span style="font-size:9px;opacity:0.75;">${tr('Lv.', 'Poz.')}${path.unlockLevel}</span>` : ''}
             `;
             if (isUnlocked) {
                 tab.addEventListener('click', () => {
@@ -939,7 +940,7 @@ export function renderJourney() {
 
     container.updateData = () => {
         const stats = DB.getStats();
-        container.querySelector('#j-level-text').textContent = `Lv.${stats.level}`;
+        container.querySelector('#j-level-text').textContent = `${tr('Lv.', 'Poz.')}${stats.level}`;
         // XP bar using scaled level thresholds
         const xpProgress = xpInCurrentLevel(stats.xp);
         const xpPct = Math.min(100, (xpProgress.earned / xpProgress.needed) * 100);
@@ -960,7 +961,7 @@ export function renderJourney() {
             questSub.textContent = `${q.emoji || '🎯'} ${q.label}`;
 
             if (q.claimed) {
-                questBadge.textContent = 'Claimed ✔';
+                questBadge.textContent = tr('Claimed ✔', 'Odebrano ✔');
                 questBadge.style.background = 'rgba(255,255,255,0.2)';
                 questBadge.style.color = 'rgba(255,255,255,0.6)';
                 questBadge.style.animation = 'none';
@@ -968,7 +969,7 @@ export function renderJourney() {
                 questBar.style.cursor = 'default';
                 questBar.onclick = null;
             } else if (q.completed) {
-                questBadge.textContent = 'Claim +25 XP';
+                questBadge.textContent = tr('Claim +25 XP', 'Odbierz +25 XP');
                 questBadge.style.background = '#e2b857';
                 questBadge.style.color = '#1b2e26';
                 questBadge.style.animation = 'pulseGlow 1.5s infinite';

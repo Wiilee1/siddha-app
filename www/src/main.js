@@ -9,10 +9,24 @@ import { renderNewReflection } from './screens/new_reflection.js';
 import { renderWisdom } from './screens/wisdom.js';
 import { DB } from './services/db.js';
 import { MenuMusic, NatureMusic } from './services/synth.js';
+import { tr, getLang } from './services/i18n.js';
 import './components/levelup_celebration.js';
 import './components/achievement_celebration.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.documentElement.lang = getLang();
+    document.title = tr('Siddha - Gamified Meditation', 'Siddha - Uważna Medytacja');
+    const navLabels = {
+        home: tr('Home', 'Start'),
+        journey: tr('Journey', 'Ścieżka'),
+        breathe: tr('Meditate', 'Medytuj'),
+        reflect: tr('Reflect', 'Dziennik'),
+        profile: tr('Profile', 'Profil')
+    };
+    document.querySelectorAll('[data-i18n-nav]').forEach(el => {
+        const key = el.getAttribute('data-i18n-nav');
+        if (navLabels[key]) el.textContent = navLabels[key];
+    });
     const screenContainer = document.getElementById('screen-container');
     const navItems = document.querySelectorAll('.nav-item');
     const bottomNav = document.querySelector('.bottom-nav');
@@ -133,7 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
             } else {
-                navigateTo('home');
+                let targetScreen = 'home';
+                try {
+                    const ret = sessionStorage.getItem('siddha_return_screen');
+                    if (ret) {
+                        sessionStorage.removeItem('siddha_return_screen');
+                        targetScreen = ret;
+                    }
+                } catch (e) {}
+                navigateTo(targetScreen);
             }
         } else {
             navigateTo('login');
@@ -233,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     lastBackPressTime = now;
                     const toast = document.createElement('div');
-                    toast.textContent = "Press back again to exit";
+                    toast.textContent = tr("Press back again to exit", "Naciśnij wstecz ponownie, aby wyjść");
                     toast.style.position = 'fixed';
                     toast.style.bottom = '80px';
                     toast.style.left = '50%';

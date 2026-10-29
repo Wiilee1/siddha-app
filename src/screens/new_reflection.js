@@ -1,6 +1,7 @@
 import { DB } from '../services/db.js';
 import { Synth } from '../services/synth.js';
 import { HapticService } from '../services/haptics.js';
+import { tr } from '../services/i18n.js';
 
 export function renderNewReflection(onComplete) {
     const container = document.createElement('div');
@@ -15,10 +16,10 @@ export function renderNewReflection(onComplete) {
                 <span class="material-symbols-rounded">arrow_back</span>
             </button>
             <div style="text-align:center; flex:1;">
-                <h1 class="nr-title" id="nr-title">Reflection</h1>
-                <p class="nr-subtitle" id="nr-subtitle">How are you feeling?</p>
+                <h1 class="nr-title" id="nr-title">${tr('Reflection', 'Refleksja')}</h1>
+                <p class="nr-subtitle" id="nr-subtitle">${tr('How are you feeling?', 'Jak się czujesz?')}</p>
             </div>
-            <button id="nr-skip-btn" class="nr-skip-btn">Skip</button>
+            <button id="nr-skip-btn" class="nr-skip-btn">${tr('Skip', 'Pomiń')}</button>
         </div>
 
         <!-- XP celebration (hidden in standalone mode) -->
@@ -34,20 +35,20 @@ export function renderNewReflection(onComplete) {
                 </div>
             </div>
             <h2 class="nr-xp-num">+<span id="nr-earned-xp">0</span></h2>
-            <p class="nr-xp-label">Calm Points Earned</p>
+            <p class="nr-xp-label">${tr('Calm Points Earned', 'Zdobyte Punkty Spokoju (XP)')}</p>
             <p id="nr-mission-chip" class="nr-mission-chip" style="display:none;"></p>
         </div>
 
         <!-- Mood -->
         <div class="nr-section">
-            <h3 class="nr-section-title">How are you feeling?</h3>
+            <h3 class="nr-section-title">${tr('How are you feeling?', 'Jak się czujesz?')}</h3>
             <div class="nr-mood-row" id="mood-selector">
-                <div class="nr-mood" data-mood="calm">😌<span class="nr-mood-lbl">Calm</span></div>
-                <div class="nr-mood" data-mood="happy">😊<span class="nr-mood-lbl">Happy</span></div>
-                <div class="nr-mood" data-mood="tired">😴<span class="nr-mood-lbl">Tired</span></div>
-                <div class="nr-mood" data-mood="anxious">😰<span class="nr-mood-lbl">Anxious</span></div>
-                <div class="nr-mood" data-mood="grateful">🙏<span class="nr-mood-lbl">Grateful</span></div>
-                <div class="nr-mood" data-mood="neutral">😐<span class="nr-mood-lbl">Neutral</span></div>
+                <div class="nr-mood" data-mood="calm">😌<span class="nr-mood-lbl">${tr('Calm', 'Spokój')}</span></div>
+                <div class="nr-mood" data-mood="happy">😊<span class="nr-mood-lbl">${tr('Happy', 'Radość')}</span></div>
+                <div class="nr-mood" data-mood="tired">😴<span class="nr-mood-lbl">${tr('Tired', 'Zmęczenie')}</span></div>
+                <div class="nr-mood" data-mood="anxious">😰<span class="nr-mood-lbl">${tr('Anxious', 'Niepokój')}</span></div>
+                <div class="nr-mood" data-mood="grateful">🙏<span class="nr-mood-lbl">${tr('Grateful', 'Wdzięczność')}</span></div>
+                <div class="nr-mood" data-mood="neutral">😐<span class="nr-mood-lbl">${tr('Neutral', 'Neutralnie')}</span></div>
             </div>
         </div>
 
@@ -60,59 +61,68 @@ export function renderNewReflection(onComplete) {
                         <span id="nr-orb-emoji" style="font-size: 28px;">🧘</span>
                     </div>
                 </div>
-                <h4 id="nr-state-title" style="font-size: 15px; font-weight: 700; margin: 0 0 4px; font-family: var(--font-heading); color: var(--color-text-primary);">Focused Clarity</h4>
-                <p id="nr-state-desc" class="text-sm" style="color: var(--color-text-secondary); margin: 0; font-size: 12px;">Steady Concentration & Clear Mindfulness</p>
+                <h4 id="nr-state-title" style="font-size: 15px; font-weight: 700; margin: 0 0 4px; font-family: var(--font-heading); color: var(--color-text-primary);">${tr('Focused Clarity', 'Skupiona Klarowność')}</h4>
+                <p id="nr-state-desc" class="text-sm" style="color: var(--color-text-secondary); margin: 0; font-size: 12px;">${tr('Steady Concentration & Clear Mindfulness', 'Stabilna koncentracja i przejrzysta uważność')}</p>
             </div>
 
             <!-- Dual Polarity Spectrum Sliders -->
             <div class="nr-section">
-                <h3 class="nr-section-title" style="margin-bottom:6px;">Mind State Spectrums</h3>
+                <h3 class="nr-section-title" style="margin-bottom:6px;">${tr('Mind State Spectrums', 'Spektrum Stanu Umysłu')}</h3>
 
                 <!-- Slider 1: Focus Polarity -->
                 <div style="margin-bottom: 16px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Focus & Concentration</span>
+                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">${tr('Focus & Concentration', 'Skupienie i Koncentracja')}</span>
                         <span id="nr-focus-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
                     </div>
                     <p style="font-size: 10px; color: var(--color-text-muted); margin: 0 0 10px 0; line-height: 1.35;">
-                        How continuously your attention stayed anchored to your breath object vs wandering.
+                        ${tr(
+                            'How continuously your attention stayed anchored to your breath object vs wandering.',
+                            'Jak nieprzerwanie Twoja uwaga pozostawała zakotwiczona na oddechu w porównaniu z błądzeniem myśli.'
+                        )}
                     </p>
                     <input type="range" id="nr-focus-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
-                        <span>🌀 Wandering</span>
-                        <span>✨ Absorbed</span>
+                        <span>🌀 ${tr('Wandering', 'Rozproszenie')}</span>
+                        <span>✨ ${tr('Absorbed', 'Pełne skupienie')}</span>
                     </div>
                 </div>
 
                 <!-- Slider 2: Stability & Clarity Polarity -->
                 <div style="margin-bottom: 16px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Stability & Clarity</span>
+                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">${tr('Stability & Clarity', 'Stabilność i Jasność')}</span>
                         <span id="nr-stability-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
                     </div>
                     <p style="font-size: 10px; color: var(--color-text-muted); margin: 0 0 10px 0; line-height: 1.35;">
-                        Whether your mind felt awake and sharp vs heavy, sluggish, or sleepy.
+                        ${tr(
+                            'Whether your mind felt awake and sharp vs heavy, sluggish, or sleepy.',
+                            'Czy Twój umysł był przebudzony i rześki, czy raczej ciężki, ospały lub senny.'
+                        )}
                     </p>
                     <input type="range" id="nr-stability-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
-                        <span>💤 Sleepy / Dull</span>
-                        <span>☀️ Vivid / Luminous</span>
+                        <span>💤 ${tr('Sleepy / Dull', 'Senność / Otępienie')}</span>
+                        <span>☀️ ${tr('Vivid / Luminous', 'Żywa jasność')}</span>
                     </div>
                 </div>
 
                 <!-- Slider 3: Equanimity & Non-Reactivity Polarity -->
                 <div style="margin-bottom: 20px; background: var(--color-bg-card); padding: 14px 16px; border-radius: 16px; border: 1px solid var(--color-bg-secondary);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">Equanimity & Openness</span>
+                        <span style="font-size: 12px; font-weight: 600; color: var(--color-text-primary);">${tr('Equanimity & Openness', 'Równowaga i Otwartość')}</span>
                         <span id="nr-equanimity-val" style="font-size: 11px; font-weight: 700; color: var(--color-accent);">50%</span>
                     </div>
                     <p style="font-size: 10px; color: var(--color-text-muted); margin: 0 0 10px 0; line-height: 1.35;">
-                        How gracefully you allowed thoughts and sensations to be without pushing or resisting.
+                        ${tr(
+                            'How gracefully you allowed thoughts and sensations to be without pushing or resisting.',
+                            'Z jaką łagodnością pozwalałeś myślom i doznaniom po prostu być, bez walki i oporu.'
+                        )}
                     </p>
                     <input type="range" id="nr-equanimity-slider" min="0" max="100" value="50" style="width: 100%; accent-color: var(--color-accent); cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--color-text-muted); margin-top: 6px;">
-                        <span>⚡ Tense / Resistant</span>
-                        <span>🕊️ Open / Equanimous</span>
+                        <span>⚡ ${tr('Tense / Resistant', 'Napięcie / Opór')}</span>
+                        <span>🕊️ ${tr('Open / Equanimous', 'Otwartość / Spokój')}</span>
                     </div>
                 </div>
             </div>
@@ -120,32 +130,32 @@ export function renderNewReflection(onComplete) {
 
         <!-- Mental Hindrances (hidden for quick reflection) -->
         <div class="nr-section" id="nr-hindrances-section">
-            <h3 class="nr-section-title">Mental Obstacles <span class="nr-section-tag">(optional)</span></h3>
+            <h3 class="nr-section-title">${tr('Mental Obstacles', 'Przeszkody Umysłu')} <span class="nr-section-tag">(${tr('optional', 'opcjonalnie')})</span></h3>
             <div class="nr-chips-row" id="hindrances-selector">
-                <div class="nr-chip nr-chip-multi" data-hindrance="dullness">💤 Sleepiness</div>
-                <div class="nr-chip nr-chip-multi" data-hindrance="restlessness">🐝 Restlessness</div>
-                <div class="nr-chip nr-chip-multi" data-hindrance="craving">💭 Craving</div>
-                <div class="nr-chip nr-chip-multi" data-hindrance="aversion">⚡ Aversion</div>
-                <div class="nr-chip nr-chip-multi" data-hindrance="doubt">❓ Doubt</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="dullness">💤 ${tr('Sleepiness', 'Senność')}</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="restlessness">🐝 ${tr('Restlessness', 'Niepokój')}</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="craving">💭 ${tr('Craving', 'Pragnienie')}</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="aversion">⚡ ${tr('Aversion', 'Niecierpliwość')}</div>
+                <div class="nr-chip nr-chip-multi" data-hindrance="doubt">❓ ${tr('Doubt', 'Zwątpienie')}</div>
             </div>
         </div>
 
         <!-- Reflection Prompts & Notes -->
         <div class="nr-section">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <h3 class="nr-section-title" style="margin:0;">Notes & Insights</h3>
-                <span style="font-size:10px; color:var(--color-text-muted);">Tap prompt to insert</span>
+                <h3 class="nr-section-title" style="margin:0;">${tr('Notes & Insights', 'Notatki i Wglądy')}</h3>
+                <span style="font-size:10px; color:var(--color-text-muted);">${tr('Tap prompt to insert', 'Dotknij, aby wstawić')}</span>
             </div>
             <!-- Dynamic Guided Prompt Chips -->
             <div class="nr-chips-row" id="guided-prompts-row" style="margin-bottom:10px;">
             </div>
             <textarea id="reflection-text" class="nr-textarea"
-                placeholder="Write down your insights, thoughts, or feelings..."></textarea>
+                placeholder="${tr('Write down your insights, thoughts, or feelings...', 'Zapisz swoje wglądy, myśli lub odczucia...')}"></textarea>
         </div>
 
         <!-- Finish -->
         <button id="finish-reflection-btn" class="btn btn-primary nr-finish-btn">
-            Save Reflection
+            ${tr('Save Reflection', 'Zapisz refleksję')}
         </button>
         <div style="height:12px; flex-shrink:0;"></div>
     `;
@@ -378,86 +388,86 @@ export function renderNewReflection(onComplete) {
 
         let grad = 'radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9)';
         let emoji = '🧘';
-        let title = 'Balanced Mindfulness';
-        let desc = 'Harmonious Concentration & Steady Flow';
+        let title = tr('Balanced Mindfulness', 'Zrównoważona Uważność');
+        let desc = tr('Harmonious Concentration & Steady Flow', 'Harmonijna koncentracja i stabilny przepływ');
         let shadowColor = 'rgba(139, 92, 246, 0.4)';
 
         if (equanimity >= 65 && focus >= 65 && stability >= 65) {
             grad = 'radial-gradient(circle at 30% 30%, #10b981, #047857)';
             emoji = '🕊️';
-            title = 'Open Samadhi';
-            desc = 'Single-Pointed Absorption, Vivid Clarity & Deep Peace';
+            title = tr('Open Samadhi', 'Otwarte Samadhi');
+            desc = tr('Single-Pointed Absorption, Vivid Clarity & Deep Peace', 'Jednopunktowe skupienie, żywa jasność i głęboki spokój');
             shadowColor = 'rgba(16, 185, 129, 0.5)';
             selectedFocusDepth = 'absorbed';
         } else if (focus >= 60 && stability < 35) {
             // High Focus + 0-34% Stability = Fighting Sluggishness/Dullness
             grad = 'radial-gradient(circle at 30% 30%, #7c3aed, #4c1d95)';
             emoji = '😴';
-            title = 'Striving against Dullness';
-            desc = 'High Effort Fighting Sluggishness & Foggy Mind';
+            title = tr('Striving against Dullness', 'Zmaganie z Otępieniem');
+            desc = tr('High Effort Fighting Sluggishness & Foggy Mind', 'Duży wysiłek w walce z ospałością i mgłą umysłową');
             shadowColor = 'rgba(124, 58, 237, 0.4)';
             selectedFocusDepth = 'unsteady';
         } else if (focus < 35 && stability < 35 && equanimity < 35) {
             grad = 'radial-gradient(circle at 30% 30%, #e11d48, #9f1239)';
             emoji = '🌪️';
-            title = 'Turbulent Mind';
-            desc = 'Restless Thoughts & Emotional Agitation';
+            title = tr('Turbulent Mind', 'Wzburzony Umysł');
+            desc = tr('Restless Thoughts & Emotional Agitation', 'Niespokojne myśli i poruszenie emocjonalne');
             shadowColor = 'rgba(225, 29, 72, 0.4)';
             selectedFocusDepth = 'wandering';
         } else if (focus < 35 && stability < 35) {
             grad = 'radial-gradient(circle at 30% 30%, #f59e0b, #d97706)';
             emoji = '💤';
-            title = 'Sleepy Drift';
-            desc = 'Dullness & Sluggish Presence';
+            title = tr('Sleepy Drift', 'Senny Dryf');
+            desc = tr('Dullness & Sluggish Presence', 'Senność i ospała obecność');
             shadowColor = 'rgba(245, 158, 11, 0.4)';
             selectedFocusDepth = 'wandering';
         } else if (focus >= 65 && stability >= 60 && equanimity < 65) {
             grad = 'radial-gradient(circle at 30% 30%, #6366f1, #4338ca)';
             emoji = '🎯';
-            title = 'Laser Clarity';
-            desc = 'Intense Single-Pointed Concentration';
+            title = tr('Laser Clarity', 'Laserowa Klarowność');
+            desc = tr('Intense Single-Pointed Concentration', 'Intensywna jednopunktowa koncentracja');
             shadowColor = 'rgba(99, 102, 241, 0.4)';
             selectedFocusDepth = 'focused';
         } else if (focus >= 65 && equanimity < 35) {
             grad = 'radial-gradient(circle at 30% 30%, #f43f5e, #be123c)';
             emoji = '⚡';
-            title = 'Tense Striving';
-            desc = 'High Focus with Internal Tension & Resistance';
+            title = tr('Tense Striving', 'Napięty Wysiłek');
+            desc = tr('High Focus with Internal Tension & Resistance', 'Wysokie skupienie połączone z napięciem i oporem');
             shadowColor = 'rgba(244, 63, 94, 0.4)';
             selectedFocusDepth = 'unsteady';
         } else if (equanimity >= 65 && focus < 40) {
             grad = 'radial-gradient(circle at 30% 30%, #06b6d4, #0891b2)';
             emoji = '🌊';
-            title = 'Equanimous Flow';
-            desc = 'Open Non-Reactivity to Wandering Thoughts';
+            title = tr('Equanimous Flow', 'Zrównoważony Przepływ');
+            desc = tr('Open Non-Reactivity to Wandering Thoughts', 'Otwarta akceptacja wobec przepływających myśli');
             shadowColor = 'rgba(6, 182, 212, 0.4)';
             selectedFocusDepth = 'settling';
         } else if (stability >= 65 && equanimity >= 60) {
             grad = 'radial-gradient(circle at 30% 30%, #3b82f6, #1d4ed8)';
             emoji = '🌌';
-            title = 'Tranquil Stillness';
-            desc = 'Quiet Physical Stability & Peaceful Presence';
+            title = tr('Tranquil Stillness', 'Spokojny Bezruch');
+            desc = tr('Quiet Physical Stability & Peaceful Presence', 'Cicha stabilność ciała i pokojowa obecność');
             shadowColor = 'rgba(59, 130, 246, 0.4)';
             selectedFocusDepth = 'settling';
         } else if (stability >= 45 && focus < 35 && equanimity >= 40) {
             grad = 'radial-gradient(circle at 30% 30%, #14b8a6, #0f766e)';
             emoji = '🕯️';
-            title = 'Gentle Anchoring';
-            desc = 'Resting Baseline Stability without Striving Focus';
+            title = tr('Gentle Anchoring', 'Łagodne Zakotwiczenie');
+            desc = tr('Resting Baseline Stability without Striving Focus', 'Spokojna obecność bez wymuszonego napięcia');
             shadowColor = 'rgba(20, 184, 166, 0.4)';
             selectedFocusDepth = 'settling';
         } else if (focus >= 50 && stability >= 50) {
             grad = 'radial-gradient(circle at 30% 30%, #8b5cf6, #6d28d9)';
             emoji = '🧘';
-            title = 'Focused Clarity';
-            desc = 'Steady Concentration & Clear Mindfulness';
+            title = tr('Focused Clarity', 'Skupiona Klarowność');
+            desc = tr('Steady Concentration & Clear Mindfulness', 'Stabilna koncentracja i przejrzysta uważność');
             shadowColor = 'rgba(139, 92, 246, 0.4)';
             selectedFocusDepth = 'focused';
         } else {
             grad = 'radial-gradient(circle at 30% 30%, #a855f7, #7e22ce)';
             emoji = '🌱';
-            title = 'Gentle Awareness';
-            desc = 'Developing Concentration & Quiet Observation';
+            title = tr('Gentle Awareness', 'Łagodna Świadomość');
+            desc = tr('Developing Concentration & Quiet Observation', 'Rozwijająca się koncentracja i cicha obserwacja');
             shadowColor = 'rgba(168, 85, 247, 0.4)';
             selectedFocusDepth = 'settling';
         }
@@ -589,32 +599,32 @@ export function renderNewReflection(onComplete) {
             xpZone.classList.add('hidden');
             if (spectsEl) spectsEl.style.display = 'none';
             if (hindrancesEl) hindrancesEl.style.display = 'none';
-            titleEl.textContent = 'Quick Reflection';
-            subtitleEl.textContent = 'Capture your thoughts & mood';
+            titleEl.textContent = tr('Quick Reflection', 'Szybka Refleksja');
+            subtitleEl.textContent = tr('Capture your thoughts & mood', 'Zapisz swoje myśli i nastrój');
 
             if (promptsRow) {
                 promptsRow.innerHTML = `
-                    <button class="nr-chip prompt-chip" data-prompt="Mindful check-in: ">💡 Check-in</button>
-                    <button class="nr-chip prompt-chip" data-prompt="Grateful for: ">🙏 Gratitude</button>
-                    <button class="nr-chip prompt-chip" data-prompt="Letting go of: ">🍃 Release</button>
-                    <button class="nr-chip prompt-chip" data-prompt="Brought me peace: ">🌟 Peace</button>
-                    <button class="nr-chip prompt-chip" data-prompt="My intention: ">🛡️ Intention</button>
-                    <button class="nr-chip prompt-chip" data-prompt="Meeting challenge: ">🌊 Challenge</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('Mindful check-in: ', 'Uważna chwila: ')}">💡 ${tr('Check-in', 'Obecność')}</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('Grateful for: ', 'Wdzięczność za: ')}">🙏 ${tr('Gratitude', 'Wdzięczność')}</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('Letting go of: ', 'Odpuszczam dziś: ')}">🍃 ${tr('Release', 'Odpuszczenie')}</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('Brought me peace: ', 'Dało mi spokój: ')}">🌟 ${tr('Peace', 'Spokój')}</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('My intention: ', 'Moja intencja: ')}">🛡️ ${tr('Intention', 'Intencja')}</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('Meeting challenge: ', 'Wobec wyzwania: ')}">🌊 ${tr('Challenge', 'Wyzwanie')}</button>
                 `;
             }
         } else {
             xpZone.classList.remove('hidden');
             if (spectsEl) spectsEl.style.display = 'block';
             if (hindrancesEl) hindrancesEl.style.display = 'block';
-            titleEl.textContent = 'Reflection';
-            subtitleEl.textContent = 'Nice work! Session complete.';
+            titleEl.textContent = tr('Reflection', 'Refleksja');
+            subtitleEl.textContent = tr('Nice work! Session complete.', 'Świetna robota! Sesja ukończona.');
 
             if (promptsRow) {
                 promptsRow.innerHTML = `
-                    <button class="nr-chip prompt-chip" data-prompt="What arose during the sit: ">💡 What arose?</button>
-                    <button class="nr-chip prompt-chip" data-prompt="Where was breath felt most clearly: ">🌬️ Breath anchor?</button>
-                    <button class="nr-chip prompt-chip" data-prompt="Tension softened in: ">🌿 Tension release?</button>
-                    <button class="nr-chip prompt-chip" data-prompt="Insight gained today: ">✨ Today's insight?</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('What arose during the sit: ', 'Co pojawiło się podczas sesji: ')}">💡 ${tr('What arose?', 'Co się pojawiło?')}</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('Where was breath felt most clearly: ', 'Gdzie oddech był najbardziej wyraźny: ')}">🌬️ ${tr('Breath anchor?', 'Kotwica oddechu?')}</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('Tension softened in: ', 'Napięcie rozluźniło się w: ')}">🌿 ${tr('Tension release?', 'Rozluźnienie?')}</button>
+                    <button class="nr-chip prompt-chip" data-prompt="${tr('Insight gained today: ', 'Dzisiejszy wgląd: ')}">✨ ${tr("Today's insight?", 'Dzisiejszy wgląd?')}</button>
                 `;
             }
             const data = container.sessionData;
@@ -633,16 +643,19 @@ export function renderNewReflection(onComplete) {
 
             if (data.mission && data.intention) {
                 chip.style.display = 'inline-block';
-                chip.innerHTML = `🏆 Mission: <strong>${data.mission.label}</strong> (+20 XP) &nbsp;•&nbsp; 🎯 Intention (+10 XP)`;
+                chip.innerHTML = `🏆 ${tr('Mission:', 'Misja:')} <strong>${data.mission.label}</strong> (+20 XP) &nbsp;•&nbsp; 🎯 ${tr('Intention', 'Intencja')} (+10 XP)`;
             } else if (data.mission) {
                 chip.style.display = 'inline-block';
-                chip.innerHTML = `🏆 Mission: <strong>${data.mission.label}</strong> (+20 XP)`;
+                chip.innerHTML = `🏆 ${tr('Mission:', 'Misja:')} <strong>${data.mission.label}</strong> (+20 XP)`;
             } else if (data.intention) {
                 chip.style.display = 'inline-block';
-                chip.innerHTML = `🎯 Intention: <em>"${data.intention}"</em> (+10 XP)`;
+                chip.innerHTML = `🎯 ${tr('Intention:', 'Intencja:')} <em>"${data.intention}"</em> (+10 XP)`;
             } else {
                 chip.style.display = 'inline-block';
-                chip.innerHTML = `✨ Completed <strong>${data.duration || 10}-min</strong> meditation session`;
+                chip.innerHTML = tr(
+                    `✨ Completed <strong>${data.duration || 10}-min</strong> meditation session`,
+                    `✨ Ukończono <strong>${data.duration || 10}-minutową</strong> sesję medytacji`
+                );
             }
         }
 

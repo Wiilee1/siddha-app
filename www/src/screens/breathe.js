@@ -1,6 +1,59 @@
 import { DB } from '../services/db.js';
 import { Synth } from '../services/synth.js';
 import { HapticService } from '../services/haptics.js';
+import { tr } from '../services/i18n.js';
+
+const isAndroidDevice = () => {
+    try {
+        if (window.Capacitor) {
+            if (typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'android') return true;
+            if (window.Capacitor.platform === 'android') return true;
+            if (typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform() && /android/i.test(navigator.userAgent)) return true;
+        }
+        return /android/i.test(navigator.userAgent);
+    } catch(e) {
+        return false;
+    }
+};
+
+const NativeMeditation = {
+    start: async (intervalSeconds, totalSeconds) => {
+        try {
+            console.log('[Breathe] Starting Native Meditation Service: interval=' + intervalSeconds + 's, total=' + totalSeconds + 's');
+            let plugin = window.Capacitor?.Plugins?.MeditationNative;
+            if (!plugin && typeof window.Capacitor?.registerPlugin === 'function') {
+                plugin = window.Capacitor.registerPlugin('MeditationNative');
+            }
+            if (plugin && typeof plugin.startService === 'function') {
+                const res = await plugin.startService({
+                    intervalSeconds: Math.floor(intervalSeconds),
+                    totalSeconds: Math.floor(totalSeconds)
+                });
+                console.log('[Breathe] Native startService result:', res);
+                return true;
+            } else {
+                console.warn('[Breathe] MeditationNative plugin not available');
+            }
+        } catch (e) {
+            console.error('[Breathe] Native startService failed:', e);
+        }
+        return false;
+    },
+    stop: async () => {
+        try {
+            console.log('[Breathe] Stopping Native Meditation Service');
+            let plugin = window.Capacitor?.Plugins?.MeditationNative;
+            if (!plugin && typeof window.Capacitor?.registerPlugin === 'function') {
+                plugin = window.Capacitor.registerPlugin('MeditationNative');
+            }
+            if (plugin && typeof plugin.stopService === 'function') {
+                await plugin.stopService();
+            }
+        } catch (e) {
+            console.error('[Breathe] Native stopService failed:', e);
+        }
+    }
+};
 
 export function renderBreathe(onComplete) {
     const container = document.createElement('div');
@@ -17,12 +70,12 @@ export function renderBreathe(onComplete) {
     container.innerHTML = `
         <!-- Header row -->
         <div class="bh-header">
-            <button class="bh-btn" id="breathe-close-btn" aria-label="Close">
+            <button class="bh-btn" id="breathe-close-btn" aria-label="${tr('Close', 'Zamknij')}">
                 <span class="material-symbols-rounded">arrow_back</span>
             </button>
             <div style="text-align:center; flex:1; padding:0 4px;">
-                <h2 id="breathe-screen-title" class="bh-title">Meditation</h2>
-                <p id="breathe-screen-desc" class="bh-desc">Find your center</p>
+                <h2 id="breathe-screen-title" class="bh-title">${tr('Meditation', 'Medytacja')}</h2>
+                <p id="breathe-screen-desc" class="bh-desc">${tr('Find your center', 'Odnajdź swój spokój')}</p>
             </div>
             <!-- Dev skip — hidden unless developer mode is unlocked -->
             <button class="bh-btn bh-skip dev-only" id="dev-skip-btn" aria-label="Skip (dev)">
@@ -34,9 +87,9 @@ export function renderBreathe(onComplete) {
         <!-- Mission info banner -->
         <div id="mission-info-banner" class="bh-mission-banner" style="display:none;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <span class="bh-mission-tag">Active Mission</span>
+                <span class="bh-mission-tag">${tr('Active Mission', 'Aktywna Misja')}</span>
                 <button id="clear-active-mission-btn" aria-label="Cancel Mission" style="background:rgba(255,255,255,0.15); border:none; color:rgba(255,255,255,0.85); cursor:pointer; font-size:12px; padding:2px 8px; border-radius:12px; display:flex; align-items:center; gap:2px;">
-                    <span class="material-symbols-rounded" style="font-size:14px;">close</span> Exit
+                    <span class="material-symbols-rounded" style="font-size:14px;">close</span> ${tr('Exit', 'Zakończ')}
                 </button>
             </div>
             <p id="mission-info-text" class="bh-mission-text"></p>
@@ -55,7 +108,7 @@ export function renderBreathe(onComplete) {
                     <span class="material-symbols-rounded" style="font-size:40px; color:rgba(255,255,255,0.85);">spa</span>
                 </div>
             </div>
-            <div id="breathe-prompt" class="bh-breathe-text" style="opacity:0;">Inhale...</div>
+            <div id="breathe-prompt" class="bh-breathe-text" style="opacity:0;">${tr('Inhale...', 'Wdech...')}</div>
         </div>
 
         <!-- Controls area -->
@@ -64,7 +117,7 @@ export function renderBreathe(onComplete) {
             <div id="intention-trigger-wrap" style="margin-bottom: 12px; transition: opacity 0.3s;">
                 <button id="open-intention-modal-btn" class="bh-intention-trigger-btn">
                     <span class="material-symbols-rounded" style="font-size:16px; color:#ffd166;">psychology_alt</span>
-                    <span id="intention-trigger-label">Set Sit Intention (Optional)</span>
+                    <span id="intention-trigger-label">${tr('Set Sit Intention (Optional)', 'Ustaw intencję sesji (opcjonalnie)')}</span>
                     <span class="material-symbols-rounded" style="font-size:14px; opacity:0.6;">edit</span>
                 </button>
             </div>
@@ -74,15 +127,15 @@ export function renderBreathe(onComplete) {
                 <!-- Interval Bell Pill -->
                 <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 4px 10px; height: 32px; box-sizing: border-box;">
                     <span class="material-symbols-rounded" style="font-size:16px; color: rgba(255,255,255,0.85);">notifications_active</span>
-                    <label for="bell-interval-input" style="font-size: 12px; font-weight: 500;">Interval:</label>
+                    <label for="bell-interval-input" style="font-size: 12px; font-weight: 500;">${tr('Interval:', 'Interwał:')}</label>
                     <input type="number" id="bell-interval-input" min="0" placeholder="5" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; padding: 2px 4px; font-size: 12px; width: 38px; text-align: center; outline: none;" value="5">
                     <span style="font-size: 12px; opacity: 0.85;">min</span>
                 </div>
 
                 <!-- Meditation Bells Toggle Button -->
-                <button id="sound-mute-btn" title="Toggle meditation bells" style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: rgba(255,255,255,0.9); padding: 4px 12px; height: 32px; font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0; transition: all 0.2s; box-sizing: border-box;">
+                <button id="sound-mute-btn" title="${tr('Toggle meditation bells', 'Przełącz dzwonki medytacyjne')}" style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: rgba(255,255,255,0.9); padding: 4px 12px; height: 32px; font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0; transition: all 0.2s; box-sizing: border-box;">
                     <span class="material-symbols-rounded" id="mute-icon" style="font-size: 16px;">volume_up</span>
-                    <span id="mute-label">Bells On</span>
+                    <span id="mute-label">${tr('Bells On', 'Dzwonki Wł.')}</span>
                 </button>
             </div>
 
@@ -92,14 +145,14 @@ export function renderBreathe(onComplete) {
                 <button class="bh-preset active" data-time="10">10m</button>
                 <button class="bh-preset" data-time="15">15m</button>
                 <button class="bh-preset" data-time="20">20m</button>
-                <button class="bh-preset" id="custom-preset-btn">Custom</button>
+                <button class="bh-preset" id="custom-preset-btn">${tr('Custom', 'Własny')}</button>
             </div>
 
             <!-- Custom input -->
             <div id="custom-timer-input-container" style="display:none; align-items:center; justify-content:center; gap:8px; margin-bottom:12px;">
                 <input type="number" id="custom-minutes-input" min="1" max="120" value="30" class="bh-custom-input">
                 <span style="color:rgba(255,255,255,0.65); font-size:14px;">min</span>
-                <button id="set-custom-btn" class="bh-preset" style="background:rgba(255,255,255,0.25); color:white;">Set</button>
+                <button id="set-custom-btn" class="bh-preset" style="background:rgba(255,255,255,0.25); color:white;">${tr('Set', 'Ustaw')}</button>
             </div>
 
             <!-- Big timer -->
@@ -111,7 +164,7 @@ export function renderBreathe(onComplete) {
                 </div>
 
                 <h1 class="bh-timer" id="breathe-timer">10:00</h1>
-                <p class="bh-timer-hint" id="bh-timer-hint" style="display:none;">Tap ⏭ to finish early</p>
+                <p class="bh-timer-hint" id="bh-timer-hint" style="display:none;">${tr('Tap ⏭ to finish early', 'Dotknij ⏭, aby zakończyć wcześniej')}</p>
             </div>
 
             <!-- Play / Reset / (Skip is in header) -->
@@ -134,10 +187,13 @@ export function renderBreathe(onComplete) {
                     <div>
                         <h3 style="font-size:15px; font-weight:700; font-family:var(--font-heading); color:#ffffff; margin:0 0 3px 0; display:flex; align-items:center; gap:6px;">
                             <span class="material-symbols-rounded" style="font-size:18px; color:#ffd166;">psychology_alt</span>
-                            Set Sit Intention (Sankalpa)
+                            ${tr('Set Sit Intention (Sankalpa)', 'Intencja Sesji (Sankalpa)')}
                         </h3>
                         <p style="font-size:11px; color:rgba(255,255,255,0.7); margin:0; line-height:1.4;">
-                            Ground your mind before sitting. Write your personal intention or pick an inspiration below.
+                            ${tr(
+                                'Ground your mind before sitting. Write your personal intention or pick an inspiration below.',
+                                'Zakotwicz swój umysł przed medytacją. Wpisz własną intencję lub wybierz inspirację poniżej.'
+                            )}
                         </p>
                     </div>
                     <button id="close-intention-modal-btn" style="background:rgba(255,255,255,0.12); border:none; color:rgba(255,255,255,0.8); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; margin-left:8px;">
@@ -150,7 +206,10 @@ export function renderBreathe(onComplete) {
                     <div style="display:flex; align-items:flex-start; gap:8px;">
                         <span class="material-symbols-rounded" style="font-size:16px; color:#ffd166; margin-top:1px; flex-shrink:0;">info</span>
                         <p style="font-size:11px; color:rgba(255,255,255,0.9); margin:0; line-height:1.45;">
-                            <strong>What is a Sankalpa?</strong> A heartfelt intention formed in a calm mind. It sets a gentle direction for your sit—such as anchoring in breath or letting go of tension—without creating goals or pressure.
+                            ${tr(
+                                '<strong>What is a Sankalpa?</strong> A heartfelt intention formed in a calm mind. It sets a gentle direction for your sit—such as anchoring in breath or letting go of tension—without creating goals or pressure.',
+                                '<strong>Czym jest Sankalpa?</strong> To szczera intencja rodząca się w spokojnym umyśle. Nadaje łagodny kierunek Twojej sesji – np. zakotwiczenie w oddechu lub puszczenie napięcia – bez wywierania presji.'
+                            )}
                         </p>
                     </div>
                 </div>
@@ -159,11 +218,11 @@ export function renderBreathe(onComplete) {
                 <div style="margin-bottom:12px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
                         <label style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.9); display:flex; align-items:center; gap:4px;">
-                            ✍️ Your Intention
+                            ✍️ ${tr('Your Intention', 'Twoja Intencja')}
                         </label>
-                        <span id="modal-clear-text-btn" style="font-size:10.5px; color:rgba(255,255,255,0.5); cursor:pointer; display:none;">Clear text</span>
+                        <span id="modal-clear-text-btn" style="font-size:10.5px; color:rgba(255,255,255,0.5); cursor:pointer; display:none;">${tr('Clear text', 'Wyczyść')}</span>
                     </div>
-                    <textarea id="modal-intention-input" placeholder="What is your intention or motivation for this sit?" class="bh-modal-intention-field" rows="3"></textarea>
+                    <textarea id="modal-intention-input" placeholder="${tr('What is your intention or motivation for this sit?', 'Jaka jest Twoja intencja lub motywacja na tę sesję?')}" class="bh-modal-intention-field" rows="3"></textarea>
                 </div>
 
                 <!-- Collapsible Inspiration Accordion Trigger -->
@@ -171,7 +230,7 @@ export function renderBreathe(onComplete) {
                     <button id="modal-inspiration-toggle" style="width:100%; text-align:left; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); border-radius:12px; padding:9px 12px; color:#ffd166; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
                         <span style="display:flex; align-items:center; gap:6px;">
                             <span class="material-symbols-rounded" style="font-size:16px; color:#ffd166;">auto_awesome</span>
-                            Need Inspiration? Explore Intentions
+                            ${tr('Need Inspiration? Explore Intentions', 'Szukasz inspiracji? Zobacz gotowe intencje')}
                         </span>
                         <span id="modal-inspiration-chevron" style="font-size:11px; transition:transform 0.2s;">▼</span>
                     </button>
@@ -181,69 +240,69 @@ export function renderBreathe(onComplete) {
                         
                         <!-- Category 1: Grounding & Calming -->
                         <div class="bh-intent-cat-group">
-                            <div class="bh-intent-cat-title">🌿 Grounding & Calming</div>
-                            <div class="bh-modal-intent-card" data-fullintent="My intention for this sit is to step out of the mental chatter and anchor myself in the quiet rhythm of my breath.">
-                                <div class="bh-intent-card-title">Anchor in the Breath</div>
-                                <div class="bh-intent-card-sub">“Step out of mental chatter and anchor in the quiet rhythm of breath.”</div>
+                            <div class="bh-intent-cat-title">🌿 ${tr('Grounding & Calming', 'Uziemienie i Wyciszenie')}</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('My intention for this sit is to step out of the mental chatter and anchor myself in the quiet rhythm of my breath.', 'Moją intencją na tę sesję jest wyjście z gonitwy myśli i zakotwiczenie się w cichym rytmie oddechu.')}">
+                                <div class="bh-intent-card-title">${tr('Anchor in the Breath', 'Kotwica w oddechu')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Step out of mental chatter and anchor in the quiet rhythm of breath.”', '„Wyjdź z gonitwy myśli i zakotwicz się w cichym rytmie oddechu.”')}</div>
                             </div>
-                            <div class="bh-modal-intent-card" data-fullintent="I intend to give my nervous system permission to rest, letting go of physical tightness and mental stress with every exhale.">
-                                <div class="bh-intent-card-title">Nervous System Rest</div>
-                                <div class="bh-intent-card-sub">“Give nervous system permission to rest, letting go of stress with every exhale.”</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('I intend to give my nervous system permission to rest, letting go of physical tightness and mental stress with every exhale.', 'Daję swojemu układowi nerwowemu przyzwolenie na odpoczynek, puszczając napięcie i stres z każdym wydechem.')}">
+                                <div class="bh-intent-card-title">${tr('Nervous System Rest', 'Odpoczynek układu nerwowego')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Give nervous system permission to rest, letting go of stress with every exhale.”', '„Pozwól układowi nerwowemu odpocząć, puszczając stres z każdym wydechem.”')}</div>
                             </div>
-                            <div class="bh-modal-intent-card" data-fullintent="I sit to create space between my emotions and my actions, so I can meet difficulty with calm rather than impulse.">
-                                <div class="bh-intent-card-title">Respond, Not React</div>
-                                <div class="bh-intent-card-sub">“Create space between emotions & actions, meeting difficulty with calm.”</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('I sit to create space between my emotions and my actions, so I can meet difficulty with calm rather than impulse.', 'Siadam, aby stworzyć przestrzeń między emocjami a działaniem i spotykać trudności ze spokojem zamiast impulsu.')}">
+                                <div class="bh-intent-card-title">${tr('Respond, Not React', 'Świadoma odpowiedź zamiast reakcji')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Create space between emotions & actions, meeting difficulty with calm.”', '„Stwórz przestrzeń między emocjami a działaniem, wybierając spokój.”')}</div>
                             </div>
                         </div>
 
                         <!-- Category 2: Sharpening the Mind -->
                         <div class="bh-intent-cat-group">
-                            <div class="bh-intent-cat-title">🧘 Sharpening the Mind</div>
-                            <div class="bh-modal-intent-card" data-fullintent="My intention is to gently bring my mind back to the breath whenever it wanders, strengthening my ability to focus.">
-                                <div class="bh-intent-card-title">Single-Pointed Focus</div>
-                                <div class="bh-intent-card-sub">“Gently return to breath whenever mind wanders, strengthening focus.”</div>
+                            <div class="bh-intent-cat-title">🧘 ${tr('Sharpening the Mind', 'Wyostrzenie Umysłu')}</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('My intention is to gently bring my mind back to the breath whenever it wanders, strengthening my ability to focus.', 'Moją intencją jest łagodne przywracanie uwagi do oddechu za każdym razem, gdy odpłynie, wzmacniając skupienie.')}">
+                                <div class="bh-intent-card-title">${tr('Single-Pointed Focus', 'Jednopunktowe skupienie')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Gently return to breath whenever mind wanders, strengthening focus.”', '„Łagodnie wracaj do oddechu, ilekroć umysł odpłynie, wzmacniając uwagę.”')}</div>
                             </div>
-                            <div class="bh-modal-intent-card" data-fullintent="I intend to cultivate a bright, clear, and alert presence, resting in awareness without slipping into dullness or sleep.">
-                                <div class="bh-intent-card-title">Bright & Alert Presence</div>
-                                <div class="bh-intent-card-sub">“Cultivate bright, clear presence without slipping into dullness or sleep.”</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('I intend to cultivate a bright, clear, and alert presence, resting in awareness without slipping into dullness or sleep.', 'Zamierzam pielęgnować jasną, klarowną i czujną obecność, spoczywając w świadomości bez popadania w senność.')}">
+                                <div class="bh-intent-card-title">${tr('Bright & Alert Presence', 'Jasna i czujna obecność')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Cultivate bright, clear presence without slipping into dullness or sleep.”', '„Pielęgnuj jasną i czujną obecność bez popadania w otępienie lub senność.”')}</div>
                             </div>
-                            <div class="bh-modal-intent-card" data-fullintent="I sit to watch the landscape of my thoughts without getting swept up in the storylines.">
-                                <div class="bh-intent-card-title">Observe Without Judgment</div>
-                                <div class="bh-intent-card-sub">“Watch the landscape of thoughts without getting swept up in storylines.”</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('I sit to watch the landscape of my thoughts without getting swept up in the storylines.', 'Siadam, by obserwować krajobraz swoich myśli bez dawania się porwać ich historiom.')}">
+                                <div class="bh-intent-card-title">${tr('Observe Without Judgment', 'Obserwacja bez oceniania')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Watch the landscape of thoughts without getting swept up in storylines.”', '„Obserwuj krajobraz myśli, nie dając się wciągnąć w ich opowieści.”')}</div>
                             </div>
                         </div>
 
                         <!-- Category 3: Openness & Acceptance -->
                         <div class="bh-intent-cat-group">
-                            <div class="bh-intent-cat-title">🌊 Openness & Acceptance</div>
-                            <div class="bh-modal-intent-card" data-fullintent="My intention is to meet pleasant, unpleasant, or neutral sensations with equal openness, without trying to push or pull.">
-                                <div class="bh-intent-card-title">Welcome Whatever Arises</div>
-                                <div class="bh-intent-card-sub">“Meet all sensations with equal openness, without pushing or pulling.”</div>
+                            <div class="bh-intent-cat-title">🌊 ${tr('Openness & Acceptance', 'Otwartość i Akceptacja')}</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('My intention is to meet pleasant, unpleasant, or neutral sensations with equal openness, without trying to push or pull.', 'Moją intencją jest przyjmowanie przyjemnych, nieprzyjemnych i neutralnych doznań z równą otwartością.')}">
+                                <div class="bh-intent-card-title">${tr('Welcome Whatever Arises', 'Przyjmij wszystko, co się pojawi')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Meet all sensations with equal openness, without pushing or pulling.”', '„Spotykaj wszystkie doznania z równą otwartością, bez lgnięcia i odpychania.”')}</div>
                             </div>
-                            <div class="bh-modal-intent-card" data-fullintent="I intend to treat my impatient or wandering mind with patience and kindness today, rather than criticism.">
-                                <div class="bh-intent-card-title">Self-Compassion & Kindness</div>
-                                <div class="bh-intent-card-sub">“Treat impatient mind with patience & kindness today, not criticism.”</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('I intend to treat my impatient or wandering mind with patience and kindness today, rather than criticism.', 'Zamierzam traktować swój niecierpliwy lub błądzący umysł z cierpliwością i życzliwością zamiast krytyki.')}">
+                                <div class="bh-intent-card-title">${tr('Self-Compassion & Kindness', 'Życzliwość dla samego siebie')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Treat impatient mind with patience & kindness today, not criticism.”', '„Traktuj błądzący umysł z cierpliwością i dobrocią, a nie krytyką.”')}</div>
                             </div>
-                            <div class="bh-modal-intent-card" data-fullintent="I sit to practice non-striving—releasing the need to accomplish anything and simply being as I am.">
-                                <div class="bh-intent-card-title">Non-Striving & Letting Go</div>
-                                <div class="bh-intent-card-sub">“Release the need to accomplish anything and simply be as I am.”</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('I sit to practice non-striving—releasing the need to accomplish anything and simply being as I am.', 'Siadam, by praktykować niedziałanie – odpuszczając potrzebę osiągnięcia czegokolwiek i po prostu będąc.')}">
+                                <div class="bh-intent-card-title">${tr('Non-Striving & Letting Go', 'Odpuszczenie i brak pośpiechu')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Release the need to accomplish anything and simply be as I am.”', '„Puść potrzebę osiągania czegokolwiek i po prostu bądź taki, jaki jesteś.”')}</div>
                             </div>
                         </div>
 
                         <!-- Category 4: Insight & Connection -->
                         <div class="bh-intent-cat-group">
-                            <div class="bh-intent-cat-title">✨ Insight & Connection</div>
-                            <div class="bh-modal-intent-card" data-fullintent="My intention is to sit in the spacious quiet beneath my thoughts and rest in pure awareness.">
-                                <div class="bh-intent-card-title">Rest in Pure Awareness</div>
-                                <div class="bh-intent-card-sub">“Sit in the spacious quiet beneath thoughts and rest in pure awareness.”</div>
+                            <div class="bh-intent-cat-title">✨ ${tr('Insight & Connection', 'Wgląd i Połączenie')}</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('My intention is to sit in the spacious quiet beneath my thoughts and rest in pure awareness.', 'Moją intencją jest spocząć w przestronnej ciszy pod powierzchnią myśli, w czystej świadomości.')}">
+                                <div class="bh-intent-card-title">${tr('Rest in Pure Awareness', 'Spoczynek w czystej świadomości')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Sit in the spacious quiet beneath thoughts and rest in pure awareness.”', '„Usiądź w przestronnej ciszy pod myślami i spocznij w czystej świadomości.”')}</div>
                             </div>
-                            <div class="bh-modal-intent-card" data-fullintent="I sit to cultivate clarity and peace within myself, so I can bring greater patience and kindness to others.">
-                                <div class="bh-intent-card-title">Dedicate the Practice</div>
-                                <div class="bh-intent-card-sub">“Cultivate clarity & peace so I can bring kindness to others.”</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('I sit to cultivate clarity and peace within myself, so I can bring greater patience and kindness to others.', 'Siadam, aby pielęgnować w sobie jasność i pokój, bym mógł wnosić więcej cierpliwości i dobroci dla innych.')}">
+                                <div class="bh-intent-card-title">${tr('Dedicate the Practice', 'Dedykacja praktyki innym')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Cultivate clarity & peace so I can bring kindness to others.”', '„Pielęgnuj jasność i spokój, aby dzielić się życzliwością z innymi.”')}</div>
                             </div>
-                            <div class="bh-modal-intent-card" data-fullintent="My intention is to simply show up for this moment, trusting the practice one breath at a time.">
-                                <div class="bh-intent-card-title">Honor the Path</div>
-                                <div class="bh-intent-card-sub">“Simply show up for this moment, trusting the practice one breath at a time.”</div>
+                            <div class="bh-modal-intent-card" data-fullintent="${tr('My intention is to simply show up for this moment, trusting the practice one breath at a time.', 'Moją intencją jest po prostu być obecnym w tej chwili, ufając praktyce oddech po oddechu.')}">
+                                <div class="bh-intent-card-title">${tr('Honor the Path', 'Zaufanie ścieżce')}</div>
+                                <div class="bh-intent-card-sub">${tr('“Simply show up for this moment, trusting the practice one breath at a time.”', '„Po prostu bądź obecny w tej chwili, ufając praktyce oddech po oddechu.”')}</div>
                             </div>
                         </div>
 
@@ -253,10 +312,10 @@ export function renderBreathe(onComplete) {
                 <!-- Footer Action Buttons -->
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:8px;">
                     <button id="modal-clear-intention-btn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18); color:rgba(255,255,255,0.7); font-size:12px; font-weight:600; padding:8px 14px; border-radius:12px; cursor:pointer;">
-                        Clear
+                        ${tr('Clear', 'Wyczyść')}
                     </button>
                     <button id="modal-save-intention-btn" style="background:linear-gradient(135deg, #ffd166, #f59e0b); border:none; color:#1a1a1a; font-size:13px; font-weight:700; padding:9px 20px; border-radius:12px; cursor:pointer; box-shadow:0 3px 12px rgba(255,209,102,0.3);">
-                        Set Intention
+                        ${tr('Set Intention', 'Zapisz intencję')}
                     </button>
                 </div>
             </div>
@@ -600,12 +659,12 @@ export function renderBreathe(onComplete) {
         function updateTriggerButtonUI() {
             if (currentIntention) {
                 const previewText = currentIntention.length > 28 ? currentIntention.slice(0, 28) + '...' : currentIntention;
-                triggerLabel.textContent = `✨ Intention: "${previewText}"`;
+                triggerLabel.textContent = `✨ ${tr('Intention:', 'Intencja:')} "${previewText}"`;
                 openModalBtn.style.borderColor = 'rgba(255,209,102,0.5)';
                 openModalBtn.style.background = 'rgba(255,209,102,0.15)';
                 openModalBtn.style.color = '#ffffff';
             } else {
-                triggerLabel.textContent = 'Set Sit Intention (Optional)';
+                triggerLabel.textContent = tr('Set Sit Intention (Optional)', 'Ustaw intencję sesji (opcjonalnie)');
                 openModalBtn.style.borderColor = 'rgba(255,255,255,0.18)';
                 openModalBtn.style.background = 'rgba(255,255,255,0.09)';
                 openModalBtn.style.color = 'rgba(255,255,255,0.85)';
@@ -705,7 +764,7 @@ export function renderBreathe(onComplete) {
         const muteLabel = container.querySelector('#mute-label');
         function applyMuteState() {
             muteIcon.textContent = isMuted ? 'volume_off' : 'volume_up';
-            if (muteLabel) muteLabel.textContent = isMuted ? 'Bells Off' : 'Bells On';
+            if (muteLabel) muteLabel.textContent = isMuted ? tr('Bells Off', 'Dzwonki Wył.') : tr('Bells On', 'Dzwonki Wł.');
             muteBtn.style.background = isMuted ? 'rgba(255,80,80,0.25)' : 'rgba(255,255,255,0.08)';
             muteBtn.style.borderColor = isMuted ? 'rgba(255,80,80,0.4)' : 'rgba(255,255,255,0.15)';
             muteBtn.style.color = isMuted ? '#ffaaaa' : 'rgba(255,255,255,0.9)';
@@ -736,7 +795,7 @@ export function renderBreathe(onComplete) {
                         const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
                         const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
                         if (currentBoundary > prevBoundary && timeLeft > 0) {
-                            if (!(window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative)) {
+                            if (!isAndroidDevice()) {
                                 Synth.playIntervalBell();
                             }
                         }
@@ -793,13 +852,13 @@ export function renderBreathe(onComplete) {
 
             if (container.activeMission) {
                 titleEl.textContent = container.activeMission.label;
-                descEl.textContent = 'Complete the sit to finish the mission';
+                descEl.textContent = tr('Complete the sit to finish the mission', 'Ukończ sesję, aby zaliczyć misję');
                 presetsEl.style.display = 'flex'; // Keep presets visible
                 banner.style.display = 'block';
                 bannerText.textContent = container.activeMission.description;
             } else {
-                titleEl.textContent = 'Meditation';
-                descEl.textContent = 'Find your center';
+                titleEl.textContent = tr('Meditation', 'Medytacja');
+                descEl.textContent = tr('Find your center', 'Odnajdź swój spokój');
                 presetsEl.style.display = 'flex';
                 banner.style.display = 'none';
             }
@@ -830,7 +889,7 @@ export function renderBreathe(onComplete) {
             const activeIntentionText = container.querySelector('#active-intention-text');
             if (activeIntentionAnchor && activeIntentionText) {
                 if (running && currentIntention) {
-                    activeIntentionText.textContent = `Intention: "${currentIntention}"`;
+                    activeIntentionText.textContent = `${tr('Intention:', 'Intencja:')} "${currentIntention}"`;
                     activeIntentionAnchor.style.display = 'inline-flex';
                 } else {
                     activeIntentionAnchor.style.display = 'none';
@@ -845,12 +904,12 @@ export function renderBreathe(onComplete) {
 
             if (running) {
                 let phase = 0;
-                breathePrompt.textContent = "Inhale...";
+                breathePrompt.textContent = tr("Inhale...", "Wdech...");
                 promptInterval = setInterval(() => {
                     phase = 1 - phase;
                     breathePrompt.style.opacity = '0';
                     setTimeout(() => {
-                        breathePrompt.textContent = phase === 0 ? "Inhale..." : "Exhale...";
+                        breathePrompt.textContent = phase === 0 ? tr("Inhale...", "Wdech...") : tr("Exhale...", "Wydech...");
                         breathePrompt.style.opacity = '1';
                     }, 1000);
                 }, 5000); // 5s inhale, 5s exhale to match the 10s animation
@@ -876,9 +935,9 @@ export function renderBreathe(onComplete) {
             }
 
             // Stop Native Foreground Service (Android only)
-            if (window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative) {
+            if (isAndroidDevice()) {
                 if (!isNaturalFinish) {
-                    window.Capacitor.Plugins.MeditationNative.stopService().catch(() => {});
+                    NativeMeditation.stop();
                 }
             }
 
@@ -945,9 +1004,7 @@ export function renderBreathe(onComplete) {
 
             // Play end of meditation bell & vibration pulses ONLY on natural finish (when timer reaches 0)
             if (isNaturalFinish) {
-                const isAndroidNative = window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative;
-                
-                if (!isAndroidNative) {
+                if (!isAndroidDevice()) {
                     if (!isMuted) {
                         Synth.playEndBell();
                     }
@@ -969,8 +1026,8 @@ export function renderBreathe(onComplete) {
             sessionElapsed = 0;
             updateDisplay();
             // Reset title/desc
-            container.querySelector('#breathe-screen-title').textContent = 'Meditation';
-            container.querySelector('#breathe-screen-desc').textContent = 'Find your center';
+            container.querySelector('#breathe-screen-title').textContent = tr('Meditation', 'Medytacja');
+            container.querySelector('#breathe-screen-desc').textContent = tr('Find your center', 'Odnajdź swój spokój');
             container.querySelector('#mission-info-banner').style.display = 'none';
             presetsEl.style.display = 'flex';
             document.querySelector('[data-target="home"]')?.click();
@@ -1020,12 +1077,11 @@ export function renderBreathe(onComplete) {
                 }
 
                 // Start Native Foreground Service (Android only)
-                if (window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative) {
+                if (isAndroidDevice()) {
                     const intervalVal = parseFloat(container.querySelector('#bell-interval-input').value) || 0;
-                    window.Capacitor.Plugins.MeditationNative.startService({
-                        intervalSeconds: isMuted ? 0 : Math.floor(intervalVal * 60),
-                        totalSeconds: timeLeft
-                    }).catch(e => console.error('[Breathe] Native service error:', e));
+                    const intervalSecs = isMuted ? 0 : Math.floor(intervalVal * 60);
+                    const totalSecs = Math.floor(timeLeft);
+                    NativeMeditation.start(intervalSecs, totalSecs);
                 }
 
                 // MediaSession Keep-Alive
@@ -1040,9 +1096,20 @@ export function renderBreathe(onComplete) {
                     } catch(e) {}
                 }
 
-                // Ensure notification permissions are requested/granted for the Foreground Service
+                // Ensure notification permissions are requested/granted & schedule completion notification for lock-screen haptics
                 if (window.Capacitor?.Plugins?.LocalNotifications) {
-                    window.Capacitor.Plugins.LocalNotifications.requestPermissions().catch(() => {});
+                    window.Capacitor.Plugins.LocalNotifications.requestPermissions().then(() => {
+                        const completionTime = new Date(Date.now() + (timeLeft * 1000));
+                        window.Capacitor.Plugins.LocalNotifications.schedule({
+                            notifications: [{
+                                id: 99,
+                                title: tr('Meditation Complete 🧘', 'Medytacja ukończona 🧘'),
+                                body: tr('Your sanctuary sit is complete.', 'Twoja sesja w sanktuarium dobiegła końca.'),
+                                schedule: { at: completionTime },
+                                sound: 'end_bell.mp3'
+                            }]
+                        }).catch(e => console.error('[Breathe] Schedule notif error:', e));
+                    }).catch(() => {});
                 }
 
                 lastTickTime = Date.now();
@@ -1055,7 +1122,7 @@ export function renderBreathe(onComplete) {
                         lastTickTime += delta * 1000;
                         updateDisplay();
 
-                        // Play interval bell every X minutes if set
+                        // Play interval bell every X minutes if set (Web fallback)
                         const intervalVal = parseFloat(container.querySelector('#bell-interval-input').value);
                         if (intervalVal > 0 && !isMuted) {
                             const intervalSeconds = intervalVal * 60;
@@ -1063,7 +1130,7 @@ export function renderBreathe(onComplete) {
                             const prevBoundary = Math.floor(prevElapsed / intervalSeconds);
                             const currentBoundary = Math.floor(sessionElapsed / intervalSeconds);
                             if (currentBoundary > prevBoundary && timeLeft > 0) {
-                                if (!(window.Capacitor?.getPlatform() === 'android' && window.Capacitor?.Plugins?.MeditationNative)) {
+                                if (!isAndroidDevice()) {
                                     Synth.playIntervalBell();
                                 }
                             }
@@ -1085,8 +1152,8 @@ export function renderBreathe(onComplete) {
                 e.stopPropagation();
                 container.activeMission = null;
                 container.querySelector('#mission-info-banner').style.display = 'none';
-                container.querySelector('#breathe-screen-title').textContent = 'Meditation';
-                container.querySelector('#breathe-screen-desc').textContent = 'Find your center';
+                container.querySelector('#breathe-screen-title').textContent = tr('Meditation', 'Medytacja');
+                container.querySelector('#breathe-screen-desc').textContent = tr('Find your center', 'Odnajdź swój spokój');
                 updatePresetsState();
             });
         }
@@ -1123,7 +1190,10 @@ export function renderBreathe(onComplete) {
             // Restrict duration if an active mission is loaded
             const minMins = container.activeMission ? container.activeMission.minDuration : 0;
             if (mins < minMins) {
-                alert(`This mission requires at least a ${minMins}-minute sit. Duration adjusted to ${minMins} minutes.`);
+                alert(tr(
+                    `This mission requires at least a ${minMins}-minute sit. Duration adjusted to ${minMins} minutes.`,
+                    `Ta misja wymaga co najmniej ${minMins}-minutowej sesji. Czas został ustawiony na ${minMins} min.`
+                ));
                 mins = minMins;
                 customInput.value = minMins;
             }
